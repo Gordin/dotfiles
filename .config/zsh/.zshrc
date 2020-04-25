@@ -31,6 +31,12 @@ bindkey -v
 # Prompt for spelling correction of commands.
 #setopt CORRECT
 
+# with spelling correction, assume dvorak kb
+setopt dvorak
+
+# Allow comments even in interactive shells
+setopt interactivecomments
+
 # Customize spelling correction prompt.
 #SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 
@@ -135,7 +141,39 @@ if [ -x "$(command -v exa)"  ]; then
   alias la='l -a'
 fi
 
+if (cat /proc/version | grep -qi microsoft); then
+  cd() {
+    # Check if no arguments to make just typing cd<Enter> work
+    # Also check if the first argument starts with a - and let cd handle it
+    if [ $# -eq 0 ] || [[ $1 == -* ]]
+    then
+      builtin cd $@
+      return
+    fi
+    # If path exists, just cd into it
+    # (also, using $* and not $@ makes it so you don't have to escape spaces any more)
+    if [[ -d "$*" ]]
+    then
+      builtin cd "$*"
+      return
+    else
+      # Try converting from Windows to absolute Linux path and try again
+      WSLP=$(wslpath -ua "$*")
+      if [[ -d "$WSLP" ]]
+      then
+        builtin cd "$WSLP"
+        return
+      fi
+    fi
+    # If both options don't work, just let the builtin cd handle it
+    builtin cd "$*"
+  }
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
+
+
+export PATH=${HOME}/.local/bin:$PATH
