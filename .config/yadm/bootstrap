@@ -1,2 +1,4 @@
 #!/bin/bash
+zsh ~/.zim/zimfw.zsh upgrade
 zsh ~/.zim/zimfw.zsh install
+zsh ~/.zim/zimfw.zsh update
