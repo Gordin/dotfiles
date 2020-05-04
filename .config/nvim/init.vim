@@ -13,6 +13,7 @@ if dein#load_state('$HOME/.config/nvim/dein')
   " Let dein manage dein
   " Required:
   call dein#add('$HOME/.config/vim/dein/repos/github.com/Shougo/dein.vim')
+  call dein#add('wsdjeg/dein-ui.vim')
 
   " Add or remove your plugins here like this:
   "call dein#add('Shougo/neosnippet.vim')

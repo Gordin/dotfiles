@@ -11,3 +11,12 @@ zsh ~/.config/zsh/zim/zimfw.zsh update
 FZFDIR=~/.config/fzf
 git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null || (cd "$FZFDIR" ; git pull)
 $FZFDIR/install --xdg --completion --key-bindings --update-rc
+
+DEIN_DIR="$HOME/.config/nvim/dein"
+DEIN_INSTALL_DIR="${DEIN_DIR}/repos/github.com/Shougo/dein.vim"
+if ! [ -e "$DEIN_INSTALL_DIR" ]; then
+	echo "Begin fetching dein..."
+	mkdir -p "$DEIN_DIR"
+	git clone https://github.com/Shougo/dein.vim "$DEIN_INSTALL_DIR"
+	echo "Installed dein."
+fi
