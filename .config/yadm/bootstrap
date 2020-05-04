@@ -15,8 +15,10 @@ $FZFDIR/install --xdg --completion --key-bindings --update-rc
 DEIN_DIR="$HOME/.config/nvim/dein"
 DEIN_INSTALL_DIR="${DEIN_DIR}/repos/github.com/Shougo/dein.vim"
 if ! [ -e "$DEIN_INSTALL_DIR" ]; then
-	echo "Begin fetching dein..."
-	mkdir -p "$DEIN_DIR"
-	git clone https://github.com/Shougo/dein.vim "$DEIN_INSTALL_DIR"
-	echo "Installed dein."
+  echo "Begin fetching dein..."
+  mkdir -p "$DEIN_DIR"
+  git clone https://github.com/Shougo/dein.vim "$DEIN_INSTALL_DIR"
+  vim '+:call dein#install()'
+  echo "Installed dein."
 fi
+vim '+:call dein#update()'
