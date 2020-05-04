@@ -141,6 +141,10 @@ if [ -x "$(command -v exa)"  ]; then
   alias la='l -a'
 fi
 
+if [ -x "$(command -v nvim)" ]; then
+  alias vim=nvim
+fi
+
 if (cat /proc/version | grep -qi microsoft); then
   cd() {
     # Check if no arguments to make just typing cd<Enter> work
