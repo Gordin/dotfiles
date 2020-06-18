@@ -63,7 +63,7 @@ else
 
   " Autocompletion
   "call minpac#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
-  call minpac#add('ycm-core/YouCompleteMe')
+  call minpac#add('ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer' } )
 
   " Colorschemes
   call minpac#add('morhetz/gruvbox')
