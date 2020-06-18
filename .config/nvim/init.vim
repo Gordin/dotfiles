@@ -62,7 +62,7 @@ else
   call minpac#add('sheerun/vim-polyglot')
 
   " Autocompletion
-  call minpac#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
+  "call minpac#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
   call minpac#add('ycm-core/YouCompleteMe')
 
   " Colorschemes

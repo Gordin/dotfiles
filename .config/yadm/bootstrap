@@ -24,7 +24,7 @@ nvm install node
 npm install -g yarn
 
 # Install vim stuff
-MINPAC_DIR="$XDG_CONFIG_HOME/nvim/pack/pack/minpac/opt/minpac"
+MINPAC_DIR="$XDG_CONFIG_HOME/nvim/pack/minpac/opt/minpac"
 mkdir -p $XDG_CONFIG_HOME/vim/undodir
 
 if ! [ -e "$MINPAC_DIR" ]; then
