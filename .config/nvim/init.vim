@@ -81,4 +81,4 @@ let g:gruvbox_contrast_dark = 'hard'
 " endif
 let g:gruvbox_invert_selection='0'
 set background=dark
-colorscheme gruvbox
+silent! colorscheme gruvbox
