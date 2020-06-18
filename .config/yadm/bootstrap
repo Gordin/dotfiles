@@ -26,11 +26,13 @@ npm install -g yarn
 # Install vim stuff
 MINPAC_DIR="$XDG_CONFIG_HOME/nvim/pack/minpac/opt/minpac"
 mkdir -p $XDG_CONFIG_HOME/vim/undodir
-
 if ! [ -e "$MINPAC_DIR" ]; then
   echo "Begin fetching minpac..."
   mkdir -p "$MINPAC_DIR"
   git clone https://github.com/k-takata/minpac.git $MINPAC_DIR
+  echo "Fetching PlugPac"
+  curl -fLo ~/.config/nvim/autoload/plugpac.vim --create-dirs \
+      https://raw.githubusercontent.com/bennyyip/plugpac.vim/master/plugpac.vim
 fi
-nvim '+:call minpac#update()'
+nvim '+:PackInstall'
 echo "Installed und updated vim plugins."

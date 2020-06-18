@@ -37,42 +37,35 @@ set shortmess+=c
 set colorcolumn=100
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
-packadd minpac
-
-if !exists('*minpac#init')
-  " minpac is not available.
-
-  " Settings for plugin-less environment.
-else
+call plugpac#begin()
   " minpac is available.
-  call minpac#init()
-  call minpac#add('k-takata/minpac', {'type': 'opt'})
+  Pack 'k-takata/minpac', {'type': 'opt'}
 
-  call minpac#add('kristijanhusak/vim-packager', { 'type': 'opt' })
+  Pack 'kristijanhusak/vim-packager', { 'type': 'opt' }
 
   " Find stuff
   " call minpac#add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
-  call minpac#add('junegunn/fzf.vim')
+  Pack 'junegunn/fzf.vim'
 
   " Stuff that shows information
-  call minpac#add('tpope/vim-fugitive')
-  call minpac#add('mbbill/undotree')
+  Pack 'tpope/vim-fugitive'
+  Pack 'mbbill/undotree'
 
   " Language stuff
-  call minpac#add('sheerun/vim-polyglot')
+  Pack 'sheerun/vim-polyglot'
 
   " Autocompletion
   "call minpac#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
-  call minpac#add('ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer' } )
+  Pack 'ycm-core/YouCompleteMe', { 'do': {-> system('./install.py --ts-completer')} }
 
   " Colorschemes
-  call minpac#add('morhetz/gruvbox')
-  call minpac#add('phanviet/vim-monokai-pro')
-  call minpac#add('vim-airline/vim-airline')
-  call minpac#add('flazz/vim-colorschemes')
+  Pack 'morhetz/gruvbox'
+  Pack 'phanviet/vim-monokai-pro'
+  Pack 'vim-airline/vim-airline'
+  Pack 'flazz/vim-colorschemes'
 
   " Plugin settings here.
-endif
+call plugpac#end()
 
 let g:gruvbox_contrast_dark = 'hard'
 " if exists('+termguicolors')
