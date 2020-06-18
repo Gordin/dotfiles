@@ -1,38 +1,84 @@
 if &compatible
   set nocompatible
 endif
+syntax on
 
-" Load packager only when you need it
-function! PackagerInit() abort
-  packadd vim-packager
-  call packager#init()
-  call packager#add('kristijanhusak/vim-packager', { 'type': 'opt' })
-  " call packager#add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
-  call packager#add('junegunn/fzf.vim')
-  call packager#add('morhetz/gruvbox')
+set guicursor=
+set showmatch
+set relativenumber
+set hlsearch
+set hidden
+set noerrorbells
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+set expandtab
+set smartindent
+set number
+set nowrap
+set smartcase
+set noswapfile
+set nobackup
+set undodir=~/.config/vim/undodir
+set undofile
+set incsearch
+set termguicolors
+set scrolloff=8
 
-  call packager#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
-endfunction
+" Give more space for displaying messages.
+set cmdheight=2
 
-function! InstallCoc(plugin) abort
-  call coc#util#install()
-  exe '!cd '.a:plugin.dir.' && yarn install'
-  call coc#add_extension('coc-eslint', 'coc-tsserver', 'coc-pyls')
-endfunction
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=50
 
-command! PackagerInstall call PackagerInit() | call packager#install()
-command! -bang PackagerUpdate call PackagerInit() | call packager#update({ 'force_hooks': '<bang>' })
-command! PackagerClean call PackagerInit() | call packager#clean()
-command! PackagerStatus call PackagerInit() | call packager#status()
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
 
-"Load plugins only for specific filetype
-"Note that this should not be done for plugins that handle their loading using ftplugin file.
-"More info in :help pack-add
-augroup packager_filetype
-  autocmd!
-  " autocmd FileType javascript packadd vim-js-file-import
-  " autocmd FileType go packadd vim-go
-augroup END
+set colorcolumn=100
+highlight ColorColumn ctermbg=0 guibg=lightgrey
 
-"Lazy load plugins with a mapping
-" nnoremap <silent><Leader>ww :unmap <Leader>ww<BAR>packadd vimwiki<BAR>VimwikiIndex<CR>
+packadd minpac
+
+if !exists('*minpac#init')
+  " minpac is not available.
+
+  " Settings for plugin-less environment.
+else
+  " minpac is available.
+  call minpac#init()
+  call minpac#add('k-takata/minpac', {'type': 'opt'})
+
+  call minpac#add('kristijanhusak/vim-packager', { 'type': 'opt' })
+
+  " Find stuff
+  " call minpac#add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
+  call minpac#add('junegunn/fzf.vim')
+
+  " Stuff that shows information
+  call minpac#add('tpope/vim-fugitive')
+  call minpac#add('mbbill/undotree')
+
+  " Language stuff
+  call minpac#add('sheerun/vim-polyglot')
+
+  " Autocompletion
+  call minpac#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
+  call minpac#add('ycm-core/YouCompleteMe')
+
+  " Colorschemes
+  call minpac#add('morhetz/gruvbox')
+  call minpac#add('phanviet/vim-monokai-pro')
+  call minpac#add('vim-airline/vim-airline')
+  call minpac#add('flazz/vim-colorschemes')
+
+  " Plugin settings here.
+endif
+
+let g:gruvbox_contrast_dark = 'hard'
+" if exists('+termguicolors')
+" 	let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+" 	let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+" endif
+let g:gruvbox_invert_selection='0'
+set background=dark
+colorscheme gruvbox

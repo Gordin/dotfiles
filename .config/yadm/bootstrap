@@ -16,18 +16,21 @@ FZFDIR=$XDG_CONFIG_HOME/fzf
 git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null || (cd "$FZFDIR" ; git pull)
 $FZFDIR/install --xdg --completion --key-bindings --update-rc
 
+# Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 nvm install node 
 npm install -g yarn
 
-PACKAGER_DIR="$XDG_CONFIG_HOME/nvim/pack/packager/opt/vim-packager"
+# Install vim stuff
+MINPAC_DIR="$XDG_CONFIG_HOME/nvim/pack/pack/minpac/opt/minpac"
+mkdir -p $XDG_CONFIG_HOME/vim/undodir
 
-if ! [ -e "$PACKAGER_DIR" ]; then
-  echo "Begin fetching vim-packager..."
-  mkdir -p "$PACKAGER_DIR"
-  git clone https://github.com/kristijanhusak/vim-packager "$PACKAGER_DIR"
+if ! [ -e "$MINPAC_DIR" ]; then
+  echo "Begin fetching minpac..."
+  mkdir -p "$MINPAC_DIR"
+  git clone https://github.com/k-takata/minpac.git $MINPAC_DIR
 fi
-nvim '+:PackagerInstall'
-echo "Installed und updated vim-packager and all vim plugins."
+nvim '+:call minpac#update()'
+echo "Installed und updated vim plugins."
