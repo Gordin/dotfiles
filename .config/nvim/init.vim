@@ -15,8 +15,8 @@ function! PackagerInit() abort
 endfunction
 
 function! InstallCoc(plugin) abort
-  exe '!cd '.a:plugin.dir.' && yarn install'
   call coc#util#install()
+  exe '!cd '.a:plugin.dir.' && yarn install'
   call coc#add_extension('coc-eslint', 'coc-tsserver', 'coc-pyls')
 endfunction
 

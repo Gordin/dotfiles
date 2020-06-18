@@ -27,6 +27,11 @@ setopt HIST_IGNORE_ALL_DUPS
 
 # Set editor default keymap to emacs (`-e`) or vi (`-v`)
 bindkey -v
+# Make Backspace and other shortcuts behave normally
+bindkey "^?" backward-delete-char
+bindkey "^W" backward-kill-word
+bindkey "^H" backward-delete-char      # Control-h also deletes the previous char
+bindkey "^U" backward-kill-line
 
 # Prompt for spelling correction of commands.
 #setopt CORRECT

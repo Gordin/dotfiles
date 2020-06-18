@@ -22,7 +22,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm install node 
 npm install -g yarn
 
-exit
 PACKAGER_DIR="$XDG_CONFIG_HOME/nvim/pack/packager/opt/vim-packager"
 
 if ! [ -e "$PACKAGER_DIR" ]; then
