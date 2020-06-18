@@ -1,36 +1,37 @@
-"dein Scripts-----------------------------
 if &compatible
-  set nocompatible               " Be iMproved
+  set nocompatible
 endif
 
-" Required:
-set runtimepath+=$HOME/.config/nvim/dein/repos/github.com/Shougo/dein.vim
+" Load packager only when you need it
+function! PackagerInit() abort
+  packadd vim-packager
+  call packager#init()
+  call packager#add('kristijanhusak/vim-packager', { 'type': 'opt' })
+  " call packager#add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
+  call packager#add('junegunn/fzf.vim')
+  call packager#add('morhetz/gruvbox')
 
-" Required:
-if dein#load_state('$HOME/.config/nvim/dein')
-  call dein#begin('$HOME/.config/nvim/dein')
+  call packager#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
+endfunction
 
-  " Let dein manage dein
-  " Required:
-  call dein#add('$HOME/.config/vim/dein/repos/github.com/Shougo/dein.vim')
-  call dein#add('wsdjeg/dein-ui.vim')
+function! InstallCoc(plugin) abort
+  exe '!cd '.a:plugin.dir.' && yarn install'
+  call coc#add_extension('coc-eslint', 'coc-tsserver', 'coc-pyls')
+endfunction
 
-  " Add or remove your plugins here like this:
-  "call dein#add('Shougo/neosnippet.vim')
-  "call dein#add('Shougo/neosnippet-snippets')
+command! PackagerInstall call PackagerInit() | call packager#install()
+command! -bang PackagerUpdate call PackagerInit() | call packager#update({ 'force_hooks': '<bang>' })
+command! PackagerClean call PackagerInit() | call packager#clean()
+command! PackagerStatus call PackagerInit() | call packager#status()
 
-  " Required:
-  call dein#end()
-  call dein#save_state()
-endif
+"Load plugins only for specific filetype
+"Note that this should not be done for plugins that handle their loading using ftplugin file.
+"More info in :help pack-add
+augroup packager_filetype
+  autocmd!
+  " autocmd FileType javascript packadd vim-js-file-import
+  " autocmd FileType go packadd vim-go
+augroup END
 
-" Required:
-filetype plugin indent on
-syntax enable
-
-" If you want to install not installed plugins on startup.
-"if dein#check_install()
-"  call dein#install()
-"endif
-
-"End dein Scripts-------------------------
+"Lazy load plugins with a mapping
+" nnoremap <silent><Leader>ww :unmap <Leader>ww<BAR>packadd vimwiki<BAR>VimwikiIndex<CR>

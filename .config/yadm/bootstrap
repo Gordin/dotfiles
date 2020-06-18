@@ -12,13 +12,13 @@ FZFDIR=~/.config/fzf
 git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null || (cd "$FZFDIR" ; git pull)
 $FZFDIR/install --xdg --completion --key-bindings --update-rc
 
-DEIN_DIR="$HOME/.config/nvim/dein"
-DEIN_INSTALL_DIR="${DEIN_DIR}/repos/github.com/Shougo/dein.vim"
-if ! [ -e "$DEIN_INSTALL_DIR" ]; then
-  echo "Begin fetching dein..."
-  mkdir -p "$DEIN_DIR"
-  git clone https://github.com/Shougo/dein.vim "$DEIN_INSTALL_DIR"
-  vim '+:call dein#install()'
-  echo "Installed dein."
+
+PACKAGER_DIR="~/.config/nvim/pack/packager/opt/vim-packager"
+
+if ! [ -e "$PACKAGER_DIR" ]; then
+  echo "Begin fetching vim-packager..."
+  mkdir -p "$PACKAGER_DIR"
+  git clone https://github.com/kristijanhusak/vim-packager "$PACKAGER_DIR"
 fi
-vim '+:call dein#update()'
+vim '+:PackagerInstall'
+echo "Installed und updated vim-packager and all vim plugins."
