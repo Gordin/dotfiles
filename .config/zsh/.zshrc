@@ -196,8 +196,13 @@ if (cat /proc/version | grep -qi microsoft); then
   # (Having system32 in PATH massively slows down autocompletion)
   update_system32_binaries() {
     mkdir -p $HOME/.cache/system32bin
-    find /mnt/c/Windows/system32/ -maxdepth 1 -executable -type f -name '*.exe' -exec ln -s {} .cache/system32bin \;
+    find /mnt/c/Windows/system32/ -maxdepth 1 -executable -type f -name '*.exe' -exec ln -s {} $HOME/.cache/system32bin \;
   }
+
+  # Initialize system23 executables on first run
+  if [ ! -d "$HOME/.cache/system32bin" ]; then
+    update_system32_binaries
+  fi
 
   # If in WSL, remove all windows stuff from path, except Windows dir for explorer.exe
   # This Speeds up Tab-completion A LOT. without this pressing TAB takes ~8.5 seconds, with this
