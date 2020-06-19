@@ -24,7 +24,7 @@ nvm install node
 npm install -g yarn neovim
 
 # Install perl stuff (just for neovim, probably useless...)
-PLENV_DIR=${XDG_CONFIG_HOME}/plenv
+PLENV_DIR=$HOME/.plenv
 git clone https://github.com/tokuhirom/plenv.git $PLENV_DIR 2> /dev/null || (cd "$PLENV_DIR" ; git pull)
 export PATH="$PLENV_DIR/bin:$PATH"
 eval "$(plenv init -)"

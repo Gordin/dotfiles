@@ -200,6 +200,7 @@ fi
 PLENV_DIR=${XDG_CONFIG_HOME}/plenv
 if [ -d "$PLENV_DIR" ]; then
   export PATH="$PLENV_DIR/bin:$PATH"
+  eval "$(plenv init - zsh)"
 fi
 
 # If in WSL, remove all windows stuff from path, except Windows dir for explorer.exe
