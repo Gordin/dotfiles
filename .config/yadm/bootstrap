@@ -33,4 +33,4 @@ git clone https://github.com/tokuhirom/Perl-Build.git $PB_DIR 2> /dev/null || (c
 
 # Install vim stuff
 mkdir -p $XDG_CONFIG_HOME/vim/undodir
-nvim '+:PlugInstall'
+nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'

@@ -69,7 +69,7 @@ set incsearch                       " Show search results while typing
 " Store plugins in custom directory
 " Add Plugins between plug#begin and plug#end
 " :PlugUpgrade to update Plug, :PlugUpdate/Install/Clean to handle plugins
-call plug#begin('~/.config/nvim/plugged')
+silent! if plug#begin('~/.config/nvim/plugged')
   " Adds a homescreen to vim that shows recently used files when you open vim without a file
   Plug 'mhinz/vim-startify'
 
@@ -195,7 +195,8 @@ call plug#begin('~/.config/nvim/plugged')
   autocmd FileType * nnoremap <nowait> <silent> <buffer> <c-_> :TComment<cr>
 
 " Initialize plugin system
-call plug#end()
+  call plug#end()
+endif
 
 " colorschemes have to be after Plugins because they aren't there before loading plugins...
 " silent! colorscheme gruvbox
