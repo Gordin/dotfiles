@@ -29,7 +29,7 @@ set cmdheight=2
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=50
+set updatetime=30
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -62,17 +62,28 @@ call plug#begin('~/.config/nvim/plugged')
   " Colorschemes
   Plug 'morhetz/gruvbox'
   Plug 'phanviet/vim-monokai-pro'
-  Plug 'vim-airline/vim-airline'
   Plug 'flazz/vim-colorschemes'
+
+  " Statusbar
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
 
 " Initialize plugin system
 call plug#end()
 
-let g:gruvbox_contrast_dark = 'hard'
-" if exists('+termguicolors')
-" 	let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-" 	let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-" endif
+let g:airline_theme='wombat'
+let g:airline_powerline_fonts = 1
+
+let g:gruvbox_contrast_dark = 'medium'
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+endif
 let g:gruvbox_invert_selection='0'
 set background=dark
-silent! colorscheme gruvbox
+set termguicolors     " enable true colors support
+" let ayucolor="light"  " for light version of theme
+let ayucolor="mirage" " for mirage version of theme
+" let ayucolor="dark"   " for dark version of theme
+silent! colorscheme ayu
+" silent! colorscheme gruvbox
