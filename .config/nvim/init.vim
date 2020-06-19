@@ -37,35 +37,36 @@ set shortmess+=c
 set colorcolumn=100
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
-call plugpac#begin()
-  " minpac is available.
-  Pack 'k-takata/minpac', {'type': 'opt'}
 
-  Pack 'kristijanhusak/vim-packager', { 'type': 'opt' }
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.config/nvim/plugged')
+  Plug 'mhinz/vim-startify'
 
   " Find stuff
   " call minpac#add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
-  Pack 'junegunn/fzf.vim'
+  Plug 'junegunn/fzf.vim'
 
   " Stuff that shows information
-  Pack 'tpope/vim-fugitive'
-  Pack 'mbbill/undotree'
+  Plug 'tpope/vim-fugitive'
+  Plug 'mbbill/undotree'
 
   " Language stuff
-  Pack 'sheerun/vim-polyglot'
+  Plug 'sheerun/vim-polyglot'
 
   " Autocompletion
-  "call minpac#add('neoclide/coc.nvim', { 'do': function('InstallCoc') })
-  Pack 'ycm-core/YouCompleteMe', { 'do': {-> system('./install.py --ts-completer')} }
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
 
   " Colorschemes
-  Pack 'morhetz/gruvbox'
-  Pack 'phanviet/vim-monokai-pro'
-  Pack 'vim-airline/vim-airline'
-  Pack 'flazz/vim-colorschemes'
+  Plug 'morhetz/gruvbox'
+  Plug 'phanviet/vim-monokai-pro'
+  Plug 'vim-airline/vim-airline'
+  Plug 'flazz/vim-colorschemes'
 
-  " Plugin settings here.
-call plugpac#end()
+" Initialize plugin system
+call plug#end()
 
 let g:gruvbox_contrast_dark = 'hard'
 " if exists('+termguicolors')
