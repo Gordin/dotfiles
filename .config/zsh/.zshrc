@@ -202,11 +202,13 @@ if [ -d "$PLENV_DIR" ]; then
   export PATH="$PLENV_DIR/bin:$PATH"
 fi
 
-WINDOWS_DIR='/mnt/c/'
-# If we are in WSL, remove all windows stuff from path, except Windows dir for explorer.exe
-# Change /mnt/\c\/ to something different if main drive isn't c...
-if [ -d "$PLENV_DIR" ]; then
-  export PATH=$(echo ${PATH} | awk -v RS=: -v ORS=: '/mnt\/c\// {next} {print}' | sed 's/:*$//')
-  export PATH="$PATH:/mnt/c/Windows/"
+# If in WSL, remove all windows stuff from path, except Windows dir for explorer.exe
+# This Speeds up Tab-completion A LOT. without this pressing TAB takes ~8.5 seconds, with this
+# ~100ms. Change /mnt/\c\/ to something different if the Windows drive is mounted somewhere else...
+C_DRIVE='/mnt/c'
+if [ -d "$C_DRIVE" ]; then
+  export PATH=$(echo ${PATH} | \
+    awk -v RS=: -v ORS=: "/${C_DRIVE//\//\\/}/ {next} {print}" | sed 's/:*$//')
+  # Add C:\Windows back so you can do `explorer.exe .` to open an explorer at current directory
+  export PATH="$PATH:$C_DRIVE/Windows/"
 fi
-
