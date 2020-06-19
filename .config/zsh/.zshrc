@@ -190,6 +190,27 @@ if (cat /proc/version | grep -qi microsoft); then
     # If both options don't work, just let the builtin cd handle it
     builtin cd "$*"
   }
+
+  # This creates symlinks for all .exe files in a folder inside WSL. This folder is in PATH,
+  # so you can access the binaries with fast autocompletion.
+  # (Having system32 in PATH massively slows down autocompletion)
+  update_system32_binaries() {
+    mkdir -p $HOME/.cache/system32bin
+    find /mnt/c/Windows/system32/ -maxdepth 1 -executable -type f -name '*.exe' -exec ln -s {} .cache/system32bin \;
+  }
+
+  # If in WSL, remove all windows stuff from path, except Windows dir for explorer.exe
+  # This Speeds up Tab-completion A LOT. without this pressing TAB takes ~8.5 seconds, with this
+  # ~100ms. Change /mnt/\c\/ to something different if the Windows drive is mounted somewhere else...
+  C_DRIVE='/mnt/c'
+  export PATH=$(echo ${PATH} | \
+    awk -v RS=: -v ORS=: "/${C_DRIVE//\//\\/}/ {next} {print}" | sed 's/:*$//')
+  # Add C:\Windows back so you can do `explorer.exe .` to open an explorer at current directory
+  export PATH="$PATH:$C_DRIVE/Windows/"
+  # export PATH="$PATH:$C_DRIVE/Windows/system32"
+  export PATH="$PATH:$HOME/.cache/system32bin"
+
+  export DISPLAY="$(ipconfig.exe | grep IPv4 | cut -d: -f2 | tr -d ' ' | grep $(ip -o route get to 8.8.8.8 | cut -d" " -f7 | cut -d. -f1-3) | sed 's/[^[:print:]]//g'):0"
 fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -197,19 +218,9 @@ fi
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
-PLENV_DIR=${XDG_CONFIG_HOME}/plenv
+PLENV_DIR=${HOME}/.plenv
 if [ -d "$PLENV_DIR" ]; then
   export PATH="$PLENV_DIR/bin:$PATH"
   eval "$(plenv init - zsh)"
 fi
 
-# If in WSL, remove all windows stuff from path, except Windows dir for explorer.exe
-# This Speeds up Tab-completion A LOT. without this pressing TAB takes ~8.5 seconds, with this
-# ~100ms. Change /mnt/\c\/ to something different if the Windows drive is mounted somewhere else...
-C_DRIVE='/mnt/c'
-if [ -d "$C_DRIVE" ]; then
-  export PATH=$(echo ${PATH} | \
-    awk -v RS=: -v ORS=: "/${C_DRIVE//\//\\/}/ {next} {print}" | sed 's/:*$//')
-  # Add C:\Windows back so you can do `explorer.exe .` to open an explorer at current directory
-  export PATH="$PATH:$C_DRIVE/Windows/"
-fi

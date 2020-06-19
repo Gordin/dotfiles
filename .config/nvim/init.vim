@@ -66,6 +66,10 @@ set smartcase                       " search case sensitive again when you use c
 set incsearch                       " Show search results while typing
 
 
+
+" Disable Ex mode
+nnoremap Q <Nop>
+
 " Store plugins in custom directory
 " Add Plugins between plug#begin and plug#end
 " :PlugUpgrade to update Plug, :PlugUpdate/Install/Clean to handle plugins
