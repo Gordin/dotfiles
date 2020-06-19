@@ -150,6 +150,8 @@ if [ -x "$(command -v nvim)" ]; then
   alias vim=nvim
 fi
 
+export PATH=${HOME}/.local/bin:$PATH
+
 if [ -d "$HOME/.cargo/bin" ]; then
   export PATH=$HOME/.cargo/bin:$PATH
 fi
@@ -195,5 +197,16 @@ fi
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
+PLENV_DIR=${XDG_CONFIG_HOME}/plenv
+if [ -d "$PLENV_DIR" ]; then
+  export PATH="$PLENV_DIR/bin:$PATH"
+fi
 
-export PATH=${HOME}/.local/bin:$PATH
+WINDOWS_DIR='/mnt/c/'
+# If we are in WSL, remove all windows stuff from path, except Windows dir for explorer.exe
+# Change /mnt/\c\/ to something different if main drive isn't c...
+if [ -d "$PLENV_DIR" ]; then
+  export PATH=$(echo ${PATH} | awk -v RS=: -v ORS=: '/mnt\/c\// {next} {print}' | sed 's/:*$//')
+  export PATH="$PATH:/mnt/c/Windows/"
+fi
+
