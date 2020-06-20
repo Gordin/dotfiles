@@ -2,7 +2,7 @@
 
 set -e
 
-export XDG_CONFIG_HOME=$HOME/.config 
+export XDG_CONFIG_HOME=$HOME/.config
 
 ### zim (zsh config manager)
 # https://github.com/zimfw/zimfw
@@ -20,16 +20,21 @@ $FZFDIR/install --xdg --completion --key-bindings --update-rc
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-nvm install node 
+nvm install node
 npm install -g yarn neovim
 
 # Install perl stuff (just for neovim, probably useless...)
-PLENV_DIR=$HOME/.plenv
-git clone https://github.com/tokuhirom/plenv.git $PLENV_DIR 2> /dev/null || (cd "$PLENV_DIR" ; git pull)
-export PATH="$PLENV_DIR/bin:$PATH"
-eval "$(plenv init -)"
-PB_DIR=$PLENV_DIR/plugins/perl-build/
-git clone https://github.com/tokuhirom/Perl-Build.git $PB_DIR 2> /dev/null || (cd "$PB_DIR" ; git pull)
+# PLENV_DIR=$HOME/.plenv
+# git clone https://github.com/tokuhirom/plenv.git $PLENV_DIR 2> /dev/null || (cd "$PLENV_DIR" ; git pull)
+# export PATH="$PLENV_DIR/bin:$PATH"
+# eval "$(plenv init -)"
+# PB_DIR=$PLENV_DIR/plugins/perl-build/
+# git clone https://github.com/tokuhirom/Perl-Build.git $PB_DIR 2> /dev/null || (cd "$PB_DIR" ; git pull)
+#
+# CPANM_DIR=$HOME/perl5/bin
+# if [ ! -d "$CPANM_DIR" ]; then
+#   plenv install-cpanm
+# fi
 
 # Install vim stuff
 mkdir -p $XDG_CONFIG_HOME/vim/undodir

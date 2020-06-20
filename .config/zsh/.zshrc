@@ -225,8 +225,10 @@ fi
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
 PLENV_DIR=${HOME}/.plenv
+export PATH="$PLENV_DIR/bin:$PATH"
 if [ -d "$PLENV_DIR" ]; then
-  export PATH="$PLENV_DIR/bin:$PATH"
   eval "$(plenv init - zsh)"
 fi
+
+export PATH="$HOME/perl5/bin/:$PATH"
 
