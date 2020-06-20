@@ -135,8 +135,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " Adds Undotree commands to show vim undo history like a git history
   Plug 'mbbill/undotree'
+  let g:undotree_WindowLayout=2
+  let g:undotree_SetFocusWhenToggle=1
+  function g:Undotree_CustomMap()
+    nmap <buffer> J <plug>UndotreeNextState
+    nmap <buffer> K <plug>UndotreePreviousState
+  endfunc
   " Show/Hide Untotree and switch to it with ,ut
-  nnoremap <silent> <leader>ut :UndotreeToggle<cr>:UndotreeFocus<cr>
+  nnoremap <silent> <leader>ut :UndotreeToggle<cr>
 
   " Detect indentation settings of current files and use them
   Plug 'tpope/vim-sleuth'
