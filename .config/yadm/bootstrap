@@ -47,4 +47,5 @@ cd $VIM_DIR//spell
 wget -c -N http://ftp.vim.org/pub/vim/runtime/spell/{de,en}.utf-8.{spl,sug}
 cd
 mkdir -p $VIM_DIR/undodir
+mkdir -p $VIM_DIR/tmp/backup
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'

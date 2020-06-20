@@ -18,8 +18,25 @@ set scrolloff=8                     " Keep X lines around cursor visible when sc
 set showmatch                       " Highlight matching (){}[] etc. pairs
 set termguicolors                   " enable true colors support
 set cmdheight=1                     " Make line below statusbar always 1 line high
+set noshowmode                      " Hide the mode text as airline already shows this
+set showcmd                         " Show partially entered commands in the statusline
 set shortmess+=c                    " Don't show autocompletion stuff in statusbar.
 set background=dark                 " Use dark background for color schemes
+set laststatus=2                    " Always show the statusline
+set ruler                           " Show the line and column number of the cursor position,
+set cursorline                      " Highlight the line with the cursor
+set mousehide                       " Hide the mouse cursor while typing (works only in gvim?)
+
+" Listchars
+set list                        " enable listchars
+set listchars=""                " Reset the listchars
+set listchars=tab:»\            " a tab should display as "»"
+set listchars+=trail:…          " show trailing spaces as "…"
+" set listchars+=eol:¬            " show line break
+set listchars+=extends:>        " The character to show in the last column when wrap is off and the
+                                " line continues beyond the right of the screen
+set listchars+=precedes:<       " The character to show in the first column when wrap is off and the
+                                " line continues beyond the left of the screen
 
 " Special settings for gruvbox scheme
 let g:gruvbox_contrast_dark = 'medium'
@@ -27,11 +44,15 @@ let g:gruvbox_invert_selection='0'
 
 " Functional stuff
 set hidden                          " Allow to switch files without having saved
-set clipboard=unnamed               " Use system clipboard as default register
+set clipboard^=unnamed,unnamedplus  " Use system clipboard as default register
 set mouse=a                         " Enable mouse controls
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
 set updatetime=30
+set splitbelow                      " open vertical splits below current buffer
+set splitright                      " open horizontal splits right of current buffer
+" don't select the newline with $ in visual mode (to $d in visual without deleting the newline)
+vnoremap $ $h
 
 " Indentation settings
 set tabstop=4 softtabstop=4         " Show tabs as 4 spaces and make 4 spaces == <tab> for commands
@@ -40,10 +61,25 @@ set smarttab                        " Makes <tab> insert `shiftwidth` amount of 
 set expandtab                       " Put multiple spaces instead of <TAB>s
 set autoindent                      " copy indent from current line when starting a new line
 set smartindent                     " be more context-aware than `autoindent`
+set nojoinspaces                    " Prevents inserting two spaces after punctuation on a join (J)
+set matchpairs+=<:>                 " Adds <> to list of bracket pairs
+
+" Vim Menu autocompletion
+set wildmenu            " Completion for :Ex mode. Show list instead of just completing
+set wildmode=full,full  " Command <Tab> completion, Show all matches, cycle through with <tab>
+set wildchar=<tab>      " Make sure Tab starts wildmode
+set wildignorecase      " ignore case in wildmode
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+
+" Resize splits when the window is resized
+au VimResized * exe "normal! \<c-w>="
 
 " Line numbers
 set number                          " Show line numbers
 set relativenumber                  " Line numbers relative to current line instead of absolute
+" toggle [r]elative[n]umber
+nmap <leader>rn :set relativenumber!<CR>
 
 " Line wrapping
 set nowrap                          " Don't wrap lines when the go off screen
@@ -54,19 +90,88 @@ set colorcolumn=100                 " Highlight colomn 100
 
 " Backup/History
 set noswapfile                      " Don't create swap files
-set nobackup                        " Don't create backups of files
-set undodir=~/.config/vim/undodir   " Set directory for undo history
-set undofile                        " Keep undo history when exiting vim
+set backup                          " Enable backups ...
+set backupdir=~/.config/nvim/tmp/backup//   " set directory for backups
+set history=10000                   " 10000 is the max history size...
 set shada=!,'100,<50,s10,h          " Some new vim 8+ session/history thing?
+if has('persistent_undo')           " Most vims should have this...
+  set undofile                      " Save undo history to file
+  set undodir=~/.config/nvim/undodir//   " Set directory for undo history
+  set undolevels=100000             " Maximum number of undos
+  set undoreload=100000             " Save complete files for undo on reload if it has less lines
+endif
 
 " Searching
 set hlsearch                        " Highlight searches
 set ignorecase                      " search case insensitive
 set smartcase                       " search case sensitive again when you use capital letters
 set incsearch                       " Show search results while typing
+set gdefault                        " substitutions have the g (all matches) flag by default.
+                                    " (Add g after s/// to turn off)
+" Turn off search result highlights when you go to insert mode toggle it back on afterwards
+autocmd InsertEnter * :setlocal nohlsearch
+autocmd InsertLeave * :setlocal hlsearch
+" Toggle :[hl]search with <leader>hl
+nmap <silent> <leader>hl :set invhlsearch<CR>
+" Paste current search
+nmap <leader>p/ "/p
+
+" Movement
+" Change to tab with <leader>[T]ab H/L
+nnoremap <leader>th :tabprevious<CR>
+nnoremap <leader>tl :tabnext<CR>
+" go down or up 1 visual line on wrapped lines instead of line of file. Check the count to only
+" do this without a count. (It will jump over wrapped lines when you give a count)
+nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+nnoremap gj j
+nnoremap gk k
+set virtualedit=block               " Allows to select beyond end of lines in block selection mode
+
+" Make q close the quickfix/command/search history window (That thing when you hit q: or q/)
+autocmd! CmdwinEnter * nnoremap <buffer> q <c-c><c-c>
+autocmd! BufWinEnter quickfix nnoremap <silent> <buffer> q :q<cr>
+
+" Jump to last known cursor position when opening a file (unless it's a commit message file)
+autocmd BufReadPost * call s:SetCursorPosition()
+function! s:SetCursorPosition()
+  if &filetype !~ 'svn\|commit\c'
+    if line("'\"") > 0 && line("'\"") <= line("$")
+      exe "normal! g`\""
+      normal! zz
+    endif
+  end
+endfunction
+
+" Folding
+set foldlevelstart=0
+set foldmethod=indent               " Fold automatically based on indentation level
+" :help foldopen !
+set foldopen=block,jump,mark,percent,quickfix,search,tag,undo
+" Make zO recursively open whatever fold we're in, even if it's partially open.
+nnoremap zO zczO
+" Space to toggle folds.
+nnoremap <Space> za
+vnoremap <Space> za
+
+" Abbreviations
+iabbrev :ldis: ಠ_ಠ
+iabbrev :shrug: ¯\_(ツ)_/¯
+iabbrev :flip: (╯°□°)╯︵ ┻━┻
+iabbrev :aflip: (ﾉಥ益ಥ）ﾉ ┻━┻
+iabbrev :patience: ┬─┬ ノ(゜-゜ノ)
+iabbrev :zwnj: ‌
+iabbrev :check: ✓
+
 
 " Automatically reload vim settings on save
 autocmd! bufwritepost $MYVIMRC source $MYVIMRC
+
+" Make sure all markdown files have the correct filetype set
+au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} set filetype=markdown
+
+" Treat JSON files like JavaScript (do I really need this? 0.o)
+au BufNewFile,BufRead *.json set ft=json
 
 " Disable Ex mode
 nnoremap Q <Nop>
@@ -85,8 +190,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Smooth scrolling for vim
   Plug 'yuttie/comfortable-motion.vim'
   " Make scrolling control the cursor. (Default is just scrolling the viewport)
-  let g:comfortable_motion_scroll_down_key = "j"
-  let g:comfortable_motion_scroll_up_key = "k"
+  " let g:comfortable_motion_scroll_down_key = "j"
+  " let g:comfortable_motion_scroll_up_key = "k"
   " Configure scrolling physics
   let g:comfortable_motion_friction = 200.0
   let g:comfortable_motion_air_drag = 1.0
@@ -143,20 +248,21 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " These functions are just because I want the cursor to stay where it is when I press * or #
   " to see if there are matches nearby or if * selected the correct thing I want to search for
   " You can delete them if you like the default behavior
-  function! SavePosition()
+  function! SaveCursor()
     set lazyredraw
     let g:winview = winsaveview()
   endfunction
-  function! LoadPosition()
+  function! LoadCursor()
     call winrestview(g:winview)
     set nolazyredraw
   endfunction
   function! VimSearchPulseMappings()
-    nmap <silent> * :call SavePosition()<CR><Plug>(incsearch-nohl-*):call LoadPosition()<cr><Plug>Pulse
-    nmap <silent> # :call SavePosition()<CR><Plug>(incsearch-nohl-#):call LoadPosition()<cr><Plug>Pulse
-    nmap <silent> g* :call SavePosition()<CR><Plug>(incsearch-nohl-g*):call LoadPosition()<cr><Plug>Pulse
-    nmap <silent> g# :call SavePosition()<CR><Plug>(incsearch-nohl-g#):call LoadPosition()<cr><Plug>Pulse
+    nmap <silent> * :call SaveCursor()<CR><Plug>(incsearch-nohl-*):call LoadCursor()<cr><Plug>Pulse
+    nmap <silent> # :call SaveCursor()<CR><Plug>(incsearch-nohl-#):call LoadCursor()<cr><Plug>Pulse
+    nmap <silent> g* :call SaveCursor()<CR><Plug>(incsearch-nohl-g*):call LoadCursor()<cr><Plug>Pulse
+    nmap <silent> g# :call SaveCursor()<CR><Plug>(incsearch-nohl-g#):call LoadCursor()<cr><Plug>Pulse
   endfunction
+  au VimEnter * call VimSearchPulseMappings()
 
   " Expand/Shrink current selection around text objects
   " Default is +/_, I added v for expand and <c-v>/- for shrink
@@ -176,25 +282,29 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " No idea why I have this in a try/catch...
   Plug 'BlueCatMe/TempKeyword'
   let TempKeywordCmdPrefix = "<leader>"
-  try
-    au VimEnter * call DeclareTempKeyword('1', 'bold', 'lightyellow', 'Black')
-    au VimEnter * call DeclareTempKeyword('2', 'bold', 'green', 'Black')
-    au VimEnter * call DeclareTempKeyword('3', 'bold', 'lightgreen', 'Black')
-    au VimEnter * call DeclareTempKeyword('4', 'bold', 'brown', 'Black')
-    au VimEnter * call DeclareTempKeyword('5', 'bold', 'lightmagenta', 'Black')
-    au VimEnter * call DeclareTempKeyword('6', 'bold', 'lightcyan', 'Black')
-    au VimEnter * call DeclareTempKeyword('7', 'bold', 'White', 'DarkRed')
-    au VimEnter * call DeclareTempKeyword('8', 'bold', 'White', 'DarkGreen')
-    au VimEnter * call DeclareTempKeyword('9', 'bold', 'White', 'DarkBlue')
-    au VimEnter * call DeclareTempKeyword('0', 'bold', 'White', 'DarkMagenta')
-  catch
-    " do nothing
-  endtry
+  function! TempKeywords()
+    call DeclareTempKeyword('1', 'bold', 'lightyellow', 'Black')
+    call DeclareTempKeyword('2', 'bold', 'green', 'Black')
+    call DeclareTempKeyword('3', 'bold', 'lightgreen', 'Black')
+    call DeclareTempKeyword('4', 'bold', 'brown', 'Black')
+    call DeclareTempKeyword('5', 'bold', 'lightmagenta', 'Black')
+    call DeclareTempKeyword('6', 'bold', 'lightcyan', 'Black')
+    call DeclareTempKeyword('7', 'bold', 'White', 'DarkRed')
+    call DeclareTempKeyword('8', 'bold', 'White', 'DarkGreen')
+    call DeclareTempKeyword('9', 'bold', 'White', 'DarkBlue')
+    call DeclareTempKeyword('0', 'bold', 'White', 'DarkMagenta')
+  endfunction
+  au VimEnter * call TempKeywords()
 
   " Find stuff
   " I install fzf outside of vim anyway so I don't need the next line
   " Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
   Plug 'junegunn/fzf.vim'
+
+  " Press s and two keys to jump to the next occurence of those 2 characters together
+  " Like f/t, but for two characters...
+  Plug 'justinmk/vim-sneak'
+  let g:sneak#s_next = 1
 
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Adds Modification markers to the line numbers
@@ -205,8 +315,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:undotree_WindowLayout=2
   let g:undotree_SetFocusWhenToggle=1
   function g:Undotree_CustomMap()
-    nmap <buffer> J <plug>UndotreeNextState
-    nmap <buffer> K <plug>UndotreePreviousState
+    nmap <buffer> K <plug>UndotreeNextState
+    nmap <buffer> J <plug>UndotreePreviousState
   endfunc
   " Show/Hide Untotree and switch to it with ,ut
   nnoremap <silent> <leader>ut :UndotreeToggle<cr>
@@ -232,11 +342,36 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:airline_theme='base16_monokai'
   let g:airline_powerline_fonts = 1
 
+  " Colors the current line number background in the mode indicator color
+  Plug 'ntpeters/vim-airline-colornum'
+
   " Surround text or remove surrounding characters
   Plug 'tpope/vim-surround'
 
   " Make some plugin functions repeatable with .
   Plug 'tpope/vim-repeat'
+
+  " Ruby stuff
+  Plug 'thoughtbot/vim-rspec'
+  Plug 'tpope/vim-rails'
+  Plug 'vim-ruby/vim-ruby'
+  Plug 'joonty/vdebug'
+  augroup ruby_settings
+    autocmd!
+    autocmd Filetype ruby setlocal iskeyword+=? iskeyword+=!
+    autocmd FileType ruby setlocal shiftwidth=2
+    autocmd FileType ruby setlocal softtabstop=2
+    autocmd FileType ruby setlocal expandtab
+    autocmd FileType ruby setlocal tabstop=2
+  augroup end
+
+  " Better file tree viewer than default vim
+  Plug 'scrooloose/nerdtree'
+  let NERDTreeShowHidden=1
+  let NERDTreeHighlightCursorline=1
+
+  " Icons for different filetypes in NerdTree
+  Plug 'ryanoasis/vim-webdevicons'
 
   " Yoink let's you cycle through clipboard after pasting
   Plug 'svermeulen/vim-yoink'
@@ -250,23 +385,25 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:yoinkIncludeDeleteOperations=1  " Includes entries from `d` in the history
   let g:yoinkSavePersistently=1         " Save history when you close vim. Needs the `shada` stuff
 
-  Plug 'svermeulen/vim-subversive'
-  " s => substitute following motion with yanked text (Also accepts a register)
-  nmap s <plug>(SubversiveSubstitute)
-  nmap ss <plug>(SubversiveSubstituteLine)
-  nmap S <plug>(SubversiveSubstituteToEndOfLine)
+  " Syntax definitions for i3 config files
+  Plug 'mboughaba/i3config.vim'
+  aug i3config_ft_detection
+      au!
+      au BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
+      au BufNewFile,BufRead ~/.config/sway/config set filetype=i3config
+  aug end
 
+  Plug 'svermeulen/vim-subversive'
   " make vim-yoink work when you paste in visual mode
-  xmap s <plug>(SubversiveSubstitute)
+  xmap s <plug>(SubversiveSubstitute)plug
   xmap p <plug>(SubversiveSubstitute)
   xmap P <plug>(SubversiveSubstitute)
 
-  " Substitute next motion inside next next Motion with something
-  nmap <leader>s <plug>(SubversiveSubstituteRange)
-  xmap <leader>s <plug>(SubversiveSubstituteRange)
-
   " Substitute current word inside next Motion with something
   nmap <leader>ss <plug>(SubversiveSubstituteWordRange)
+
+  " Replace every occurence of your current search with content of your clipboard
+  vmap <leader>s/ :s//*/<CR>
 
   " Automatically Lint/Syntax Check everything asynchronously
   Plug 'dense-analysis/ale'
@@ -274,6 +411,27 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Cycle through errors
   nmap <silent> <C-k> <Plug>(ale_previous_wrap)
   nmap <silent> <C-j> <Plug>(ale_next_wrap)
+  " Configure how errors/warnings are shown in the sidebar
+  let g:ale_sign_error = 'E>'
+  let g:ale_sign_warning = 'W>'
+  " Configure how errors/warnings are shown in the statusbar
+  let g:ale_echo_msg_error_str = 'Error'
+  let g:ale_echo_msg_warning_str = 'Warning'
+  let g:ale_echo_msg_format = '%severity%: %s [%linter%]'
+  " Check when getting back to normal made
+  let g:ale_lint_on_text_changed = 'normal'
+  let g:ale_lint_delay = 200
+  " Typescript config for ALE
+  let g:ale_fixers = { 'javascript': [ 'standard', 'eslint', ], 'typescript': [ 'tsserver', 'tslint' ] }
+  let g:ale_linters= { 'javascript': [ 'standard' ], 'typescript': [ 'tsserver', 'tslint' ],}
+  let g:ale_completion_tsserver_autoimport = 1
+  let g:ale_typescript_tslint_config_path = '.'
+  au BufRead,BufNewFile *.ts vnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
+  au BufRead,BufNewFile *.ts vnoremap <leader>t :ALEGoToDefinition -tab<cr>
+  au BufRead,BufNewFile *.ts vnoremap <c-]> :ALEGoToDefinition<cr>
+  au BufRead,BufNewFile *.ts nnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
+  au BufRead,BufNewFile *.ts nnoremap <leader>t :ALEGoToDefinition -tab<cr>
+  au BufRead,BufNewFile *.ts nnoremap <c-]> :ALEGoToDefinition<cr>
 
   " Comment stuff with gc or <c-/>
   Plug 'tomtom/tcomment_vim'
@@ -289,10 +447,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
   call plug#end()
 endif
 
-" Call functions that overwrite Plugin mappings here
-call VimSearchPulseMappings()
+" Trim trailing whitespace
+nnoremap <silent> <leader>trim  :%s/\s\+$//<cr>:let @/=''<CR>
 
-" colorschemes have to be after Plugins because they aren't there before loading plugins...
+" Spellchecking
+set spelllang=de_20,en          " German and English spellchecking
+set nospell                       " disable spellchecking on startup
+
+" Colorschemes have to be after Plugins because they aren't there before loading plugins...
 " silent! colorscheme gruvbox
-silent! colorscheme monokain        " Sets colorscheme. silent! suppresses the warning when you
+silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
                                     " start vim the first time and the scheme isn't installed yet.
