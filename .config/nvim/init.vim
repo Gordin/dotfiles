@@ -95,13 +95,52 @@ silent! if plug#begin('~/.config/nvim/plugged')
   noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(50)<CR>
   noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-50)<CR>
 
-  " adds maps to vim help files
+  " adds maps to Vim help files
   " jump to ... option: o/O ,link: s/S, anchor: t/T
   " jump to selected: <enter>/<backspace>
   Plug 'dahu/vim-help'
 
-  " When you open a new file but a file with a similar name exists vim will ask to open that one
+  " When you open a new file but a file with a similar name exists Vim will ask to open that one
   Plug 'EinfachToll/DidYouMean'
+
+  " Automatically create folders that don't exist when saving a new file
+  Plug 'DataWraith/auto_mkdir'
+
+  " Highlight ALL matching searches while typing (For regexes)
+  Plug 'haya14busa/incsearch.vim'
+  let g:incsearch#auto_nohlsearch = 0
+  let g:incsearch#consistent_n_direction = 1
+  map /  <Plug>(incsearch-forward)\v
+  map ?  <Plug>(incsearch-backward)\v
+  map g/ <Plug>(incsearch-stay)\v
+
+  " Fuzzy search with <leader>SEARCH-KEY
+  " Function copied from README. also matches SOME words when they are misspelled
+  Plug 'haya14busa/incsearch-fuzzy.vim'
+  function! s:config_fuzzyall(...) abort
+      return extend(copy({
+                  \   'converters': [
+                  \     incsearch#config#fuzzy#converter(),
+                  \     incsearch#config#fuzzyspell#converter()
+                  \   ],
+                  \ }), get(a:, 1, {}))
+  endfunction
+
+  noremap <silent><expr> <leader>/ incsearch#go(<SID>config_fuzzyall())
+  noremap <silent><expr> <leader>? incsearch#go(<SID>config_fuzzyall({'command': '?'}))
+  noremap <silent><expr> <leader>g/ incsearch#go(<SID>config_fuzzyall({'is_stay': 1}))
+
+  " Expand/Shrink current selection around text objects
+  " Default is +/_, I added v for expand and <c-v>/- for shrink
+  " With this you can just press v multiple times from normal mode to get the selection you want
+  Plug 'landock/vim-expand-region'
+  " Adds extra text objecst to stop extending/shrinking around. No idea what those are any more...
+  au VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 }) ">
+  vmap v <Plug>(expand_region_expand)
+  vmap - <Plug>(expand_region_shrink)
+  vmap <c-v> <Plug>(expand_region_shrink)
+  " This is a fork. Original is this, but hasn't been updated since 2013:
+  " Plug 'terryma/vim-expand-region'
 
   " Maps <leader>1-9 to "Highlight word under cursor with color"
   " Useful when you want to see occurences of multiple variables at the same time

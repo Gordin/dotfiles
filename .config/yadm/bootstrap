@@ -37,5 +37,14 @@ npm install -g yarn neovim
 # fi
 
 # Install vim stuff
-mkdir -p $XDG_CONFIG_HOME/vim/undodir
+
+
+VIM_DIR=$XDG_CONFIG_HOME/nvim
+
+# Get spellfiles
+mkdir -p $VIM_DIR/spell
+cd ~/.vim/spell
+wget -c -N http://ftp.vim.org/pub/vim/runtime/spell/{de,en}.utf-8.{spl,sug}
+cd
+mkdir -p $VIM_DIR/undodir
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'
