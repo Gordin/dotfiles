@@ -65,7 +65,8 @@ set ignorecase                      " search case insensitive
 set smartcase                       " search case sensitive again when you use capital letters
 set incsearch                       " Show search results while typing
 
-
+" Automatically reload vim settings on save
+autocmd! bufwritepost $MYVIMRC source $MYVIMRC
 
 " Disable Ex mode
 nnoremap Q <Nop>
@@ -80,6 +81,19 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
   " (Useful for copypasting files from stacktraces or searches
   Plug 'kopischke/vim-fetch'
+
+  " Smooth scrolling for vim
+  Plug 'yuttie/comfortable-motion.vim'
+  " Make scrolling control the cursor. (Default is just scrolling the viewport)
+  let g:comfortable_motion_scroll_down_key = "j"
+  let g:comfortable_motion_scroll_up_key = "k"
+  " Configure scrolling physics
+  let g:comfortable_motion_friction = 200.0
+  let g:comfortable_motion_air_drag = 1.0
+  let g:comfortable_motion_interval = 1000 / 144 " 144 fps scrolling
+  " Smooth scrolling with mousewheel
+  noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(50)<CR>
+  noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-50)<CR>
 
   " adds maps to vim help files
   " jump to ... option: o/O ,link: s/S, anchor: t/T
