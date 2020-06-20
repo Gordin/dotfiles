@@ -126,9 +126,37 @@ silent! if plug#begin('~/.config/nvim/plugged')
                   \ }), get(a:, 1, {}))
   endfunction
 
-  noremap <silent><expr> <leader>/ incsearch#go(<SID>config_fuzzyall())
-  noremap <silent><expr> <leader>? incsearch#go(<SID>config_fuzzyall({'command': '?'}))
+  noremap <silent><expr> <leader>/  incsearch#go(<SID>config_fuzzyall())
+  noremap <silent><expr> <leader>?  incsearch#go(<SID>config_fuzzyall({'command': '?'}))
   noremap <silent><expr> <leader>g/ incsearch#go(<SID>config_fuzzyall({'is_stay': 1}))
+  " noremap <silent> n n<Plug>Pulse
+  " noremap <silent> N N<Plug>Pulse
+
+  " Pulses search results when you jump to them. Useful for very dense code
+  Plug 'iamFIREcracker/vim-search-pulse'
+  let g:vim_search_pulse_mode = 'pattern'
+  let g:vim_search_pulse_duration = 50
+  let g:vim_search_pulse_disable_auto_mappings = 0
+  " This is a fork. Original (seems inactive):
+  " Plug 'inside/vim-search-pulse'
+
+  " These functions are just because I want the cursor to stay where it is when I press * or #
+  " to see if there are matches nearby or if * selected the correct thing I want to search for
+  " You can delete them if you like the default behavior
+  function! SavePosition()
+    set lazyredraw
+    let g:winview = winsaveview()
+  endfunction
+  function! LoadPosition()
+    call winrestview(g:winview)
+    set nolazyredraw
+  endfunction
+  function! VimSearchPulseMappings()
+    nmap <silent> * :call SavePosition()<CR><Plug>(incsearch-nohl-*):call LoadPosition()<cr><Plug>Pulse
+    nmap <silent> # :call SavePosition()<CR><Plug>(incsearch-nohl-#):call LoadPosition()<cr><Plug>Pulse
+    nmap <silent> g* :call SavePosition()<CR><Plug>(incsearch-nohl-g*):call LoadPosition()<cr><Plug>Pulse
+    nmap <silent> g# :call SavePosition()<CR><Plug>(incsearch-nohl-g#):call LoadPosition()<cr><Plug>Pulse
+  endfunction
 
   " Expand/Shrink current selection around text objects
   " Default is +/_, I added v for expand and <c-v>/- for shrink
@@ -260,6 +288,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
 " Initialize plugin system
   call plug#end()
 endif
+
+" Call functions that overwrite Plugin mappings here
+call VimSearchPulseMappings()
 
 " colorschemes have to be after Plugins because they aren't there before loading plugins...
 " silent! colorscheme gruvbox
