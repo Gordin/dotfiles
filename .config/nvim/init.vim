@@ -74,8 +74,8 @@ au VimResized * exe "normal! \<c-w>="
 " Line numbers
 set number                          " Show line numbers
 set relativenumber                  " Line numbers relative to current line instead of absolute
-" toggle [r]elative[n]umber
-nmap <leader>rn :set relativenumber!<CR>
+" [t]oggle [r]elative[n]umber
+nmap <leader>trn :set relativenumber!<CR>
 
 " Line wrapping
 set nowrap                          " Don't wrap lines when the go off screen
@@ -219,18 +219,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Fuzzy search with <leader>SEARCH-KEY
   " Function copied from README. also matches SOME words when they are misspelled
   Plug 'haya14busa/incsearch-fuzzy.vim'
-  function! s:config_fuzzyall(...) abort
-      return extend(copy({
-                  \   'converters': [
-                  \     incsearch#config#fuzzy#converter(),
-                  \     incsearch#config#fuzzyspell#converter()
-                  \   ],
-                  \ }), get(a:, 1, {}))
-  endfunction
-
-  noremap <silent><expr> <leader>/  incsearch#go(<SID>config_fuzzyall())
-  noremap <silent><expr> <leader>?  incsearch#go(<SID>config_fuzzyall({'command': '?'}))
-  noremap <silent><expr> <leader>g/ incsearch#go(<SID>config_fuzzyall({'is_stay': 1}))
+  map <leader>/ <Plug>(incsearch-fuzzy-/)
+  map <leader>? <Plug>(incsearch-fuzzy-?)
+  map <leader>g/ <Plug>(incsearch-fuzzy-stay)
   " noremap <silent> n n<Plug>Pulse
   " noremap <silent> N N<Plug>Pulse
 
@@ -405,7 +396,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   xmap P <plug>(SubversiveSubstitute)
 
   " Substitute current word inside next Motion with something
-  nmap <leader>ss <plug>(SubversiveSubstituteWordRange)
+  nmap <leader>sw <plug>(SubversiveSubstituteWordRange)
 
   " Replace every occurence of your current search with content of your clipboard
   vmap <leader>s/ :s//*/<CR>
@@ -490,29 +481,29 @@ nnoremap <silent> <leader>      :<c-u>WhichKey ','<CR>
 " nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
 " Help Menu for my leader mappings
 let g:which_key_map = {
-            \'/' : 'fuzzy search' ,
-            \'?' : 'fuzzy search backwards' ,
-            \'g' : {'name': 'which_key_ignore'}, 'g/' : 'fuzzy search, cursor stays' ,
-            \'_' : {'name': 'TComment Stuff'},
-            \'c' : {'name': 'which_key_ignore'},
-            \'ca' : 'Clear all highlights',
-            \'c0-9' : 'Clear highlight 0-9',
-            \'p' : {'name': 'which_key_ignore'}, 'p/' : 'paste current search',
-            \'r' : {'name': 'which_key_ignore'}, 'rn' : 'toogle relativenumber',
-            \0 : 'which_key_ignore', 1 : 'which_key_ignore', 2 : 'which_key_ignore',
-            \3 : 'which_key_ignore', 4 : 'which_key_ignore', 5 : 'which_key_ignore',
-            \6 : 'which_key_ignore', 7 : 'which_key_ignore', 8 : 'which_key_ignore',
-            \9 : 'which_key_ignore', '0-9' : 'highlight word under cursor',
-            \'h' : {'name': 'which_key_ignore'}, 'hl' : 'toggle hlsearch',
-            \'s' : {'name': 'which_key_ignore'}, 'ss' : 'substitute word under cursor in motion',
-            \'u' : {'name': 'which_key_ignore'}, 'ut' : '[u]ndo[t]ree',
-            \'t' : { "name" : "Tabs + trim",
-                \'h': 'previous tab',
-                \'l': 'next tab',
-                \'rim': 't[rim] all trailing whitespace',
-                \'r': {'name': 'which_key_ignore'}
-                \}
-            \}
+  \  '/'  : 'fuzzy search'
+  \, '?'  : 'fuzzy search backwards'
+  \, 'g/' : [',g/', 'fuzzy search, cursor stays'], 'g' : {'name': 'which_key_ignore'}
+  \, '_'  : {'name': 'TComment Stuff'  }
+  \, 'c'  : {'name': '[c]lear [0-9] or [a]ll highlights'}
+  \, 'p' : {'name': '[p]aste stuff'
+    \, '/' : 'paste current search [/]'
+    \}
+  \, '#'  : '[0-9] highlight word under cursor', '0' : 'which_key_ignore'
+  \, '1'  : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
+  \, '4'  : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
+  \, '7'  : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
+  \, 'h'  : {'name': 'which_key_ignore'}, 'hl' : 'toggle [hl]search'
+  \, 's'  : {'name': 'which_key_ignore'}, 'sw' : '[s]ubstitute [w]ord under cursor in motion'
+  \, 'u'  : {'name': 'which_key_ignore'}, 'ut' : '[u]ndo[t]ree'
+  \, 't'  : { "name" : "[t]abs, [t]oggle + [t]rim"
+    \, 'rn' : [',trn',  'toggle [r]elative[n]number']
+    \, 'h'  : 'previous tab'
+    \, 'l'  : 'next tab'
+    \, 'rim': [',trim', 't[rim] all trailing whitespace']
+    \, 'r'  : {'name': 'which_key_ignore'}
+    \ }
+  \ }
 
 if has('nvim')
   lua require'colorizer'.setup()
