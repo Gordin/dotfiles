@@ -3,10 +3,6 @@ if &compatible
 endif
 syntax on
 
-" Set <leader> to ,
-let mapleader = ","
-let maplocalleader = ","
-
 " Controls cursor blinking and shapes. (blink timing has problems in some terminals)
 set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
             \,a:blinkwait900-blinkoff200-blinkon500-Cursor/lCursor
@@ -144,7 +140,8 @@ function! s:SetCursorPosition()
 endfunction
 
 " Folding
-set foldlevelstart=0
+set foldlevelstart=99
+set foldnestmax=5
 set foldmethod=indent               " Fold automatically based on indentation level
 " :help foldopen !
 set foldopen=block,jump,mark,percent,quickfix,search,tag,undo
@@ -365,6 +362,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
     autocmd FileType ruby setlocal tabstop=2
   augroup end
 
+  augroup vim settings
+    autocmd!
+    autocmd FileType vim setlocal shiftwidth=2
+    autocmd FileType vim setlocal softtabstop=2
+    autocmd FileType vim setlocal expandtab
+    autocmd FileType vim setlocal tabstop=2
+  augroup end
+
   " Better file tree viewer than default vim
   Plug 'scrooloose/nerdtree'
   let NERDTreeShowHidden=1
@@ -443,8 +448,74 @@ silent! if plug#begin('~/.config/nvim/plugged')
   autocmd FileType * vnoremap <nowait> <silent> <buffer> <c-_> :TCommentBlock<cr>
   autocmd FileType * nnoremap <nowait> <silent> <buffer> <c-_> :TComment<cr>
 
-" Initialize plugin system
+  " Gives nested prentheses different colors
+  Plug 'junegunn/rainbow_parentheses.vim'
+  let g:rainbow#max_level = 16
+  let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}'], ['<', '>']]
+  autocmd FileType * RainbowParentheses
+
+  " Shows color codes in the color they represent
+  if has('nvim')
+    Plug 'norcalli/nvim-colorizer.lua'
+  endif
+
+  " Makes sure vims working directory is always the root of the project you are working on
+  Plug 'airblade/vim-rooter'
+  " Don't change directory if no project root is found (Default)
+  let g:rooter_change_directory_for_non_project_files = ''
+  let g:rooter_silent_chdir = 1         " Don't announce when directory is changed
+  let g:rooter_resolve_links = 1        " Follow symlinks
+
+  " Automatically close opening parenthesis
+  Plug 'jiangmiao/auto-pairs'
+  let g:AutoPairsFlyMode = 1
+  " Cancel what AutoPairs did and revert to what you actually typed
+  let g:AutoPairsShortcutBackInsert = '<M-b>'
+  " [S]urround things after typing an opening \( => Alt-s
+  let g:AutoPairsShortcutFastWrap = '<M-s>'
+
+  " Shows a list of all mapped keys after pressing <leader> and waiting
+  Plug 'liuchengxu/vim-which-key'
+
+  " Initialize plugin system
   call plug#end()
+endif
+
+" Set <leader> to ,
+let mapleader = ","
+let maplocalleader = ","
+" Make sure the leader key in the next line stays the same as your leader!
+call which_key#register(',', "g:which_key_map")
+nnoremap <silent> <leader>      :<c-u>WhichKey ','<CR>
+" nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
+" Help Menu for my leader mappings
+let g:which_key_map = {
+            \'/' : 'fuzzy search' ,
+            \'?' : 'fuzzy search backwards' ,
+            \'g' : {'name': 'which_key_ignore'}, 'g/' : 'fuzzy search, cursor stays' ,
+            \'_' : {'name': 'TComment Stuff'},
+            \'c' : {'name': 'which_key_ignore'},
+            \'ca' : 'Clear all highlights',
+            \'c0-9' : 'Clear highlight 0-9',
+            \'p' : {'name': 'which_key_ignore'}, 'p/' : 'paste current search',
+            \'r' : {'name': 'which_key_ignore'}, 'rn' : 'toogle relativenumber',
+            \0 : 'which_key_ignore', 1 : 'which_key_ignore', 2 : 'which_key_ignore',
+            \3 : 'which_key_ignore', 4 : 'which_key_ignore', 5 : 'which_key_ignore',
+            \6 : 'which_key_ignore', 7 : 'which_key_ignore', 8 : 'which_key_ignore',
+            \9 : 'which_key_ignore', '0-9' : 'highlight word under cursor',
+            \'h' : {'name': 'which_key_ignore'}, 'hl' : 'toggle hlsearch',
+            \'s' : {'name': 'which_key_ignore'}, 'ss' : 'substitute word under cursor in motion',
+            \'u' : {'name': 'which_key_ignore'}, 'ut' : '[u]ndo[t]ree',
+            \'t' : { "name" : "Tabs + trim",
+                \'h': 'previous tab',
+                \'l': 'next tab',
+                \'rim': 't[rim] all trailing whitespace',
+                \'r': {'name': 'which_key_ignore'}
+                \}
+            \}
+
+if has('nvim')
+  lua require'colorizer'.setup()
 endif
 
 " Trim trailing whitespace
@@ -452,7 +523,7 @@ nnoremap <silent> <leader>trim  :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Spellchecking
 set spelllang=de_20,en          " German and English spellchecking
-set nospell                       " disable spellchecking on startup
+set nospell                     " disable spellchecking on startup
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 " silent! colorscheme gruvbox
