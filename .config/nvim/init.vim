@@ -179,6 +179,44 @@ nnoremap Q <Nop>
 silent! if plug#begin('~/.config/nvim/plugged')
   " Adds a homescreen to vim that shows recently used files when you open vim without a file
   Plug 'mhinz/vim-startify'
+  " returns all modified files of the current git repo
+  " `2>/dev/null` makes the command fail quietly, so that when we are not
+  " in a git repo, the list will be empty
+  function! s:gitModified()
+    let files = systemlist('git ls-files -m 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+  endfunction
+
+  " same as above, but show untracked files, honouring .gitignore
+  function! s:gitUntracked()
+    let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+  endfunction
+
+  let g:startify_lists = [
+    \  { 'type': 'files',                    'header': ['   MRU'            ] }
+    \, { 'type': 'dir',                      'header': ['   MRU '. getcwd() ] }
+    \, { 'type': 'sessions',                 'header': ['   Sessions'       ] }
+    \, { 'type': function('s:gitModified'),  'header': ['   git modified'   ] }
+    \, { 'type': 'commands',                 'header': ['   Commands'       ] }
+    \ ]
+  " \, { 'type': function('s:gitUntracked'), 'header': ['   git untracked'  ] }
+  " \, { 'type': 'bookmarks',                'header': ['   Bookmarks'      ] }
+  " I don't use bookmarks because they don't support a description for the file
+  let g:startify_bookmarks = []
+  let g:startify_commands = [
+    \  {',z': ['Edit zshrc',                 'e $HOME/.zshrc']}
+    \, {',v': ['Edit vimrc',                 '$MYVIMRC']}
+    \, {',g': ['Edit git config',            'e $HOME/.gitconfig']}
+    \, {',s': ['Edit ssh config',            'e $HOME/.ssh/config']}
+    \, {',b': ['Edit yadm bootstrap script', 'e $HOME/.config/yadm/bootstrap']}
+    \ ]
+  let g:startify_update_oldfiles = 1        " Update most recently used files on the fly
+  let g:startify_change_to_vcs_root = 1     " cd into root of repository if possible
+  " Open Startify with ,st in current buffer or in a split with Shift
+  nnoremap <silent> <leader>St :vsp<cr>:Startify<cr>
+  nnoremap <silent> <leader>ST :vsp<cr>:Startify<cr>
+  nnoremap <silent> <leader>st :Startify<cr>
 
   " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
   " (Useful for copypasting files from stacktraces or searches
@@ -295,13 +333,44 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:sneak#s_next = 1
 
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
-  " Also has :Gblame and other stuff. Adds Modification markers to the line numbers
+  " Also has :Gblame and other stuff. Can browse through everything in a git repo
   Plug 'tpope/vim-fugitive'
+
+  " Show changed lines in files under version control next to the line numbers
+  if has('nvim') || has('patch-8.0.902')
+    Plug 'mhinz/vim-signify'
+  else
+    Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
+  endif
+
+  " This function takes a highlighting group and creates a new one with addeditions
+  " I use this because the backgroud of Signify does not match the line number
+  " background color by default
+  function! ExtendHighlight(base, group, add)
+    redir => basehi
+    sil! exe 'highlight' a:base
+    redir END
+    let grphi = split(basehi, '\n')[0]
+    let grphi = substitute(grphi, '^'.a:base.'\s\+xxx', '', '')
+    sil exe 'highlight' a:group grphi a:add
+  endfunction
+
+  function SetSignifyColors()
+    call ExtendHighlight('NonText', 'SignifySignAdd',
+          \'ctermfg=green  guifg=#00ff00 cterm=NONE gui=NONE')
+    call ExtendHighlight('NonText', 'SignifySignDelete ',
+          \'ctermfg=red    guifg=#ff0000 cterm=NONE gui=NONE')
+    call ExtendHighlight('NonText', 'SignifySignChange ',
+          \'ctermfg=yellow guifg=#ffff00 cterm=NONE gui=NONE')
+  endfunction
+  " Do this in an autocommand because setting a colorscheme overrides this
+  autocmd FileType * call SetSignifyColors()
 
   " Adds Undotree commands to show vim undo history like a git history
   Plug 'mbbill/undotree'
   let g:undotree_WindowLayout=2
   let g:undotree_SetFocusWhenToggle=1
+  " Scroll back in history, while updating the file
   function g:Undotree_CustomMap()
     nmap <buffer> K <plug>UndotreeNextState
     nmap <buffer> J <plug>UndotreePreviousState

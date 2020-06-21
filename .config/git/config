@@ -1,0 +1,7 @@
+[user]
+	email = 9ordin@gmail.com
+	name = Gordin
+[alias]
+	co = checkout
+	st = status
+	cached = diff --cached
