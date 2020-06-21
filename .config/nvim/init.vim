@@ -209,6 +209,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " \, { 'type': 'bookmarks',                'header': ['   Bookmarks'      ] }
   " I don't use bookmarks because they don't support a description for the file
   let g:startify_bookmarks = []
+  " Edit common config files quickly by opening vim and pressing <leader>X
   let g:startify_commands = [
     \  {',z': ['Edit zshrc',                 'e $HOME/.zshrc']}
     \, {',v': ['Edit vimrc',                 'e $MYVIMRC']}
