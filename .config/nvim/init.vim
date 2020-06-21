@@ -57,7 +57,7 @@ set smarttab                        " Makes <tab> insert `shiftwidth` amount of 
 set expandtab                       " Put multiple spaces instead of <TAB>s
 set autoindent                      " copy indent from current line when starting a new line
 set smartindent                     " be more context-aware than `autoindent`
-set nojoinspaces                    " Prevents inserting two spaces after punctuation on a join (J)
+set nojoinspaces                    " Put (max) 1 space between words when joining 2 lines with `J`
 set matchpairs+=<:>                 " Adds <> to list of bracket pairs
 
 " Vim Menu autocompletion
