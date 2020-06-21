@@ -399,6 +399,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   let g:airline_theme='base16_monokai'
+  " Use fancy icons in the statusbar. Needs a font with icons (Anything from "NerdFonts.com" works)
   let g:airline_powerline_fonts = 1
 
   " Colors the current line number background in the mode indicator color
