@@ -4,6 +4,8 @@ set -e
 
 export XDG_CONFIG_HOME=$HOME/.config
 
+ln -sf $HOME/.config/yadm/git-redirect $HOME/.git
+
 ### zim (zsh config manager)
 # https://github.com/zimfw/zimfw
 zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh upgrade
