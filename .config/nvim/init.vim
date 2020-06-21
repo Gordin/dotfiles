@@ -305,7 +305,6 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Maps <leader>1-9 to "Highlight word under cursor with color"
   " Useful when you want to see occurences of multiple variables at the same time
   " <leader>ca (c)lears (a)ll highlights, <leader>c1-9 (c)lears color 1-9
-  " No idea why I have this in a try/catch...
   Plug 'BlueCatMe/TempKeyword'
   let TempKeywordCmdPrefix = "<leader>"
   function! TempKeywords()
