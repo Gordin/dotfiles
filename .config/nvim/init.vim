@@ -113,9 +113,14 @@ nmap <silent> <leader>hl :set invhlsearch<CR>
 nmap <leader>p/ "/p
 
 " Movement
-" Change to tab with <leader>[T]ab H/L
+" Change tab with <leader>[T]ab H/L
 nnoremap <leader>th :tabprevious<CR>
 nnoremap <leader>tl :tabnext<CR>
+" Change window with <leader>[w]indow [hjkl]
+nnoremap <leader>wh <c-w>h
+nnoremap <leader>wl <c-w>l
+nnoremap <leader>wj <c-w>j
+nnoremap <leader>wk <c-w>k
 " go down or up 1 visual line on wrapped lines instead of line of file. Check the count to only
 " do this without a count. (It will jump over wrapped lines when you give a count)
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
@@ -206,7 +211,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:startify_bookmarks = []
   let g:startify_commands = [
     \  {',z': ['Edit zshrc',                 'e $HOME/.zshrc']}
-    \, {',v': ['Edit vimrc',                 '$MYVIMRC']}
+    \, {',v': ['Edit vimrc',                 'e $MYVIMRC']}
     \, {',g': ['Edit git config',            'e $HOME/.gitconfig']}
     \, {',s': ['Edit ssh config',            'e $HOME/.ssh/config']}
     \, {',b': ['Edit yadm bootstrap script', 'e $HOME/.config/yadm/bootstrap']}
@@ -267,28 +272,23 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'iamFIREcracker/vim-search-pulse'
   let g:vim_search_pulse_mode = 'pattern'
   let g:vim_search_pulse_duration = 50
-  let g:vim_search_pulse_disable_auto_mappings = 0
+  " Disable default mappings becaus we want to combine them with vim-asterisk
+  let g:vim_search_pulse_disable_auto_mappings = 1
   " This is a fork. Original (seems inactive):
   " Plug 'inside/vim-search-pulse'
 
-  " These functions are just because I want the cursor to stay where it is when I press * or #
-  " to see if there are matches nearby or if * selected the correct thing I want to search for
-  " You can delete them if you like the default behavior
-  function! SaveCursor()
-    set lazyredraw
-    let g:winview = winsaveview()
-  endfunction
-  function! LoadCursor()
-    call winrestview(g:winview)
-    set nolazyredraw
-  endfunction
-  function! VimSearchPulseMappings()
-    nmap <silent> * :call SaveCursor()<CR><Plug>(incsearch-nohl-*):call LoadCursor()<cr><Plug>Pulse
-    nmap <silent> # :call SaveCursor()<CR><Plug>(incsearch-nohl-#):call LoadCursor()<cr><Plug>Pulse
-    nmap <silent> g* :call SaveCursor()<CR><Plug>(incsearch-nohl-g*):call LoadCursor()<cr><Plug>Pulse
-    nmap <silent> g# :call SaveCursor()<CR><Plug>(incsearch-nohl-g#):call LoadCursor()<cr><Plug>Pulse
-  endfunction
-  au VimEnter * call VimSearchPulseMappings()
+  Plug 'haya14busa/vim-asterisk'
+  " Allows to search for selected text with *
+  " Also has a commend that makes the cursor stay after pressing *
+  " Map * to stay in place after * and make the search pulse with vim-search-pulse
+  map *  <Plug>(asterisk-z*)<Plug>Pulse
+  map #  <Plug>(asterisk-z#)<Plug>Pulse
+  map g* <Plug>(asterisk-gz*)<Plug>Pulse
+  map g# <Plug>(asterisk-gz#)<Plug>Pulse
+  " Makes the cursor stay in the same position inside the match while iterating over matches.
+  " Useful for quick refactorings whene you need to replace part of a word:
+  " Example Usage: *cwTYPE-REPLACEMENT<esc>n.n.n.n.n.n.n.
+  let g:asterisk#keeppos = 1
 
   " Expand/Shrink current selection around text objects
   " Default is +/_, I added v for expand and <c-v>/- for shrink
@@ -335,6 +335,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Can browse through everything in a git repo
   Plug 'tpope/vim-fugitive'
+  " Add filler lines in diffs and open diffsplit to the left
+  set diffopt=filler,vertical
 
   " Show changed lines in files under version control next to the line numbers
   if has('nvim') || has('patch-8.0.902')
@@ -468,7 +470,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   nmap <leader>sw <plug>(SubversiveSubstituteWordRange)
 
   " Replace every occurence of your current search with content of your clipboard
-  vmap <leader>s/ :s//*/<CR>
+  vmap <leader>s/ :s//*/<cr>
+  nmap <leader>s/ :%s//*/<cr>
 
   " Automatically Lint/Syntax Check everything asynchronously
   Plug 'dense-analysis/ale'
@@ -562,8 +565,17 @@ let g:which_key_map = {
   \, '1'  : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
   \, '4'  : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
   \, '7'  : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
-  \, 'h'  : {'name': 'which_key_ignore'}, 'hl' : 'toggle [hl]search'
-  \, 's'  : {'name': 'which_key_ignore'}, 'sw' : '[s]ubstitute [w]ord under cursor in motion'
+  \, 'h'  : { 'name': 'which_key_ignore' }, 'hl' : 'toggle [hl]search'
+  \, 'st' : [':Startify<cr>',  '[St]artify']
+  \, 'S'  : { 'name': '[St]artify in a split'
+    \, 't' : 'Open [St]artify in a split'
+    \, 'T' : 'Open [St]artify in a split'
+    \}
+  \, 's'  : { 'name': '[s]ubstitute'
+    \, 't' : 'Open S[t]artify in current buffer'
+    \, 'w' : '[s]ubstitute [w]ord under cursor in motion'
+    \, '/' : '[s]ubstitute current search [/] with last yanked text'
+    \}
   \, 'u'  : {'name': 'which_key_ignore'}, 'ut' : '[u]ndo[t]ree'
   \, 't'  : { "name" : "[t]abs, [t]oggle + [t]rim"
     \, 'rn' : [',trn',  'toggle [r]elative[n]number']
