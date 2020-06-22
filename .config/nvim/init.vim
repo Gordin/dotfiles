@@ -3,6 +3,11 @@ if &compatible
 endif
 syntax on
 
+" Set <leader> to ,
+" The leader key has to be set BEFORE mapping anything to <leader> for the which-key plugin to work
+let mapleader = ","
+let maplocalleader = ","
+
 " Controls cursor blinking and shapes. (blink timing has problems in some terminals)
 set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
             \,a:blinkwait900-blinkoff200-blinkon500-Cursor/lCursor
@@ -31,8 +36,15 @@ set listchars+=trail:…          " show trailing spaces as "…"
 " set listchars+=eol:¬            " show line break
 set listchars+=extends:>        " The character to show in the last column when wrap is off and the
                                 " line continues beyond the right of the screen
-set listchars+=precedes:<       " The character to show in the first column when wrap is off and the
-                                " line continues beyond the left of the screen
+set listchars+=precedes:<       " The character to show in the first column when wrap is off and
+                                " the line continues beyond the left of the screen
+
+" diffs
+" Add filler lines in diffs and open diffsplit to the left
+set diffopt=filler,vertical
+" Automatically update/fold the diff after [o]btaining or [p]utting and go to next change
+nnoremap do do:diffupdate<cr>]c
+nnoremap dp dp:diffupdate<cr>]c
 
 " Special settings for gruvbox scheme
 let g:gruvbox_contrast_dark = 'medium'
@@ -326,6 +338,11 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " I install fzf outside of vim anyway so I don't need the next line
   " Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
   Plug 'junegunn/fzf.vim'
+  Plug '~/.fzf'
+  nnoremap <leader>fl :Lines<cr>
+  nnoremap <leader>ff :Files<cr>
+  nnoremap <leader>fc :norm <leader>rg<cr>
+  nnoremap <leader>rg :Rg<cr>
 
   " Press s and two keys to jump to the next occurence of those 2 characters together
   " Like f/t, but for two characters...
@@ -335,8 +352,6 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Can browse through everything in a git repo
   Plug 'tpope/vim-fugitive'
-  " Add filler lines in diffs and open diffsplit to the left
-  set diffopt=filler,vertical
 
   " Show changed lines in files under version control next to the line numbers
   if has('nvim') || has('patch-8.0.902')
@@ -532,7 +547,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " Automatically close opening parenthesis
   Plug 'jiangmiao/auto-pairs'
-  let g:AutoPairsFlyMode = 1
+  let g:AutoPairsFlyMode = 0
   " Cancel what AutoPairs did and revert to what you actually typed
   let g:AutoPairsShortcutBackInsert = '<M-b>'
   " [S]urround things after typing an opening \( => Alt-s
@@ -545,9 +560,6 @@ silent! if plug#begin('~/.config/nvim/plugged')
   call plug#end()
 endif
 
-" Set <leader> to ,
-let mapleader = ","
-let maplocalleader = ","
 " Make sure the leader key in the next line stays the same as your leader!
 call which_key#register(',', "g:which_key_map")
 nnoremap <silent> <leader>      :<c-u>WhichKey ','<CR>
@@ -557,6 +569,11 @@ let g:which_key_map = {
   \  '/'  : 'fuzzy search'
   \, '?'  : 'fuzzy search backwards'
   \, 'g/' : [',g/', 'fuzzy search, cursor stays'], 'g' : {'name': 'which_key_ignore'}
+  \, 'f'  : { 'name': '[f]ind Files, search in code'
+    \, 'f' : 'find [f]ilenames in project'
+    \, 'c' : 'find [c]ode in project'
+    \, 'l' : 'find [l]ines in project'
+    \}
   \, '_'  : {'name': 'TComment Stuff'  }
   \, 'c'  : {'name': '[c]lear [0-9] or [a]ll highlights'}
   \, 'p' : {'name': '[p]aste stuff'
@@ -566,7 +583,10 @@ let g:which_key_map = {
   \, '1'  : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
   \, '4'  : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
   \, '7'  : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
-  \, 'h'  : { 'name': 'which_key_ignore' }, 'hl' : 'toggle [hl]search'
+  \, 'h'  : { 'name': 'which_key_ignore'
+    \, 'l' : 'toggle h[l]search'
+    \}
+  \, 'hl' : [',hl',  'toggle [hl]search']
   \, 'st' : [':Startify<cr>',  '[St]artify']
   \, 'S'  : { 'name': '[St]artify in a split'
     \, 't' : 'Open [St]artify in a split'
@@ -577,7 +597,12 @@ let g:which_key_map = {
     \, 'w' : '[s]ubstitute [w]ord under cursor in motion'
     \, '/' : '[s]ubstitute current search [/] with last yanked text'
     \}
-  \, 'u'  : {'name': 'which_key_ignore'}, 'ut' : '[u]ndo[t]ree'
+  \, 'r'  : {'name': 'which_key_ignore'
+    \, 'g' : 'Search in code with r[g]'
+    \}
+  \, 'rg' : [',rg', 'Search in code with [rg]']
+  \, 'u'  : {'name': 'which_key_ignore'}
+  \, 'ut' : [',ut', '[u]ndo[t]ree']
   \, 't'  : { "name" : "[t]abs, [t]oggle + [t]rim"
     \, 'rn' : [',trn',  'toggle [r]elative[n]number']
     \, 'h'  : 'previous tab'

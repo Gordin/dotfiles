@@ -151,6 +151,7 @@ if [ -x "$(command -v nvim)" ]; then
 fi
 
 export PATH=${HOME}/.local/bin:$PATH
+export PATH=${HOME}/.config/bin:$PATH
 
 if [ -d "$HOME/.cargo/bin" ]; then
   export PATH=$HOME/.cargo/bin:$PATH

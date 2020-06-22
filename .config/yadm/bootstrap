@@ -3,6 +3,8 @@
 set -e
 
 export XDG_CONFIG_HOME=$HOME/.config
+BINS=$XDG_CONFIG_HOME/bin
+mkdir -p $BINS
 
 ln -sf $HOME/.config/yadm/git-redirect $HOME/.git
 
@@ -17,7 +19,21 @@ zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh update
 FZFDIR=$XDG_CONFIG_HOME/fzf
 git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null || (cd "$FZFDIR" ; git pull)
 $FZFDIR/install --xdg --completion --key-bindings --update-rc
+ln -sf $FZFDIR ~/.fzf
 
+if ! [ -x "$(command -v rg)" ]; then
+  RGURL=https://github.com/BurntSushi/ripgrep/releases/download
+  RGVER=12.1.1
+  RGBASE=ripgrep-${RGVER}-x86_64-unknown-linux-musl
+  RGTARGZ=${RGBASE}.tar.gz
+  wget -O /tmp/${RGTARGZ} ${RGURL}/${RGVER}/${RGTARGZ}
+  mkdir -p /tmp/rg-${RGVER}
+  tar -xzvf /tmp/${RGTARGZ} -C /tmp/rg-${RGVER}
+  cp /tmp/rg-${RGVER}/${RGBASE}/rg ${BINS}
+  # rm -rf /tmp/$RGTARGZ /tmp/rg-$RGVER/
+fi
+
+exit
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
