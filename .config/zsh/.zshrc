@@ -1,3 +1,8 @@
+# Base16 Shell
+BASE16_SHELL="$HOME/.config/base16-shell/"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -18,8 +23,22 @@ fi
 # History
 #
 
-# Remove older command from the history if a duplicate is to be added.
-setopt HIST_IGNORE_ALL_DUPS
+HISTFILE="$HOME/.config/zsh/.zhistory"
+HISTSIZE=10000000
+SAVEHIST=10000000
+setopt BANG_HIST                 # Treat the '!' character specially during expansion.
+setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt SHARE_HISTORY             # Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
+setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 #
 # Input/output
@@ -91,6 +110,11 @@ zstyle ':zim:input' double-dot-expand yes
 # Customize the style that the suggestions are shown with.
 # See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
 #ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=10'
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+# Execute suggestion with <leader><cr>
+bindkey -M viins ',^M' autosuggest-execute
+# Accept and put cursor after suggestion with <leader>l
+bindkey -M viins ',l' autosuggest-accept
 
 #
 # zsh-syntax-highlighting
@@ -141,9 +165,40 @@ bindkey -M vicmd 'j' history-substring-search-down
 # }}} End configuration added by Zim install
 
 # Aliases
+alias -g ¦='| grep'
+alias f='find . -name'
+alias fd='find . -type d -name'
+alias ff='find . -type f -name'
+alias h='history'
+alias cpd='cp -r'
+alias scpd='scp -r'
+alias rmd='rm -rf'
+alias lS='l -Sr --group-directories-first'
+alias :q=exit
+alias vim='vim -O'
+alias agv='vim $(ag --nobreak --nonumbers --noheading . | fzf | sed "s/^\([^:]*\).*$/\1/")'
+alias rgv='vim $(rg -N --no-heading --color never . | fzf | sed "s/^\([^:]*\).*$/\1/")'
+
+alias psa='ps aux | grep -v "grep --color=auto" | grep'
+alias lsport='sudo lsof -Pan -i tcp -i udp'
+alias icanhazip='curl icanhazip.com'
+alias update_mirrorlist='reflector -a 24 -f 20 -l 10 | sudo tee /etc/pacman.d/mirrorlist'
+alias mirrorlist_update='update_mirrorlist'
+scan_local_network() {
+    nmap -v -sn $(ip route get 8.8.8.8 | head -1 | awk '{print $3}' | grep -ohe '.\+\.')0/24 | sed '/host down/d' | grep -e '\(Nmap\|Host\)'
+}
+
+set_git_vars() {
+    echo $PWD
+    GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git
+}
+
+alias ggit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git -c user.name=Gordin -c user.email=9ordin@gmail.com $@"
+alias ssh='if ssh-add -l 1>/dev/null; then; else ssh-add -t 600; fi; ssh'
+
 if [ -x "$(command -v exa)"  ]; then
   alias l='exa -l'
-  alias la='l -a'
+  alias la='exa -la'
 fi
 
 if [ -x "$(command -v nvim)" ]; then

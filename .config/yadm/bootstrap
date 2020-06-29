@@ -14,6 +14,9 @@ zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh upgrade
 zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh install
 zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh update
 
+BASE16DIR=~/.config/base16-shell
+git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR || (cd "$BASE16DIR" ; git pull)
+
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
 FZFDIR=$XDG_CONFIG_HOME/fzf
@@ -33,7 +36,6 @@ if ! [ -x "$(command -v rg)" ]; then
   # rm -rf /tmp/$RGTARGZ /tmp/rg-$RGVER/
 fi
 
-exit
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"

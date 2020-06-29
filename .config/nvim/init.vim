@@ -52,7 +52,20 @@ let g:gruvbox_invert_selection='0'
 
 " Functional stuff
 set hidden                          " Allow to switch files without having saved
-set clipboard^=unnamed,unnamedplus  " Use system clipboard as default register
+set clipboard+=unnamed              " Use system clipboard as default register
+" Override clipboard manager because xclip is the default and has bug with yoink
+let g:clipboard = {
+      \   'name': 'xsel_override',
+      \   'copy': {
+      \      '+': 'xsel --input --clipboard',
+      \      '*': 'xsel --input --primary',
+      \    },
+      \   'paste': {
+      \      '+': 'xsel --output --clipboard',
+      \      '*': 'xsel --output --primary',
+      \   },
+      \   'cache_enabled': 1,
+      \ }
 set mouse=a                         " Enable mouse controls
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -69,8 +82,10 @@ set smarttab                        " Makes <tab> insert `shiftwidth` amount of 
 set expandtab                       " Put multiple spaces instead of <TAB>s
 set autoindent                      " copy indent from current line when starting a new line
 set smartindent                     " be more context-aware than `autoindent`
-set nojoinspaces                    " Put (max) 1 space between words when joining 2 lines with `J`
 set matchpairs+=<:>                 " Adds <> to list of bracket pairs
+set nojoinspaces                    " Put (max) 1 space between words when joining 2 lines with `J`
+" Keep cursor at the same position when joining lines
+nnoremap J mzJ`z
 
 " Vim Menu autocompletion
 set wildmenu            " Completion for :Ex mode. Show list instead of just completing
@@ -144,6 +159,11 @@ set virtualedit=block               " Allows to select beyond end of lines in bl
 " Make q close the quickfix/command/search history window (That thing when you hit q: or q/)
 autocmd! CmdwinEnter * nnoremap <buffer> q <c-c><c-c>
 autocmd! BufWinEnter quickfix nnoremap <silent> <buffer> q :q<cr>
+
+
+" Put directory of current file in command line mode
+" Useful for editing files that are not in a repository
+cnoremap <leader>. <C-R>=expand('%:p:h').'/'<cr>
 
 " Jump to last known cursor position when opening a file (unless it's a commit message file)
 autocmd BufReadPost * call s:SetCursorPosition()
@@ -230,7 +250,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
     \, {',b': ['Edit yadm bootstrap script', 'e $HOME/.config/yadm/bootstrap']}
     \ ]
   let g:startify_update_oldfiles = 1        " Update most recently used files on the fly
-  let g:startify_change_to_vcs_root = 1     " cd into root of repository if possible
+  let g:startify_change_to_vcs_root = 0     " cd into root of repository if possible
+  let g:startify_change_to_dir = 1          " When opening a file or bookmark, change directory
+  let g:startify_fortune_use_unicode = 1    " Use unicode symbors instead of just ASCII
   " Open Startify with ,st in current buffer or in a split with Shift
   nnoremap <silent> <leader>St :vsp<cr>:Startify<cr>
   nnoremap <silent> <leader>ST :vsp<cr>:Startify<cr>
@@ -341,6 +363,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug '~/.fzf'
   nnoremap <leader>fl :Lines<cr>
   nnoremap <leader>ff :Files<cr>
+  nnoremap <c-p> :Files<cr>
   nnoremap <leader>fc :norm <leader>rg<cr>
   nnoremap <leader>rg :Rg<cr>
 
@@ -409,11 +432,15 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Colorschemes
   Plug 'morhetz/gruvbox'
   Plug 'flazz/vim-colorschemes'
+  Plug 'chriskempson/base16-vim'
 
   " Statusbar
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  let g:airline_theme='base16_monokai'
+  " let g:airline_theme='base16_monokai'
+  let g:airline_theme='powerlineish'
+
+
   " Use fancy icons in the statusbar. Needs a font with icons (Anything from "NerdFonts.com" works)
   let g:airline_powerline_fonts = 1
 
@@ -422,6 +449,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " Surround text or remove surrounding characters
   Plug 'tpope/vim-surround'
+  " Change surrounding quotes to different ones by quickly pressing the
+  " current quote and the quote type you want to change to
+  nmap '` cs'`
+  nmap `' cs`'
+  nmap `" cs`"
+  nmap "` cs"`
+  nmap '" cs'"
+  nmap "' cs"'
 
   " Make some plugin functions repeatable with .
   Plug 'tpope/vim-repeat'
@@ -458,11 +493,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " Yoink let's you cycle through clipboard after pasting
   Plug 'svermeulen/vim-yoink'
-  nmap <c-n> <plug>(YoinkPostPasteSwapBack)
-  nmap <c-p> <plug>(YoinkPostPasteSwapForward)
+  nmap <c-h> <plug>(YoinkPostPasteSwapBack)
+  nmap <c-l> <plug>(YoinkPostPasteSwapForward)
 
   nmap p <plug>(YoinkPaste_p)
   nmap P <plug>(YoinkPaste_P)
+
+  nmap y <plug>(YoinkYankPreserveCursorPosition)
+  xmap y <plug>(YoinkYankPreserveCursorPosition)
 
   let g:yoinkMaxItems=20
   let g:yoinkIncludeDeleteOperations=1  " Includes entries from `d` in the history
@@ -517,6 +555,19 @@ silent! if plug#begin('~/.config/nvim/plugged')
   au BufRead,BufNewFile *.ts nnoremap <leader>t :ALEGoToDefinition -tab<cr>
   au BufRead,BufNewFile *.ts nnoremap <c-]> :ALEGoToDefinition<cr>
 
+  Plug 'pechorin/any-jump.vim'
+  " Disable default keybinds (I kept the default below though)
+  let g:any_jump_disable_default_keybindings = 1
+  " Allow searching in files not under version control (for newly created files)
+  let g:any_jump_disable_vcs_ignore = 1
+  " Jump to definition under cursor/of selection
+  nnoremap <leader>j :AnyJump<CR>
+  xnoremap <leader>j :AnyJumpVisual<CR>
+  " Normal mode: open previous opened file (after jump)
+  nnoremap <leader>ab :AnyJumpBack<CR>
+  " Normal mode: open last closed search window again
+  nnoremap <leader>al :AnyJumpLastResults<CR>
+
   " Comment stuff with gc or <c-/>
   Plug 'tomtom/tcomment_vim'
   " tComment has a lot of mappings that use another key after pressing <c-/>. The next 2 lines
@@ -542,7 +593,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'airblade/vim-rooter'
   " Don't change directory if no project root is found (Default)
   let g:rooter_change_directory_for_non_project_files = ''
-  let g:rooter_silent_chdir = 1         " Don't announce when directory is changed
+  let g:rooter_silent_chdir = 0         " Don't announce when directory is changed
   let g:rooter_resolve_links = 1        " Follow symlinks
 
   " Automatically close opening parenthesis
@@ -625,5 +676,6 @@ set nospell                     " disable spellchecking on startup
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 " silent! colorscheme gruvbox
-silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
+silent! colorscheme gruvbox
+" silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
                                     " start vim the first time and the scheme isn't installed yet.

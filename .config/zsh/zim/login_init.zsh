@@ -15,7 +15,7 @@
   done
 
   # Compile Zim scripts
-  for zfile in /home/gordin/.config/zsh/zim/(^*test*/)#*.zsh(|-theme)(N-.); do
+  for zfile in /home/aguth/.config/zsh/zim/(^*test*/)#*.zsh(|-theme)(N-.); do
     zrecompile -p ${1} ${zfile} || return 1
   done
 
