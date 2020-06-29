@@ -194,6 +194,11 @@ set_git_vars() {
 }
 
 alias ggit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git -c user.name=Gordin -c user.email=9ordin@gmail.com $@"
+if [ "`hostname`" = workelch ]; then
+  alias yadm="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' yadm $@"
+else
+  # nothing
+fi
 alias ssh='if ssh-add -l 1>/dev/null; then; else ssh-add -t 600; fi; ssh'
 
 if [ -x "$(command -v exa)"  ]; then

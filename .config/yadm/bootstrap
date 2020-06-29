@@ -4,15 +4,15 @@ set -e
 
 export XDG_CONFIG_HOME=$HOME/.config
 BINS=$XDG_CONFIG_HOME/bin
-mkdir -p $BINS
+mkdir -p "$BINS"
 
-ln -sf $HOME/.config/yadm/git-redirect $HOME/.git
+ln -sf "$HOME/.config/yadm/git-redirect" "$HOME/.git"
 
 ### zim (zsh config manager)
 # https://github.com/zimfw/zimfw
-zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh upgrade
-zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh install
-zsh $XDG_CONFIG_HOME/zsh/zim/zimfw.zsh update
+zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" upgrade
+zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" install
+zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" update
 
 BASE16DIR=~/.config/base16-shell
 git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR || (cd "$BASE16DIR" ; git pull)
@@ -21,8 +21,8 @@ git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR || (cd "$B
 # https://github.com/junegunn/fzf
 FZFDIR=$XDG_CONFIG_HOME/fzf
 git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null || (cd "$FZFDIR" ; git pull)
-$FZFDIR/install --xdg --completion --key-bindings --update-rc
-ln -sf $FZFDIR ~/.fzf
+"$FZFDIR/install" --xdg --completion --key-bindings --update-rc
+ln -sf "$FZFDIR" ~/.fzf
 
 if ! [ -x "$(command -v rg)" ]; then
   RGURL=https://github.com/BurntSushi/ripgrep/releases/download
@@ -32,7 +32,7 @@ if ! [ -x "$(command -v rg)" ]; then
   wget -O /tmp/${RGTARGZ} ${RGURL}/${RGVER}/${RGTARGZ}
   mkdir -p /tmp/rg-${RGVER}
   tar -xzvf /tmp/${RGTARGZ} -C /tmp/rg-${RGVER}
-  cp /tmp/rg-${RGVER}/${RGBASE}/rg ${BINS}
+  cp /tmp/rg-${RGVER}/${RGBASE}/rg "${BINS}"
   # rm -rf /tmp/$RGTARGZ /tmp/rg-$RGVER/
 fi
 
@@ -62,10 +62,10 @@ npm install -g yarn neovim
 VIM_DIR=$XDG_CONFIG_HOME/nvim
 
 # Get spellfiles
-mkdir -p $VIM_DIR/spell
-cd $VIM_DIR//spell
+mkdir -p "$VIM_DIR/spell"
+cd "$VIM_DIR/spell"
 wget -c -N http://ftp.vim.org/pub/vim/runtime/spell/{de,en}.utf-8.{spl,sug}
 cd
-mkdir -p $VIM_DIR/undodir
-mkdir -p $VIM_DIR/tmp/backup
+mkdir -p "$VIM_DIR/undodir"
+mkdir -p "$VIM_DIR/tmp/backup"
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'

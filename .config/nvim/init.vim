@@ -105,7 +105,7 @@ set relativenumber                  " Line numbers relative to current line inst
 nmap <leader>trn :set relativenumber!<CR>
 
 " Line wrapping
-set nowrap                          " Don't wrap lines when the go off screen
+set wrap                            " Don't wrap lines when are too long for the screen
 set textwidth=100                   " Automatically wrap lines after column 100
 set wrapmargin=100                  " fallback for when textwidth is 0?
 set colorcolumn=100                 " Highlight colomn 100
@@ -428,6 +428,21 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Plug 'neoclide/coc.nvim', {'branch': 'release'}
   " YCM is nice for python, TypeScript and some other languages. You can also try coc
   Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
+  " Change selection from list away from <Tab> so ultisnips can use it
+  let g:ycm_key_list_select_completion = ['<Down>']
+  let g:ycm_key_list_previous_completion = ['<Up>']
+  let g:ycm_autoclose_preview_window_after_insertion = 1
+  let g:ycm_autoclose_preview_window_after_completion = 1
+
+  Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
+  let g:UltiSnipsExpandTrigger = "<tab>"
+  let g:UltiSnipsJumpForwardTrigger = "<tab>"
+  let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+  let g:UltiSnipsListSnippets = "<leader><tab>"
+  " Open :UltiSnipsEdit in a vsplit
+  let g:UltiSnipsEditSplit="vertical"
+
 
   " Colorschemes
   Plug 'morhetz/gruvbox'
@@ -559,10 +574,23 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Disable default keybinds (I kept the default below though)
   let g:any_jump_disable_default_keybindings = 1
   " Allow searching in files not under version control (for newly created files)
-  let g:any_jump_disable_vcs_ignore = 1
+  let g:any_jump_disable_vcs_ignore = 0
+  " Any-jump window size & position options
+  let g:any_jump_window_width_ratio  = 0.8
+  let g:any_jump_window_height_ratio = 0.8
+  let g:any_jump_window_top_offset   = 4
+  let g:any_jump_max_search_results = 20
+  let g:any_jump_search_prefered_engine = 'rg'
+
+  " Set custom ignores for different filetypes
+  au filetype * let g:any_jump_ignored_files = ['*.tmp', '*.temp', '*.swp']
+  " Ignore definitions/references in JavaScript files while editing TypeScript
+  au filetype typescript call add(g:any_jump_ignored_files, '*.js')
+
   " Jump to definition under cursor/of selection
-  nnoremap <leader>j :AnyJump<CR>
-  xnoremap <leader>j :AnyJumpVisual<CR>
+  " Also turn colorcolumn off in the result window
+  nnoremap <leader>j :AnyJump<CR>:setlocal colorcolumn=0<CR>
+  xnoremap <leader>j :AnyJumpVisual<CR>:setlocal colorcolumn=0<CR>
   " Normal mode: open previous opened file (after jump)
   nnoremap <leader>ab :AnyJumpBack<CR>
   " Normal mode: open last closed search window again
