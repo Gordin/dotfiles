@@ -598,7 +598,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'airblade/vim-rooter'
   " Don't change directory if no project root is found (Default)
   let g:rooter_change_directory_for_non_project_files = ''
-  let g:rooter_silent_chdir = 0         " Don't announce when directory is changed
+  let g:rooter_silent_chdir = 1         " Don't announce when directory is changed
   let g:rooter_resolve_links = 1        " Follow symlinks
 
   " Automatically close opening parenthesis
