@@ -363,9 +363,21 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug '~/.fzf'
   nnoremap <leader>fl :Lines<cr>
   nnoremap <leader>ff :Files<cr>
-  nnoremap <c-p> :Files<cr>
+  nnoremap <c-p>      :Files<cr>
   nnoremap <leader>fc :norm <leader>rg<cr>
   nnoremap <leader>rg :Rg<cr>
+
+  " Allows to interactively align code (like on : as in the lines above)
+  " Plug 'junegunn/vim-easy-align'
+  " I forked this and added hjkl as alternatives for arrow keys
+  " Pull Request here: https://github.com/junegunn/vim-easy-align/pull/138/files
+  Plug 'Gordin/vim-easy-align', { 'branch': 'main' }
+  " Start interactive EasyAlign in visual mode (e.g. vipga)
+  xmap ga <Plug>(EasyAlign)
+  " Additional mapping to remember this plugin because = indents
+  xmap <leader>= <Plug>(LiveEasyAlign)
+  " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+  nmap ga <Plug>(EasyAlign)
 
   " Press s and two keys to jump to the next occurence of those 2 characters together
   " Like f/t, but for two characters...
