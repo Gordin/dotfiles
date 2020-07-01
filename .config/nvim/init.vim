@@ -383,29 +383,6 @@ silent! if plug#begin('~/.config/nvim/plugged')
     Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
   endif
 
-  " This function takes a highlighting group and creates a new one with addeditions
-  " I use this because the backgroud of Signify does not match the line number
-  " background color by default
-  function! ExtendHighlight(base, group, add)
-    redir => basehi
-    sil! exe 'highlight' a:base
-    redir END
-    let grphi = split(basehi, '\n')[0]
-    let grphi = substitute(grphi, '^'.a:base.'\s\+xxx', '', '')
-    sil exe 'highlight' a:group grphi a:add
-  endfunction
-
-  function SetSignifyColors()
-    call ExtendHighlight('NonText', 'SignifySignAdd',
-          \'ctermfg=green  guifg=#00ff00 cterm=NONE gui=NONE')
-    call ExtendHighlight('NonText', 'SignifySignDelete ',
-          \'ctermfg=red    guifg=#ff0000 cterm=NONE gui=NONE')
-    call ExtendHighlight('NonText', 'SignifySignChange ',
-          \'ctermfg=yellow guifg=#ffff00 cterm=NONE gui=NONE')
-  endfunction
-  " Do this in an autocommand because setting a colorscheme overrides this
-  autocmd FileType * call SetSignifyColors()
-
   " Adds Undotree commands to show vim undo history like a git history
   Plug 'mbbill/undotree'
   let g:undotree_WindowLayout=2
