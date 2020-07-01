@@ -382,7 +382,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Press s and two keys to jump to the next occurence of those 2 characters together
   " Like f/t, but for two characters...
   Plug 'justinmk/vim-sneak'
-  let g:sneak#s_next = 1
+  let g:sneak#s_next = 1        " Press s/S again to jump through all targets"
+  let g:sneak#label = 1         " Put labels on possible jump target after activating
+  let g:sneak#use_ic_scs = 1    " Make sneak follow ignorecase and smartcase setting
 
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Can browse through everything in a git repo
