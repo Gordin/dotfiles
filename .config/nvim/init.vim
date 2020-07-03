@@ -22,7 +22,6 @@ set cmdheight=1                     " Make line below statusbar always 1 line hi
 set noshowmode                      " Hide the mode text as airline already shows this
 set showcmd                         " Show partially entered commands in the statusline
 set shortmess+=c                    " Don't show autocompletion stuff in statusbar.
-set background=dark                 " Use dark background for color schemes
 set laststatus=2                    " Always show the statusline
 set ruler                           " Show the line and column number of the cursor position,
 set cursorline                      " Highlight the line with the cursor
@@ -33,7 +32,7 @@ set list                        " enable listchars
 set listchars=""                " Reset the listchars
 set listchars=tab:»\            " a tab should display as "»"
 set listchars+=trail:…          " show trailing spaces as "…"
-" set listchars+=eol:¬            " show line break
+set listchars+=eol:¬            " show line break
 set listchars+=extends:>        " The character to show in the last column when wrap is off and the
                                 " line continues beyond the right of the screen
 set listchars+=precedes:<       " The character to show in the first column when wrap is off and
@@ -53,7 +52,7 @@ let g:gruvbox_invert_selection='0'
 " Functional stuff
 set hidden                          " Allow to switch files without having saved
 set clipboard+=unnamed              " Use system clipboard as default register
-" Override clipboard manager because xclip is the default and has bug with yoink
+" Override clipboard manager because xclip is the default and there is a bug with it and vim-yoink
 let g:clipboard = {
       \   'name': 'xsel_override',
       \   'copy': {
@@ -69,7 +68,7 @@ let g:clipboard = {
 set mouse=a                         " Enable mouse controls
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=30
+set updatetime=10
 set splitbelow                      " open vertical splits below current buffer
 set splitright                      " open horizontal splits right of current buffer
 " don't select the newline with $ in visual mode (to $d in visual without deleting the newline)
@@ -84,7 +83,7 @@ set autoindent                      " copy indent from current line when startin
 set smartindent                     " be more context-aware than `autoindent`
 set matchpairs+=<:>                 " Adds <> to list of bracket pairs
 set nojoinspaces                    " Put (max) 1 space between words when joining 2 lines with `J`
-" Keep cursor at the same position when joining lines
+" Keep cursor at the same position when joining lines with J
 nnoremap J mzJ`z
 
 " Vim Menu autocompletion
@@ -249,9 +248,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
     \, {',s': ['Edit ssh config',            'e $HOME/.ssh/config']}
     \, {',b': ['Edit yadm bootstrap script', 'e $HOME/.config/yadm/bootstrap']}
     \ ]
-  let g:startify_update_oldfiles = 1        " Update most recently used files on the fly
-  let g:startify_change_to_vcs_root = 0     " cd into root of repository if possible
-  let g:startify_change_to_dir = 1          " When opening a file or bookmark, change directory
+  let g:startify_update_oldfiles     = 1    " Update most recently used files on the fly
+  let g:startify_change_to_vcs_root  = 0    " cd into root of repository if possible
+  let g:startify_change_to_dir       = 1    " When opening a file or bookmark, change directory
   let g:startify_fortune_use_unicode = 1    " Use unicode symbors instead of just ASCII
   " Open Startify with ,st in current buffer or in a split with Shift
   nnoremap <silent> <leader>St :vsp<cr>:Startify<cr>
@@ -297,8 +296,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Fuzzy search with <leader>SEARCH-KEY
   " Function copied from README. also matches SOME words when they are misspelled
   Plug 'haya14busa/incsearch-fuzzy.vim'
-  map <leader>/ <Plug>(incsearch-fuzzy-/)
-  map <leader>? <Plug>(incsearch-fuzzy-?)
+  map <leader>/  <Plug>(incsearch-fuzzy-/)
+  map <leader>?  <Plug>(incsearch-fuzzy-?)
   map <leader>g/ <Plug>(incsearch-fuzzy-stay)
   " noremap <silent> n n<Plug>Pulse
   " noremap <silent> N N<Plug>Pulse
@@ -306,11 +305,20 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Pulses search results when you jump to them. Useful for very dense code
   Plug 'iamFIREcracker/vim-search-pulse'
   let g:vim_search_pulse_mode = 'pattern'
-  let g:vim_search_pulse_duration = 50
-  " Disable default mappings becaus we want to combine them with vim-asterisk
+  let g:vim_search_pulse_duration = 300
+  " Disable default mappings becaus we want to combine Pulse with vim-asterisk and incsearch
   let g:vim_search_pulse_disable_auto_mappings = 1
   " This is a fork. Original (seems inactive):
   " Plug 'inside/vim-search-pulse'
+
+  " Integrate incsearch plugin with Pulse
+  map n <Plug>(incsearch-nohl-n)<Plug>Pulse
+  map N <Plug>(incsearch-nohl-N)<Plug>Pulse
+  autocmd! User IncSearchExecute
+  autocmd  User IncSearchExecute :call search_pulse#Pulse()
+
+  " Alternative to vim-search-pulse
+  " Plug 'danilamihailov/beacon.nvim'
 
   Plug 'haya14busa/vim-asterisk'
   " Allows to search for selected text with *
@@ -330,9 +338,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " With this you can just press v multiple times from normal mode to get the selection you want
   Plug 'landock/vim-expand-region'
   " Adds extra text objecst to stop extending/shrinking around. No idea what those are any more...
-  au VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 }) ">
-  vmap v <Plug>(expand_region_expand)
-  vmap - <Plug>(expand_region_shrink)
+  au VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 })
+  vmap v     <Plug>(expand_region_expand)
+  vmap -     <Plug>(expand_region_shrink)
   vmap <c-v> <Plug>(expand_region_shrink)
   " This is a fork. Original is this, but hasn't been updated since 2013:
   " Plug 'terryma/vim-expand-region'
@@ -420,19 +428,19 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " YCM is nice for python, TypeScript and some other languages. You can also try coc
   Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
   " Change selection from list away from <Tab> so ultisnips can use it
-  let g:ycm_key_list_select_completion = ['<Down>']
-  let g:ycm_key_list_previous_completion = ['<Up>']
-  let g:ycm_autoclose_preview_window_after_insertion = 1
+  let g:ycm_key_list_select_completion                = ['<Down>']
+  let g:ycm_key_list_previous_completion              = ['<Up>']
+  let g:ycm_autoclose_preview_window_after_insertion  = 1
   let g:ycm_autoclose_preview_window_after_completion = 1
 
   Plug 'SirVer/ultisnips'
   Plug 'honza/vim-snippets'
-  let g:UltiSnipsExpandTrigger = "<tab>"
-  let g:UltiSnipsJumpForwardTrigger = "<tab>"
+  let g:UltiSnipsExpandTrigger       = "<tab>"
+  let g:UltiSnipsJumpForwardTrigger  = "<tab>"
   let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-  let g:UltiSnipsListSnippets = "<leader><tab>"
+  let g:UltiSnipsListSnippets        = "<leader><tab>"
   " Open :UltiSnipsEdit in a vsplit
-  let g:UltiSnipsEditSplit="vertical"
+  let g:UltiSnipsEditSplit           = "vertical"
 
 
   " Colorschemes
@@ -540,15 +548,15 @@ silent! if plug#begin('~/.config/nvim/plugged')
   nmap <silent> <C-k> <Plug>(ale_previous_wrap)
   nmap <silent> <C-j> <Plug>(ale_next_wrap)
   " Configure how errors/warnings are shown in the sidebar
-  let g:ale_sign_error = 'E>'
-  let g:ale_sign_warning = 'W>'
+  let g:ale_sign_error           = 'E>'
+  let g:ale_sign_warning         = 'W>'
   " Configure how errors/warnings are shown in the statusbar
-  let g:ale_echo_msg_error_str = 'Error'
+  let g:ale_echo_msg_error_str   = 'Error'
   let g:ale_echo_msg_warning_str = 'Warning'
-  let g:ale_echo_msg_format = '%severity%: %s [%linter%]'
+  let g:ale_echo_msg_format      = '%severity%: %s [%linter%]'
   " Check when getting back to normal made
   let g:ale_lint_on_text_changed = 'normal'
-  let g:ale_lint_delay = 200
+  let g:ale_lint_delay           = 200
   " Typescript config for ALE
   let g:ale_fixers = { 'javascript': [ 'standard', 'eslint', ], 'typescript': [ 'tsserver', 'tslint' ] }
   let g:ale_linters= { 'javascript': [ 'standard' ], 'typescript': [ 'tsserver', 'tslint' ],}
@@ -556,22 +564,22 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ale_typescript_tslint_config_path = '.'
   au BufRead,BufNewFile *.ts vnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
   au BufRead,BufNewFile *.ts vnoremap <leader>t :ALEGoToDefinition -tab<cr>
-  au BufRead,BufNewFile *.ts vnoremap <c-]> :ALEGoToDefinition<cr>
+  au BufRead,BufNewFile *.ts vnoremap <c-]>     :ALEGoToDefinition<cr>
   au BufRead,BufNewFile *.ts nnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
   au BufRead,BufNewFile *.ts nnoremap <leader>t :ALEGoToDefinition -tab<cr>
-  au BufRead,BufNewFile *.ts nnoremap <c-]> :ALEGoToDefinition<cr>
+  au BufRead,BufNewFile *.ts nnoremap <c-]>     :ALEGoToDefinition<cr>
 
   Plug 'pechorin/any-jump.vim'
   " Disable default keybinds (I kept the default below though)
   let g:any_jump_disable_default_keybindings = 1
   " Allow searching in files not under version control (for newly created files)
-  let g:any_jump_disable_vcs_ignore = 0
+  let g:any_jump_disable_vcs_ignore          = 0
   " Any-jump window size & position options
-  let g:any_jump_window_width_ratio  = 0.8
-  let g:any_jump_window_height_ratio = 0.8
-  let g:any_jump_window_top_offset   = 4
-  let g:any_jump_max_search_results = 20
-  let g:any_jump_search_prefered_engine = 'rg'
+  let g:any_jump_window_width_ratio          = 0.8
+  let g:any_jump_window_height_ratio         = 0.8
+  let g:any_jump_window_top_offset           = 4
+  let g:any_jump_max_search_results          = 20
+  let g:any_jump_search_prefered_engine      = 'rg'
 
   " Set custom ignores for different filetypes
   au filetype * let g:any_jump_ignored_files = ['*.tmp', '*.temp', '*.swp']
@@ -580,8 +588,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " Jump to definition under cursor/of selection
   " Also turn colorcolumn off in the result window
-  nnoremap <leader>j :AnyJump<CR>:setlocal colorcolumn=0<CR>
-  xnoremap <leader>j :AnyJumpVisual<CR>:setlocal colorcolumn=0<CR>
+  nnoremap <leader>j  :AnyJump<CR>:setlocal colorcolumn=0<CR>
+  xnoremap <leader>j  :AnyJumpVisual<CR>:setlocal colorcolumn=0<CR>
   " Normal mode: open previous opened file (after jump)
   nnoremap <leader>ab :AnyJumpBack<CR>
   " Normal mode: open last closed search window again
@@ -612,7 +620,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'airblade/vim-rooter'
   " Don't change directory if no project root is found (Default)
   let g:rooter_change_directory_for_non_project_files = ''
-  let g:rooter_silent_chdir = 1         " Don't announce when directory is changed
+  let g:rooter_silent_chdir  = 1        " Don't announce when directory is changed
   let g:rooter_resolve_links = 1        " Follow symlinks
 
   " Automatically close opening parenthesis
@@ -694,7 +702,8 @@ set spelllang=de_20,en          " German and English spellchecking
 set nospell                     " disable spellchecking on startup
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
-" silent! colorscheme gruvbox
+set background=dark                 " Use dark background for color schemes
 silent! colorscheme gruvbox
+" silent! colorscheme ayu
 " silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
                                     " start vim the first time and the scheme isn't installed yet.

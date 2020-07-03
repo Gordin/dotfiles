@@ -283,6 +283,8 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --no-ignore-vcs'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
 PLENV_DIR=${HOME}/.plenv
