@@ -6,7 +6,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 BINS=$XDG_CONFIG_HOME/bin
 mkdir -p "$BINS"
 
-ln -sf "$HOME/.config/yadm/git-redirect" "$HOME/.git"
+# ln -sf "$HOME/.config/yadm/git-redirect" "$HOME/.git"
 
 ### zim (zsh config manager)
 # https://github.com/zimfw/zimfw
