@@ -1,4 +1,5 @@
 cd
+export XDG_CONFIG_HOME=$HOME/.config
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/"
 [ -n "$PS1" ] && \
@@ -226,6 +227,7 @@ fi
 
 if [ -x "$(command -v brew)" ]; then
   eval $(brew shellenv)
+  export PATH="$HOME/.config/sbin:$PATH"
 fi
 
 if (cat /proc/version | grep -qi microsoft); then

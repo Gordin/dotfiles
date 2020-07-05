@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
 
 set -e
 
@@ -17,6 +19,16 @@ zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" update
 BASE16DIR=~/.config/base16-shell
 git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR 2> /dev/null || (cd "$BASE16DIR" ; git pull)
 
+# Install pip and python stuff
+if ! [ -x "$(command -v pip)" ]; then
+  cd /tmp
+  wget https://bootstrap.pypa.io/get-pip.py
+  python get-pip.py --user
+fi
+# Install python linters/fixers
+pip install --user flake8 mypy pylint black
+exit
+
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
 FZFDIR=$XDG_CONFIG_HOME/fzf
@@ -24,17 +36,17 @@ git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null
 "$FZFDIR/install" --xdg --completion --key-bindings --update-rc
 ln -sf "$FZFDIR" ~/.fzf
 
-# Install linuxbrew START
-BREW_DIR=~/.linuxbrew/Homebrew
-mkdir -p $BREW_DIR
-git clone https://github.com/Homebrew/brew "${BREW_DIR}" 2> /dev/null || (cd "$BREW_DIR" ; git pull)
+# Install homebrew START
 if ! [ -x "$(command -v brew)" ]; then
+  BREW_DIR=~/.linuxbrew/Homebrew
+  mkdir -p $BREW_DIR
+  git clone https://github.com/Homebrew/brew "${BREW_DIR}" 2> /dev/null || (cd "$BREW_DIR" ; git pull)
   ln -sf "${BREW_DIR}/bin/brew" "${BINS}"
-  eval $(brew shellenv)
+  eval "$(brew shellenv)"
 fi
 brew update
 brew upgrade -v --force-bottle
-# Install linuxbrew END
+# Install homebrew END
 
 # Install rigpgrep binary if it's not in system
 if ! [ -x "$(command -v rg)" ]; then
@@ -45,12 +57,19 @@ fi
 # Install hub (Github Client) binary if it's not in system
 if ! [ -x "$(command -v hub)" ]; then
   brew install ncurses util-linux hub --force-bottle
+  # ncurses and util-linux are dependencies and brew tries to build them without installing them
+  # explicitly with --force-bottle
+fi
+
+# Install Shellcheck if it's not in system
+if ! [ -x "$(command -v shellcheck)" ]; then
+  brew install shellcheck --force-bottle
 fi
 
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# shellcheck source=../../.config/nvm/nvm.sh # shellcheck can't resolve ~ or $HOME for some reason
+\. "${XDG_CONFIG_HOME}/nvm/nvm.sh" # This loads nvm
 nvm install node
 npm install -g yarn neovim
 
