@@ -1,3 +1,4 @@
+cd
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/"
 [ -n "$PS1" ] && \
@@ -223,6 +224,9 @@ if [ -d "$HOME/.config/nvm" ]; then
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 
+if [ -x "$(command -v brew)" ]; then
+  eval $(brew shellenv)
+fi
 
 if (cat /proc/version | grep -qi microsoft); then
   cd() {

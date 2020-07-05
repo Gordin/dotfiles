@@ -262,7 +262,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'kopischke/vim-fetch'
 
   " Smooth scrolling for vim
-  Plug 'yuttie/comfortable-motion.vim'
+  " Plug 'yuttie/comfortable-motion.vim'
   " Make scrolling control the cursor. (Default is just scrolling the viewport)
   " let g:comfortable_motion_scroll_down_key = "j"
   " let g:comfortable_motion_scroll_up_key = "k"
@@ -271,8 +271,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:comfortable_motion_air_drag = 1.0
   let g:comfortable_motion_interval = 1000 / 144 " 144 fps scrolling
   " Smooth scrolling with mousewheel
-  noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(50)<CR>
-  noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-50)<CR>
+  " noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(50)<CR>
+  " noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-50)<CR>
 
   " adds maps to Vim help files
   " jump to ... option: o/O ,link: s/S, anchor: t/T
@@ -397,6 +397,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Can browse through everything in a git repo
   Plug 'tpope/vim-fugitive'
+  " [g]it: Go to [n]ext/[p]revious change in current file
+  nmap <leader>gn ]c
+  nmap <leader>gp [c
 
   " Show changed lines in files under version control next to the line numbers
   if has('nvim') || has('patch-8.0.902')

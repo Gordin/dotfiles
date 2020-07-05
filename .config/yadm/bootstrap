@@ -15,7 +15,7 @@ zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" install
 zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" update
 
 BASE16DIR=~/.config/base16-shell
-git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR || (cd "$BASE16DIR" ; git pull)
+git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR 2> /dev/null || (cd "$BASE16DIR" ; git pull)
 
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
@@ -24,16 +24,27 @@ git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null
 "$FZFDIR/install" --xdg --completion --key-bindings --update-rc
 ln -sf "$FZFDIR" ~/.fzf
 
+# Install linuxbrew START
+BREW_DIR=~/.linuxbrew/Homebrew
+mkdir -p $BREW_DIR
+git clone https://github.com/Homebrew/brew "${BREW_DIR}" 2> /dev/null || (cd "$BREW_DIR" ; git pull)
+if ! [ -x "$(command -v brew)" ]; then
+  ln -sf "${BREW_DIR}/bin/brew" "${BINS}"
+  eval $(brew shellenv)
+fi
+brew update
+brew upgrade -v --force-bottle
+# Install linuxbrew END
+
+# Install rigpgrep binary if it's not in system
 if ! [ -x "$(command -v rg)" ]; then
-  RGURL=https://github.com/BurntSushi/ripgrep/releases/download
-  RGVER=12.1.1
-  RGBASE=ripgrep-${RGVER}-x86_64-unknown-linux-musl
-  RGTARGZ=${RGBASE}.tar.gz
-  wget -O /tmp/${RGTARGZ} ${RGURL}/${RGVER}/${RGTARGZ}
-  mkdir -p /tmp/rg-${RGVER}
-  tar -xzvf /tmp/${RGTARGZ} -C /tmp/rg-${RGVER}
-  cp /tmp/rg-${RGVER}/${RGBASE}/rg "${BINS}"
-  # rm -rf /tmp/$RGTARGZ /tmp/rg-$RGVER/
+  brew install ripgrep ripgrep-all --force-bottle
+  # ripgrep-all adds the rga binary that can also search in PDFS, .docs, zip, etc.
+fi
+
+# Install hub (Github Client) binary if it's not in system
+if ! [ -x "$(command -v hub)" ]; then
+  brew install ncurses util-linux hub --force-bottle
 fi
 
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
