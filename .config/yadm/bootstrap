@@ -2,8 +2,6 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-set -e
-
 export XDG_CONFIG_HOME=$HOME/.config
 BINS=$XDG_CONFIG_HOME/bin
 mkdir -p "$BINS"
@@ -16,6 +14,7 @@ zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" upgrade
 zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" install
 zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" update
 
+# Install base16 (Color schemes for the terminal)
 BASE16DIR=~/.config/base16-shell
 git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR 2> /dev/null || (cd "$BASE16DIR" ; git pull)
 
@@ -27,7 +26,6 @@ if ! [ -x "$(command -v pip)" ]; then
 fi
 # Install python linters/fixers
 pip install --user flake8 mypy pylint black
-exit
 
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
@@ -37,6 +35,8 @@ git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null
 ln -sf "$FZFDIR" ~/.fzf
 
 # Install homebrew START
+# I only use brew to install small binaries without many dependencies, because the binary version
+# of many bigger packages only work when there is a user called homebrew set up
 if ! [ -x "$(command -v brew)" ]; then
   BREW_DIR=~/.linuxbrew/Homebrew
   mkdir -p $BREW_DIR
@@ -48,20 +48,20 @@ brew update
 brew upgrade -v --force-bottle
 # Install homebrew END
 
-# Install rigpgrep binary if it's not in system
+# Install rigpgrep binary if it's not available
 if ! [ -x "$(command -v rg)" ]; then
   brew install ripgrep ripgrep-all --force-bottle
   # ripgrep-all adds the rga binary that can also search in PDFS, .docs, zip, etc.
 fi
 
-# Install hub (Github Client) binary if it's not in system
+# Install hub (Github Client) binary if it's not available
 if ! [ -x "$(command -v hub)" ]; then
   brew install ncurses util-linux hub --force-bottle
   # ncurses and util-linux are dependencies and brew tries to build them without installing them
   # explicitly with --force-bottle
 fi
 
-# Install Shellcheck if it's not in system
+# Install Shellcheck (bash linter) if it's not available
 if ! [ -x "$(command -v shellcheck)" ]; then
   brew install shellcheck --force-bottle
 fi
@@ -91,11 +91,12 @@ npm install -g yarn neovim
 
 VIM_DIR=$XDG_CONFIG_HOME/nvim
 
-# Get spellfiles
+# Get latest spellfiles for german and english
 mkdir -p "$VIM_DIR/spell"
 cd "$VIM_DIR/spell"
 wget -c -N http://ftp.vim.org/pub/vim/runtime/spell/{de,en}.utf-8.{spl,sug}
 cd
 mkdir -p "$VIM_DIR/undodir"
 mkdir -p "$VIM_DIR/tmp/backup"
+# Install plugins. Don't update here because YouCompleteMe Plugin can take a long time
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'
