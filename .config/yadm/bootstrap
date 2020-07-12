@@ -48,6 +48,13 @@ pyenv exec pip install wheel
 pyenv exec pip install neovim flake8 mypy pylint black
 pyenv exec pip install ipython ipdb ptpython
 
+
+# move all paths ending in 'sbin' to the back of PATH
+# This is needed because pyenv fails to find the system python otherwise
+for SB in $(echo "$PATH" | grep ':*/[^:]*sbin' -o)
+do
+  PATH="${PATH/$SB}:${X#:}"
+done
 # Set global version to system version
 pyenv global system
 set +u; pyenv deactivate; set -u

@@ -303,6 +303,12 @@ fi
 
 export PATH="$HOME/perl5/bin/:$PATH"
 
+# move all paths ending in 'sbin' to the back of PATH
+# This is needed because pyenv fails to find the system python otherwise
+for SB in $(echo "$PATH" | grep ':*/[^:]*sbin' -o)
+do
+  export PATH="${PATH/$SB}:${SB#:}"
+done
 
 PYENV_ROOT=$HOME/.config/pyenv
 if [ -d "$PYENV_ROOT" ]; then
