@@ -53,7 +53,7 @@ pyenv exec pip install ipython ipdb ptpython
 # This is needed because pyenv fails to find the system python otherwise
 for SB in $(echo "$PATH" | grep ':*/[^:]*sbin' -o)
 do
-  PATH="${PATH/$SB}:${X#:}"
+  PATH="${PATH/$SB}:${SB#:}"
 done
 # Set global version to system version
 pyenv global system
