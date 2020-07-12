@@ -18,14 +18,50 @@ zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" update
 BASE16DIR=~/.config/base16-shell
 git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR 2> /dev/null || (cd "$BASE16DIR" ; git pull)
 
+
+export PYENV_ROOT=~/.config/pyenv
+if ! [ -d "$PYENV_ROOT" ]; then
+  curl https://pyenv.run | bash
+fi
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+set +u
+eval "$(pyenv virtualenv-init -)" || true
+set -u
+# Get latest available python 2 and 3 versions
+# PY2VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '2\.7.\+' -o | tail -1)
+PY2VER='2.7.18'
+pyenv install "$PY2VER" -s
+pyenv virtualenvs --skip-aliases | grep neovim2 || pyenv virtualenv "$PY2VER" neovim2
+set +u; pyenv activate neovim2; set -u
+pyenv exec pip install --upgrade pip
+pyenv exec pip install wheel
+pyenv exec pip install neovim
+
+# PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
+PY3VER='3.8.3'
+pyenv install "$PY3VER" -s
+pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" neovim3
+set +u; pyenv activate neovim3; set -u
+pyenv exec pip install --upgrade pip
+pyenv exec pip install wheel
+pyenv exec pip install neovim flake8 mypy pylint black
+pyenv exec pip install ipython ipdb ptpython
+
+# Set global version to system version
+pyenv global system
+set +u; pyenv deactivate; set -u
+
 # Install pip and python stuff
 if ! [ -x "$(command -v pip)" ]; then
   cd /tmp
   wget https://bootstrap.pypa.io/get-pip.py
   python get-pip.py --user
 fi
-# Install python linters/fixers
-pip install --user flake8 mypy pylint black
+# Install same stuff as for neovim3 env (and maybe more stuff)
+pip install --user wheel
+pip install --user neovim flake8 mypy pylint black
+pip install --user ipython ipdb ptpython
 
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
@@ -40,10 +76,11 @@ ln -sf "$FZFDIR" ~/.fzf
 if ! [ -x "$(command -v brew)" ]; then
   BREW_DIR=~/.linuxbrew/Homebrew
   mkdir -p $BREW_DIR
+  echo created brew dir
   git clone https://github.com/Homebrew/brew "${BREW_DIR}" 2> /dev/null || (cd "$BREW_DIR" ; git pull)
   ln -sf "${BREW_DIR}/bin/brew" "${BINS}"
-  eval "$(brew shellenv)"
 fi
+eval "$(brew shellenv)"
 brew update
 brew upgrade -v --force-bottle
 # Install homebrew END
@@ -69,9 +106,15 @@ fi
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 # shellcheck source=../../.config/nvm/nvm.sh # shellcheck can't resolve ~ or $HOME for some reason
-\. "${XDG_CONFIG_HOME}/nvm/nvm.sh" # This loads nvm
-nvm install node
+\. "${XDG_CONFIG_HOME}/nvm/nvm.sh" 2> /dev/null || true # This loads nvm
+# Ignore the errors from loading nvm because it errors out if the current version isn't set right
+# Set a version instead of just stable, because the lazy loading in .zshrc needs that
+NODEVER="$(nvm version-remote stable)"
+nvm install "$NODEVER"
+nvm alias default "$NODEVER"
+nvm use "$NODEVER"
 npm install -g yarn neovim
+yarn global add neovim
 
 # Install perl stuff (just for neovim, probably useless...)
 # PLENV_DIR=$HOME/.plenv

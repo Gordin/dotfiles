@@ -8,6 +8,15 @@ syntax on
 let mapleader = ","
 let maplocalleader = ","
 
+
+if filereadable(expand('~/.config/pyenv/versions/neovim2/bin/python'))
+  let g:python_host_prog = '~/.config/pyenv/versions/neovim2/bin/python'
+endif
+if filereadable(expand('~/.config/pyenv/versions/neovim3/bin/python'))
+  let g:python3_host_prog = '~/.config/pyenv/versions/neovim3/bin/python'
+endif
+
+
 " Controls cursor blinking and shapes. (blink timing has problems in some terminals)
 set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
             \,a:blinkwait900-blinkoff200-blinkon500-Cursor/lCursor
@@ -52,19 +61,22 @@ let g:gruvbox_invert_selection='0'
 " Functional stuff
 set hidden                          " Allow to switch files without having saved
 set clipboard+=unnamed              " Use system clipboard as default register
-" Override clipboard manager because xclip is the default and there is a bug with it and vim-yoink
-let g:clipboard = {
-      \   'name': 'xsel_override',
-      \   'copy': {
-      \      '+': 'xsel --input --clipboard',
-      \      '*': 'xsel --input --primary',
-      \    },
-      \   'paste': {
-      \      '+': 'xsel --output --clipboard',
-      \      '*': 'xsel --output --primary',
-      \   },
-      \   'cache_enabled': 1,
-      \ }
+" If xsel is available, use it instead of xclip (default) because vim-yoink has a bug with xclip
+if executable('xsel')
+  let g:clipboard = {
+        \   'name': 'xsel_override',
+        \   'copy': {
+        \      '+': 'xsel --input --clipboard',
+        \      '*': 'xsel --input --primary',
+        \    },
+        \   'paste': {
+        \      '+': 'xsel --output --clipboard',
+        \      '*': 'xsel --output --primary',
+        \   },
+        \   'cache_enabled': 1,
+        \ }
+endif
+
 set mouse=a                         " Enable mouse controls
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -707,6 +719,7 @@ set nospell                     " disable spellchecking on startup
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 set background=dark                 " Use dark background for color schemes
 silent! colorscheme gruvbox
+" silent! colorscheme getafe
 " silent! colorscheme ayu
 " silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
                                     " start vim the first time and the scheme isn't installed yet.

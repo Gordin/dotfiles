@@ -214,6 +214,7 @@ fi
 
 export PATH=${HOME}/.local/bin:$PATH
 export PATH=${HOME}/.config/bin:$PATH
+export PATH="${HOME}/.pub-cache/bin:$PATH"
 
 if [ -d "$HOME/.cargo/bin" ]; then
   export PATH=$HOME/.cargo/bin:$PATH
@@ -221,8 +222,9 @@ fi
 
 if [ -d "$HOME/.config/nvm" ]; then
   export NVM_DIR="$HOME/.config/nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm
+  export PATH="$NVM_DIR/versions/node/$(<$NVM_DIR/alias/default)/bin:$PATH" #"
+  alias nvm="unalias nvm; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm $@ || true"
 fi
 
 if [ -x "$(command -v brew)" ]; then
@@ -300,4 +302,13 @@ if [ -d "$PLENV_DIR" ]; then
 fi
 
 export PATH="$HOME/perl5/bin/:$PATH"
+
+
+PYENV_ROOT=$HOME/.config/pyenv
+if [ -d "$PYENV_ROOT" ]; then
+  export PYENV_ROOT
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+fi
 
