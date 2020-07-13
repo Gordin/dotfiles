@@ -659,49 +659,63 @@ nnoremap <silent> <leader>      :<c-u>WhichKey ','<CR>
 " nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
 " Help Menu for my leader mappings
 let g:which_key_map = {
-  \  '/'  : 'fuzzy search'
-  \, '?'  : 'fuzzy search backwards'
-  \, 'g/' : [',g/', 'fuzzy search, cursor stays'], 'g' : {'name': 'which_key_ignore'}
-  \, 'f'  : { 'name': '[f]ind Files, search in code'
-    \, 'f' : 'find [f]ilenames in project'
-    \, 'c' : 'find [c]ode in project'
-    \, 'l' : 'find [l]ines in project'
+  \  '#'     : '[0-9] highlight word under cursor', '0' : 'which_key_ignore'
+  \, '1'     : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
+  \, '4'     : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
+  \, '7'     : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
+  \, '/'     : 'fuzzy search'
+  \, '<Tab>' : 'Pick UltiSnips snippet from list'
+  \, '?'     : 'fuzzy search backwards'
+  \, 'g/'    : [',g/', 'fuzzy search, cursor stays'], 'g' : {'name': 'which_key_ignore'}
+  \, 'f'     : { 'name': '[f]ind Files, search in code (FZF)'
+    \, 'f'   : 'find [f]ilenames in project'
+    \, 'c'   : 'find [c]ode in project'
+    \, 'l'   : 'find [l]ines in project'
     \}
-  \, '_'  : {'name': 'TComment Stuff'  }
-  \, 'c'  : {'name': '[c]lear [0-9] or [a]ll highlights'}
-  \, 'p' : {'name': '[p]aste stuff'
-    \, '/' : 'paste current search [/]'
+  \, '_'     : {'name': 'TComment Stuff'  }
+  \, 'c'     : {'name': '[c]lear [0-9] or [a]ll highlights'}
+  \, 'd'     : 'Show [d]iagnostics for YouCompleteMe'
+  \, 'a'     : {'name': '[a]nyJump mappings'
+    \, 'b'   : 'Jump [b]ack'
+    \, 'l'   : 'show [l]ast search'
     \}
-  \, '#'  : '[0-9] highlight word under cursor', '0' : 'which_key_ignore'
-  \, '1'  : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
-  \, '4'  : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
-  \, '7'  : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
-  \, 'h'  : { 'name': 'which_key_ignore'
-    \, 'l' : 'toggle h[l]search'
+  \, 'j'     : 'Any[j]ump to word under cursor'
+  \, 'p'     : {'name': '[p]aste stuff'
+    \, '/'   : 'paste current search [/]'
     \}
-  \, 'hl' : [',hl',  'toggle [hl]search']
-  \, 'st' : [':Startify<cr>',  '[St]artify']
-  \, 'S'  : { 'name': '[St]artify in a split'
-    \, 't' : 'Open [St]artify in a split'
-    \, 'T' : 'Open [St]artify in a split'
+  \, 'h'     : { 'name': 'which_key_ignore'
+    \, 'l'   : 'toggle h[l]search'
     \}
-  \, 's'  : { 'name': '[s]ubstitute'
-    \, 't' : 'Open S[t]artify in current buffer'
-    \, 'w' : '[s]ubstitute [w]ord under cursor in motion'
-    \, '/' : '[s]ubstitute current search [/] with last yanked text'
+  \, 'hl'    : [',hl',  'toggle [hl]search']
+  \, 'st'    : [',st',  '[St]artify']
+  \, 'ST'    : [',ST',  '[ST]artify in a vsplit']
+  \, 'S'     : {'name': 'which_key_ignore'
+    \, 't'   : 'Open [St]artify in a split'
+    \, 'T'   : 'Open [ST]artify in a split'
     \}
-  \, 'r'  : {'name': 'which_key_ignore'
-    \, 'g' : 'Search in code with r[g]'
+  \, 's'     : { 'name': '[s]ubstitute'
+    \, 't'   : 'Open S[t]artify in current buffer'
+    \, 'w'   : '[s]ubstitute [w]ord under cursor in motion'
+    \, '/'   : '[s]ubstitute current search [/] with last yanked text'
     \}
-  \, 'rg' : [',rg', 'Search in code with [rg]']
-  \, 'u'  : {'name': 'which_key_ignore'}
-  \, 'ut' : [',ut', '[u]ndo[t]ree']
-  \, 't'  : { "name" : "[t]abs, [t]oggle + [t]rim"
-    \, 'rn' : [',trn',  'toggle [r]elative[n]number']
-    \, 'h'  : 'previous tab'
-    \, 'l'  : 'next tab'
-    \, 'rim': [',trim', 't[rim] all trailing whitespace']
-    \, 'r'  : {'name': 'which_key_ignore'}
+  \, 'r'     : {'name': 'which_key_ignore'
+    \, 'g'   : 'Search in code with r[g]'
+    \}
+  \, 'rg'    : [',rg', 'Search in code with [rg]']
+  \, 'u'     : {'name': 'which_key_ignore'}
+  \, 'ut'    : [',ut', '[u]ndo[t]ree']
+  \, 't'     : { "name" : "[t]abs, [t]oggle + [t]rim"
+    \, 'rn'  : [',trn',  'toggle [r]elative[n]number']
+    \, 'h'   : 'previous tab'
+    \, 'l'   : 'next tab'
+    \, 'rim' : [',trim', 't[rim] all trailing whitespace']
+    \, 'r'   : {'name': 'which_key_ignore'}
+    \ }
+  \, 'w'     : { "name" : "[w]indow movement"
+    \, 'h'   : 'go left'
+    \, 'l'   : 'go right'
+    \, 'j'   : 'go down'
+    \, 'k'   : 'go up'
     \ }
   \ }
 

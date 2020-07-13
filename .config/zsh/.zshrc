@@ -1,4 +1,3 @@
-cd
 export XDG_CONFIG_HOME=$HOME/.config
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/"
@@ -195,6 +194,7 @@ set_git_vars() {
     GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git
 }
 
+alias yvim="yadm enter nvim"
 alias ggit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git -c user.name=Gordin -c user.email=9ordin@gmail.com $@"
 if [ "`hostname`" = workelch ]; then
   alias yadm="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' yadm $@"
