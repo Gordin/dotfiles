@@ -216,6 +216,10 @@ export PATH=${HOME}/.local/bin:$PATH
 export PATH=${HOME}/.config/bin:$PATH
 export PATH="${HOME}/.pub-cache/bin:$PATH"
 
+export PATH="$PATH:${HOME}/work/flutter/bin"
+export PATH="${HOME}/.gem/ruby/2.6.0/bin:$PATH"
+export PATH="${HOME}/homebrew/bin:$PATH"
+
 if [ -d "$HOME/.cargo/bin" ]; then
   export PATH=$HOME/.cargo/bin:$PATH
 fi
@@ -318,3 +322,5 @@ if [ -d "$PYENV_ROOT" ]; then
   eval "$(pyenv virtualenv-init -)"
 fi
 
+# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
+[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
