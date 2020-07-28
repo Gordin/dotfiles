@@ -266,8 +266,9 @@ if (cat /proc/version | grep -qi microsoft); then
   # export PATH="$PATH:$C_DRIVE/Windows/system32"
   export PATH="$PATH:$HOME/.cache/system32bin"
 
-  # export DISPLAY="$(ipconfig.exe | grep IPv4 | cut -d: -f2 | tr -d ' ' | grep $(ip -o route get to 8.8.8.8 | cut -d" " -f7 | cut -d. -f1-2) | sed 's/[^[:print:]]//g'):0"
-  export DISPLAY="$(ipconfig.exe | grep IPv4 | cut -d: -f2 | tr -d ' ' | head -1 | sed 's/[^[:print:]]//g'):0"
+  # Set ip address for X server
+  # export DISPLAY="$(ipconfig.exe | grep IPv4 | cut -d: -f2 | tr -d ' ' | head -1 | sed 's/[^[:print:]]//g'):0"
+  export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
 fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
