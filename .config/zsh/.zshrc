@@ -20,26 +20,6 @@ fi
 # Zsh configuration
 # -----------------
 
-#
-# History
-#
-
-HISTFILE="$HOME/.config/zsh/.zhistory"
-HISTSIZE=10000000
-SAVEHIST=10000000
-setopt BANG_HIST                 # Treat the '!' character specially during expansion.
-setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
-setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
-setopt SHARE_HISTORY             # Share history between all sessions.
-setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
-setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
-setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
-setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
-setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
-setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
-setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
-setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
-setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 #
 # Input/output
@@ -52,6 +32,8 @@ bindkey "^?" backward-delete-char
 bindkey "^W" backward-kill-word
 bindkey "^H" backward-delete-char      # Control-h also deletes the previous char
 bindkey "^U" backward-kill-line
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
 
 # Prompt for spelling correction of commands.
 #setopt CORRECT
@@ -318,3 +300,88 @@ if [ -d "$PYENV_ROOT" ]; then
   eval "$(pyenv virtualenv-init -)"
 fi
 
+
+#
+# History
+#
+
+HISTFILE="$HOME/.config/zsh/.zhistory"
+HISTSIZE=10000000
+SAVEHIST=10000000
+setopt BANG_HIST                 # Treat the '!' character specially during expansion.
+setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt SHARE_HISTORY             # Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
+setopt HIST_BEEP                 # Beep when accessing nonexistent history.
+
+
+##
+# shell bookmarks with fzf
+#
+# @param {string} [$1] Defined bookmark string.
+##
+function b() {
+    # Bookmarks
+    local -A bookmarks=(
+        'd' "~/Downloads/"
+        'i' "~/Pictures/"
+        'work' "~/work/"
+        'firebase' "~/work/studibase/app/functions"
+        'club' "~/work/clubhouse"
+        'app' "~/work/student-services-app"
+    )
+
+    local selected_bookmark
+    local bookmarks_table
+    local key
+    foreach key (${(k)bookmarks}) {
+      bookmarks_table+="$key ${bookmarks[$key]}\n"
+    }
+
+    if [[ "$1" != '' ]] {
+        selected_bookmark="${bookmarks[$1]}"
+        if [[ "$selected_bookmark" == '' ]] {
+            selected_bookmark=$(
+            printf "$bookmarks_table" \
+                | fzf -f $1 -1 --tiebreak=begin,length\
+                | cut --delimiter=' ' --fields=2\
+                | head -1
+            )
+        }
+    } else {
+        if (! hash fzf &>/dev/null) {
+            echo; echo "error: fzf is required for selection menu."; echo
+
+            return 1
+        } else {
+            selected_bookmark=$(
+                printf "$bookmarks_table" \
+                    | fzf \
+                        --exact \
+                        --height='20%' \
+                        --preview='eval ls --almost-all --classify --color=always --group-directories-first --literal $(echo {} | cut --delimiter=" " --fields=2 -) 2>/dev/null' \
+                        --preview-window='right:50%' \
+                    | cut --delimiter=' ' --fields=2
+            )
+        }
+    }
+
+    if [[ "$selected_bookmark" != '' ]] {
+        eval cd "$selected_bookmark"
+    } else {
+        echo; echo 'error: Could not find any bookmark to jump in.'; echo
+        return 1
+    }
+}
+# Bind for when ^A is bound (default)
+bindkey -s '^B' '^Ab ^M'
+# Bind for when ^A is not bound (vi mode)
+# bindkey -s '^B' '^[Ib ^M'

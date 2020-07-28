@@ -639,12 +639,13 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:rooter_resolve_links = 1        " Follow symlinks
 
   " Automatically close opening parenthesis
-  Plug 'jiangmiao/auto-pairs'
-  let g:AutoPairsFlyMode = 0
-  " Cancel what AutoPairs did and revert to what you actually typed
-  let g:AutoPairsShortcutBackInsert = '<M-b>'
-  " [S]urround things after typing an opening \( => Alt-s
-  let g:AutoPairsShortcutFastWrap = '<M-s>'
+  Plug 'tmsvg/pear-tree'
+  " Enable Smart pairs
+  let g:pear_tree_smart_openers = 1
+  let g:pear_tree_smart_closers = 0
+  let g:pear_tree_smart_backspace = 1
+  " If enabled, smart pair functions timeout after 60ms:
+  let g:pear_tree_timeout = 60
 
   " Shows a list of all mapped keys after pressing <leader> and waiting
   Plug 'liuchengxu/vim-which-key'

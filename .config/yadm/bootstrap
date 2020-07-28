@@ -6,11 +6,19 @@ export XDG_CONFIG_HOME=$HOME/.config
 BINS=$XDG_CONFIG_HOME/bin
 mkdir -p "$BINS"
 
+case "$OSTYPE" in
+  solaris*) OS="solaris" ;;
+  darwin*)  OS="OSX" ;; 
+  linux*)   OS="LINUX" ;;
+  bsd*)     OS="BSD" ;;
+  msys*)    OS="WINDOWS" ;;
+esac
+
 # ln -sf "$HOME/.config/yadm/git-redirect" "$HOME/.git"
 
 ### zim (zsh config manager)
 # https://github.com/zimfw/zimfw
-zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" upgrade
+zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" upgrade || true
 zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" install
 zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" update
 
@@ -55,20 +63,31 @@ for SB in $(echo "$PATH" | grep ':*/[^:]*sbin' -o)
 do
   PATH="${PATH/$SB}:${SB#:}"
 done
-# Set global version to system version
-pyenv global system
-set +u; pyenv deactivate; set -u
 
-# Install pip and python stuff
-if ! [ -x "$(command -v pip)" ]; then
-  cd /tmp
-  wget https://bootstrap.pypa.io/get-pip.py
-  python get-pip.py --user
+if [[ ! "$OS" == "OSX" ]]; then
+  # Set global version to system version
+  pyenv global system
+  set +u; pyenv deactivate; set -u
+
+  # Install pip and python stuff
+  if ! [ -x "$(command -v pip)" ]; then
+	cd /tmp
+	wget https://bootstrap.pypa.io/get-pip.py
+	python get-pip.py --user
+  fi
+  # Install same stuff as for neovim3 env (and maybe more stuff)
+  pip install --user wheel
+  pip install --user neovim flake8 mypy pylint black
+  pip install --user ipython ipdb ptpython
+else
+  # Don't trust macOS with anything, always use the python from pyenv...
+  # Set global version to system version
+  pyenv global $PY3VER
+  set +u; pyenv activate; set -u
+  pip install wheel
+  pip install neovim flake8 mypy pylint black
+  pip install ipython ipdb ptpython
 fi
-# Install same stuff as for neovim3 env (and maybe more stuff)
-pip install --user wheel
-pip install --user neovim flake8 mypy pylint black
-pip install --user ipython ipdb ptpython
 
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
@@ -148,5 +167,9 @@ wget -c -N http://ftp.vim.org/pub/vim/runtime/spell/{de,en}.utf-8.{spl,sug}
 cd
 mkdir -p "$VIM_DIR/undodir"
 mkdir -p "$VIM_DIR/tmp/backup"
+# Install neovim if it's missing
+if ! [ -x "$(command -v nvim)" ]; then
+  brew install nvim --force-bottle
+fi
 # Install plugins. Don't update here because YouCompleteMe Plugin can take a long time
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'
