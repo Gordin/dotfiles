@@ -20,10 +20,30 @@ if !has('nvim')
   set luadll=~/.config/lib/liblua.so.5.3
 endif
 
-" Controls cursor blinking and shapes. (blink timing has problems in some terminals)
-set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
-            \,a:blinkwait900-blinkoff200-blinkon500-Cursor/lCursor
-            \,sm:block-blinkwait500-blinkoff200-blinkon500
+" This changes the shape of the cursor depending on the current mode.
+" Different config is needed for gvim, neovim and vim.
+if has("gui_running") || has("nvim")
+  " Controls cursor blinking and shapes for gvim and neovim
+  set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+        \,a:blinkwait900-blinkoff200-blinkon500-Cursor/lCursor
+        \,sm:block-blinkwait500-blinkoff200-blinkon500
+else
+  " Taken and adapted from https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
+  " This probably does not works on all terminals, but it works on "Windows Terminal", so I assume
+  " it will work in most cases. I removed the `redraw!` from all the lines because that made my
+  " terminal flash each time I entered/left INSERT mode.
+  augroup cursorshape
+    autocmd!
+    au VimEnter,InsertLeave * silent execute '!echo -ne "\e[1 q"'
+    au InsertEnter,InsertChange *
+          \ if v:insertmode == 'i' |
+          \   silent execute '!echo -ne "\e[5 q"' |
+          \ elseif v:insertmode == 'r' |
+          \   silent execute '!echo -ne "\e[3 q"' |
+          \ endif
+    au VimLeave * silent execute '!echo -ne "\e[ q"'
+  augroup end
+endif
 
 " Visual stuff
 set noerrorbells                    " no blinking or noises...
@@ -61,26 +81,33 @@ nnoremap dp dp:diffupdate<cr>]c
 let g:gruvbox_contrast_dark = 'medium'
 let g:gruvbox_invert_selection='0'
 
-" Functional stuff
-set hidden                          " Allow to switch files without having saved
-set clipboard+=unnamed              " Use system clipboard as default register
-" If xsel is available, use it instead of xclip (default) because vim-yoink has a bug with xclip
-if executable('xsel')
-  let g:clipboard = {
-        \   'name': 'xsel_override',
-        \   'copy': {
-        \      '+': 'xsel --input --clipboard',
-        \      '*': 'xsel --input --primary',
-        \    },
-        \   'paste': {
-        \      '+': 'xsel --output --clipboard',
-        \      '*': 'xsel --output --primary',
-        \   },
-        \   'cache_enabled': 1,
-        \ }
+set hidden                        " Allow to switch files without having saved
+if !has('clipboard')
+  echo 'VIM IS NOT COMPILED WITH +cliboard!'
+else
+  set clipboard=unnamed             " Use system clipboard as default register
+  " If xsel is available, use it instead of xclip (default) because vim-yoink has a bug with xclip
+  if executable('xsel')
+    let g:clipboard = {
+          \   'name': 'xsel_override',
+          \   'copy': {
+          \      '+': 'xsel --input --clipboard',
+          \      '*': 'xsel --input --primary',
+          \    },
+          \   'paste': {
+          \      '+': 'xsel --output --clipboard',
+          \      '*': 'xsel --output --primary',
+          \   },
+          \   'cache_enabled': 1,
+          \ }
+  endif
 endif
 
-set mouse=a                         " Enable mouse controls
+set mouse=nvir                      " Enable mouse controls
+                                    " nvir is the same as [a]ll without command mode.
+                                    " This allows the mouse to act like it normally would in a
+                                    " Terminal when you are in `:` Command mode
+
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
 set updatetime=10
@@ -130,7 +157,9 @@ set noswapfile                      " Don't create swap files
 set backup                          " Enable backups ...
 set backupdir=~/.config/nvim/tmp/backup//   " set directory for backups
 set history=10000                   " 10000 is the max history size...
-set shada=!,'100,<50,s10,h          " Some new vim 8+ session/history thing?
+if has('nvim')
+  set shada=!,'100,<50,s10,h          " Some new vim 8+ session/history thing?
+endif
 if has('persistent_undo')           " Most vims should have this...
   set undofile                      " Save undo history to file
   set undodir=~/.config/nvim/undodir//   " Set directory for undo history
@@ -164,8 +193,8 @@ nnoremap <leader>wj <c-w>j
 nnoremap <leader>wk <c-w>k
 " go down or up 1 visual line on wrapped lines instead of line of file. Check the count to only
 " do this without a count. (It will jump over wrapped lines when you give a count)
-nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
-nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+nnoremap <silent><expr> j v:count == 0 ? 'gj' : 'j'
+nnoremap <silent><expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap gj j
 nnoremap gk k
 set virtualedit=block               " Allows to select beyond end of lines in block selection mode
@@ -296,6 +325,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " When you open a new file but a file with a similar name exists Vim will ask to open that one
   Plug 'EinfachToll/DidYouMean'
+  let g:dym_use_fzf = 1
 
   " Automatically create folders that don't exist when saving a new file
   Plug 'DataWraith/auto_mkdir'
@@ -384,11 +414,26 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
   Plug 'junegunn/fzf.vim'
   Plug '~/.fzf'
+  " Fuzy search in code in current file
   nnoremap <leader>fl :Lines<cr>
+  " Fuzzy search filenames in project
   nnoremap <leader>ff :Files<cr>
   nnoremap <c-p>      :Files<cr>
+  " Fuzzy search in code in project
   nnoremap <leader>fc :norm <leader>rg<cr>
   nnoremap <leader>rg :Rg<cr>
+  " The default :Rg command matches filenames AND Code, this redefined version only matches code
+  " This is just copied from the fzf help section `fzf-vim-example-advanced-ripgrep-integration`
+  " I have no idea why this one doesn't match the filenames, but it doesn't...
+  function! RipgrepFzf(query, fullscreen)
+    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+    let initial_command = printf(command_fmt, shellescape(a:query))
+    let reload_command = printf(command_fmt, '{q}')
+    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+  endfunction
+  command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
+
 
   " Allows to interactively align code (like on : as in the lines above)
   " Plug 'junegunn/vim-easy-align'
@@ -415,6 +460,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " [g]it: Go to [n]ext/[p]revious change in current file
   nmap <leader>gn ]c
   nmap <leader>gp [c
+  " Rhubarb extends fugitive with some stuff when `hub` in installed (Github Client)
+  Plug 'tpope/vim-rhubarb'
 
   " Show changed lines in files under version control next to the line numbers
   if has('nvim') || has('patch-8.0.902')
@@ -422,6 +469,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   else
     Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
   endif
+  " Only show signcolumn when there are changes or Errors to be shown
+  set signcolumn=auto
 
   " Adds Undotree commands to show vim undo history like a git history
   Plug 'mbbill/undotree'
@@ -536,7 +585,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   let g:yoinkMaxItems=20
   let g:yoinkIncludeDeleteOperations=1  " Includes entries from `d` in the history
-  let g:yoinkSavePersistently=1         " Save history when you close vim. Needs the `shada` stuff
+  if has('nvim')
+    let g:yoinkSavePersistently=1       " Save history when you close vim. Needs the `shada` stuff
+  endif
 
   " Syntax definitions for i3 config files
   Plug 'mboughaba/i3config.vim'
@@ -579,6 +630,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ale_fixers = { 'javascript': [ 'standard', 'eslint', ], 'typescript': [ 'tsserver', 'tslint' ] }
   let g:ale_linters= { 'javascript': [ 'standard' ], 'typescript': [ 'tsserver', 'tslint' ],}
   let g:ale_completion_tsserver_autoimport = 1
+  " let g:ale_completion_enabled = 1
   let g:ale_typescript_tslint_config_path = '.'
   au BufRead,BufNewFile *.ts vnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
   au BufRead,BufNewFile *.ts vnoremap <leader>t :ALEGoToDefinition -tab<cr>
