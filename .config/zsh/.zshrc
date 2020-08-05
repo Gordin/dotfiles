@@ -176,7 +176,7 @@ set_git_vars() {
     GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git
 }
 
-alias yvim="yadm enter nvim"
+alias yvim="yadm enter vim"
 alias ggit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git -c user.name=Gordin -c user.email=9ordin@gmail.com $@"
 if [ "`hostname`" = workelch ]; then
   alias yadm="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' yadm $@"
@@ -190,9 +190,6 @@ if [ -x "$(command -v exa)"  ]; then
   alias la='exa -la'
 fi
 
-if [ -x "$(command -v nvim)" ]; then
-  alias vim=nvim
-fi
 
 export PATH=${HOME}/.local/bin:$PATH
 export PATH=${HOME}/.config/bin:$PATH
@@ -215,6 +212,11 @@ if [ -x "$(command -v brew)" ]; then
 fi
 
 if (cat /proc/version | grep -qi microsoft); then
+  # WSL usally starts in your Windows home, so cd to linux home instead
+  # By doing this instead of changing the start directory, you can easily
+  # get to your Windows home after opening a terminal with `cd -`
+  cd ~
+
   cd() {
     # Check if no arguments to make just typing cd<Enter> work
     # Also check if the first argument starts with a - and let cd handle it

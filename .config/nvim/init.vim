@@ -16,6 +16,9 @@ if filereadable(expand('~/.config/pyenv/versions/neovim3/bin/python'))
   let g:python3_host_prog = '~/.config/pyenv/versions/neovim3/bin/python'
 endif
 
+if !has('nvim')
+  set luadll=~/.config/lib/liblua.so.5.3
+endif
 
 " Controls cursor blinking and shapes. (blink timing has problems in some terminals)
 set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
@@ -626,10 +629,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}'], ['<', '>']]
   autocmd FileType * RainbowParentheses
 
-  " Shows color codes in the color they represent
-  if has('nvim')
-    Plug 'norcalli/nvim-colorizer.lua'
-  endif
+  " Shows color codes in the color they represent (Only works in neovim)
+  Plug 'norcalli/nvim-colorizer.lua'
 
   " Makes sure vims working directory is always the root of the project you are working on
   Plug 'airblade/vim-rooter'

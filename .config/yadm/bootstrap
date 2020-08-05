@@ -8,7 +8,7 @@ mkdir -p "$BINS"
 
 case "$OSTYPE" in
   solaris*) OS="solaris" ;;
-  darwin*)  OS="OSX" ;; 
+  darwin*)  OS="OSX" ;;
   linux*)   OS="LINUX" ;;
   bsd*)     OS="BSD" ;;
   msys*)    OS="WINDOWS" ;;
@@ -71,9 +71,9 @@ if [[ ! "$OS" == "OSX" ]]; then
 
   # Install pip and python stuff
   if ! [ -x "$(command -v pip)" ]; then
-	cd /tmp
-	wget https://bootstrap.pypa.io/get-pip.py
-	python get-pip.py --user
+    cd /tmp
+    wget https://bootstrap.pypa.io/get-pip.py
+    python get-pip.py --user
   fi
   # Install same stuff as for neovim3 env (and maybe more stuff)
   pip install --user wheel
@@ -128,6 +128,9 @@ fi
 if ! [ -x "$(command -v shellcheck)" ]; then
   brew install shellcheck --force-bottle
 fi
+
+# Install lua
+brew install lua luarocks
 
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
