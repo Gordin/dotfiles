@@ -34,14 +34,14 @@ else
   " terminal flash each time I entered/left INSERT mode.
   augroup cursorshape
     autocmd!
-    au VimEnter,InsertLeave * silent execute '!echo -ne "\e[1 q"'
-    au InsertEnter,InsertChange *
+    autocmd VimEnter,InsertLeave * silent execute '!echo -ne "\e[1 q"'
+    autocmd InsertEnter,InsertChange *
           \ if v:insertmode == 'i' |
           \   silent execute '!echo -ne "\e[5 q"' |
           \ elseif v:insertmode == 'r' |
           \   silent execute '!echo -ne "\e[3 q"' |
           \ endif
-    au VimLeave * silent execute '!echo -ne "\e[ q"'
+    autocmd VimLeave * silent execute '!echo -ne "\e[ q"'
   augroup end
 endif
 
@@ -137,7 +137,7 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
 
 " Resize splits when the window is resized
-au VimResized * exe "normal! \<c-w>="
+autocmd VimResized * exe "normal! \<c-w>="
 
 " Line numbers
 set number                          " Show line numbers
@@ -245,10 +245,10 @@ iabbrev :check: ✓
 autocmd! bufwritepost $MYVIMRC source $MYVIMRC
 
 " Make sure all markdown files have the correct filetype set
-au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} set filetype=markdown
+autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} set filetype=markdown
 
 " Treat JSON files like JavaScript (do I really need this? 0.o)
-au BufNewFile,BufRead *.json set ft=json
+autocmd BufNewFile,BufRead *.json set ft=json
 
 " Disable Ex mode
 nnoremap Q <Nop>
@@ -344,8 +344,6 @@ silent! if plug#begin('~/.config/nvim/plugged')
   map <leader>/  <Plug>(incsearch-fuzzy-/)
   map <leader>?  <Plug>(incsearch-fuzzy-?)
   map <leader>g/ <Plug>(incsearch-fuzzy-stay)
-  " noremap <silent> n n<Plug>Pulse
-  " noremap <silent> N N<Plug>Pulse
 
   " Pulses search results when you jump to them. Useful for very dense code
   Plug 'iamFIREcracker/vim-search-pulse'
@@ -383,7 +381,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " With this you can just press v multiple times from normal mode to get the selection you want
   Plug 'landock/vim-expand-region'
   " Adds extra text objecst to stop extending/shrinking around. No idea what those are any more...
-  au VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 })
+  autocmd VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 })
   vmap v     <Plug>(expand_region_expand)
   vmap -     <Plug>(expand_region_shrink)
   vmap <c-v> <Plug>(expand_region_shrink)
@@ -407,13 +405,16 @@ silent! if plug#begin('~/.config/nvim/plugged')
     call DeclareTempKeyword('9', 'bold', 'White', 'DarkBlue')
     call DeclareTempKeyword('0', 'bold', 'White', 'DarkMagenta')
   endfunction
-  au VimEnter * call TempKeywords()
+  autocmd VimEnter * call TempKeywords()
+
 
   " Find stuff
   " I install fzf outside of vim anyway so I don't need the next line
   " Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
   Plug 'junegunn/fzf.vim'
   Plug '~/.fzf'
+  " Addon to search in the quickfix window
+  Plug 'fszymanski/fzf-quickfix', {'on': 'Quickfix'}
   " Fuzy search in code in current file
   nnoremap <leader>fl :Lines<cr>
   " Fuzzy search filenames in project
@@ -454,6 +455,15 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:sneak#label      = 1 " Put labels on possible jump target after activating
   let g:sneak#use_ic_scs = 1 " Make sneak follow ignorecase and smartcase setting
 
+  " Syntax fire for jsonc (json as config files with comments)
+  Plug 'kevinoid/vim-jsonc'
+  augroup jsonc
+    autocmd!
+    " set filetype of the coc config file to jsonc. Comments show up as errors otherwise
+    autocmd BufEnter */coc-settings.json set ft=jsonc
+  augroup end
+
+
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Can browse through everything in a git repo
   Plug 'tpope/vim-fugitive'
@@ -489,26 +499,162 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " Meta-Plugin for multiple programming languages, loaded on demand
   Plug 'sheerun/vim-polyglot'
+  let g:polyglot_disabled = []
 
-  " Autocompletion
-  " Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  " Autocompletion with Coc
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  " Use <c-space> to trigger completion.
+  " if has('nvim')
+  "   inoremap <silent><expr> <c-space> coc#refresh()
+  " else
+  "   inoremap <silent><expr> <c-@> coc#refresh()
+  " endif
+
+  " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+  " position. Coc only does snippet and additional edit on confirm.
+  " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+  " if exists('*complete_info')
+  "   inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+  " else
+  "   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+  " endif
+  let g:coc_global_extensions = [
+              \  'coc-tsserver'
+              \, 'coc-json'
+              \, 'coc-marketplace'
+              \, 'coc-python'
+              \, 'coc-snippets'
+              \, 'coc-ultisnips'
+              \, 'coc-rust-analyzer'
+              \, 'coc-rls'
+              \, 'coc-vimlsp'
+              \]
+  " Use K to show documentation in preview window.
+  " (Only needed in neovim, in vim this is always shown for stuff under the cursor)
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    else
+      call CocAction('doHover')
+    endif
+  endfunction
+
+  " nnoremap <esc> :call coc#util#float_hide()<CR>
+  " nmap <esc> <Plug>(coc-float-hide)
+  " nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
+  " nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
+  " nnoremap <leader><esc> :call popup_clear()<CR>:call coc#util#float_hide()<CR>:call coc#util#close_floats()<CR>
+  " nnoremap <leader><esc> :call coc#config('suggest.floatEnable', "false")<cr>
+
+  " autocmd User CocOpenFloat call coc#util#close_floats()
+
+  " Highlight the symbol and its references when holding the cursor.
+  autocmd CursorHold * silent call CocActionAsync('highlight')
+
+  " Disable/enable completion based on languages (others are handled by YouCompleteMe)
+  augroup coc
+    autocmd!
+    autocmd BufEnter *          call coc#config('suggest.autoTrigger', "always")
+    autocmd BufEnter *          call CocMappings()
+    autocmd filetype *          let b:coc_suggest_disable=0
+
+    autocmd filetype python     let b:coc_suggest_disable=1
+    autocmd BufEnter *.py       call coc#config('suggest.autoTrigger', "never")
+    autocmd BufEnter *.py       call YcmMappings()
+
+    autocmd filetype rust       let b:coc_suggest_disable=1
+    autocmd BufEnter *.rs       call coc#config('suggest.autoTrigger', "never")
+    autocmd BufEnter *.rs       call YcmMappings()
+
+    autocmd filetype typescript let b:coc_suggest_disable=1
+    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "trigger")
+    autocmd BufEnter *.ts       call YcmMappings()
+  augroup end
+
+  inoremap <silent><expr> <CR>
+              \ UltiSnips#ExpandableExact() ? "<C-R>=UltiSnips#ExpandSnippet()<CR>":
+              \ "\<CR>"
+  inoremap <silent><expr> <TAB>
+              \ pumvisible() ? "\<c-n>":
+              \ "\<TAB>"
+  inoremap <silent><expr> <S-TAB>
+              \ pumvisible() ? "\<c-p>":
+              \ "\<S-TAB>"
+
+  " GoTo code navigation.
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+
+  " Symbol renaming.
+  nmap <leader>rn <Plug>(coc-rename)
+
+  " Formatting selected code.
+  xmap <leader>f  <Plug>(coc-format-selected)
+  nmap <leader>f  <Plug>(coc-format-selected)
+
+  fun! YcmMappings()
+  endfunction
+
+  fun! CocMappings()
+  endfunction
+
+  let g:coc_snippet_next = '<tab>'
+
   " YCM is nice for python, TypeScript and some other languages. You can also try coc
   Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
   " Change selection from list away from <Tab> so ultisnips can use it
-  let g:ycm_key_list_select_completion                = ['<Down>']
-  let g:ycm_key_list_previous_completion              = ['<Up>']
+  let g:ycm_key_list_select_completion                = ['<TAB>', '<Down>']
+  let g:ycm_key_list_previous_completion              = ['<S-TAB>', '<Up>']
+  let g:ycm_key_invoke_completion                     = '<C-Space>'
   let g:ycm_autoclose_preview_window_after_insertion  = 1
   let g:ycm_autoclose_preview_window_after_completion = 1
+  let g:ycm_auto_hover                                = 'CursorHold'
+  nmap <silent> <leader>tt <esc>:call HoverToggle()<CR><plug>(YCMHover)
+  " nmap <esc> <plug>(YCMHover)
+  " This toggles YCMs hover tooltips with context help
+  " I'm overriding the b:ycm_hover variable because g:ycm_auto_hover seems to be read only when
+  " a file is (re)loaded.
+  function! HoverToggle()
+    if g:ycm_auto_hover == 'CursorHold'
+      let g:ycm_auto_hover = ''
+      let b:ycm_hover      = { 'command': '',       'syntax': '' }
+      echo "Turned Hover Tooltips Off"
+    else
+      let g:ycm_auto_hover = 'CursorHold'
+      let b:ycm_hover      = { 'command': 'GetDoc', 'syntax': &filetype }
+      echo "Turned Hover Tooltips On"
+    endif
+  endfunction
+
+  " Turn off ycm on plugin specific buffers
+  let g:ycm_filetype_blacklist = {
+              \ 'any-jump': 1,     'fzf': 1, 'tagbar': 1,    'notes': 1,  'markdown': 1,
+              \    'netrw': 1,   'unite': 1,   'text': 1,  'vimwiki': 1,    'pandoc': 1,
+              \  'infolog': 1, 'leaderf': 1,   'mail': 1, 'startify': 1, 'gitcommit': 1
+              \}
+  " Turn off ycm for specific programming languages (to use coc instead)
+  " let g:ycm_filetype_blacklist['typescript'] = 1
+  " let g:ycm_filetype_blacklist['python'] = 1
+  let g:ycm_filetype_blacklist['ruby'] = 1
+  let g:ycm_filetype_blacklist['vim'] = 1
+  let g:ycm_filetype_blacklist['json'] = 1
+  let g:ycm_filetype_blacklist['jsonc'] = 1
 
   Plug 'SirVer/ultisnips'
   Plug 'honza/vim-snippets'
-  let g:UltiSnipsExpandTrigger       = "<tab>"
+  let g:UltiSnipsExpandTrigger       = "<c-l>"
   let g:UltiSnipsJumpForwardTrigger  = "<tab>"
   let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-  let g:UltiSnipsListSnippets        = "<leader><tab>"
+  " let g:UltiSnipsListSnippets        = "<leader><tab>"
+  let g:UltiSnipsListSnippets        = ""
+  inoremap <leader><tab> <esc>:Snippets<CR>
   " Open :UltiSnipsEdit in a vsplit
   let g:UltiSnipsEditSplit           = "vertical"
-
+  let g:ycm_use_ultisnips_completer  = 1
 
   " Colorschemes
   Plug 'morhetz/gruvbox'
@@ -593,8 +739,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'mboughaba/i3config.vim'
   aug i3config_ft_detection
       au!
-      au BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
-      au BufNewFile,BufRead ~/.config/sway/config set filetype=i3config
+      autocmd BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
+      autocmd BufNewFile,BufRead ~/.config/sway/config set filetype=i3config
   aug end
 
   Plug 'svermeulen/vim-subversive'
@@ -610,6 +756,12 @@ silent! if plug#begin('~/.config/nvim/plugged')
   vmap <leader>s/ :s//*/<cr>
   nmap <leader>s/ :%s//*/<cr>
 
+  let g:ale_disable_lsp = 1
+  let g:ale_set_balloons = 1
+  " Set to 1 to open another buffer with error information when there is any
+  let g:ale_cursor_detail = 0
+  " Show errors in virtualtext (neovim only)
+  let g:ale_virtualtext_cursor = 1
   " Automatically Lint/Syntax Check everything asynchronously
   Plug 'dense-analysis/ale'
   let g:airline#extensions#ale#enabled = 1
@@ -622,22 +774,29 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Configure how errors/warnings are shown in the statusbar
   let g:ale_echo_msg_error_str   = 'Error'
   let g:ale_echo_msg_warning_str = 'Warning'
-  let g:ale_echo_msg_format      = '%severity%: %s [%linter%]'
+  let g:ale_echo_msg_format      = '%severity%: %s [%linter% - %code%]'
   " Check when getting back to normal made
   let g:ale_lint_on_text_changed = 'normal'
   let g:ale_lint_delay           = 200
-  " Typescript config for ALE
-  let g:ale_fixers = { 'javascript': [ 'standard', 'eslint', ], 'typescript': [ 'tsserver', 'tslint' ] }
-  let g:ale_linters= { 'javascript': [ 'standard' ], 'typescript': [ 'tsserver', 'tslint' ],}
+  let g:ale_fixers = {
+        \ 'javascript': [ 'standard', 'eslint', ],
+        \ 'typescript': [ 'tsserver', 'tslint' ],
+        \ 'python': [ 'trim_whitespace', 'autopep8' ]
+        \ }
+  let g:ale_linters= {
+        \ 'javascript': [ 'standard' ],
+        \ 'typescript': [ 'tsserver', 'tslint' ],
+        \ 'python': ['flake8', 'mypy']
+        \ }
   let g:ale_completion_tsserver_autoimport = 1
   " let g:ale_completion_enabled = 1
   let g:ale_typescript_tslint_config_path = '.'
-  au BufRead,BufNewFile *.ts vnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
-  au BufRead,BufNewFile *.ts vnoremap <leader>t :ALEGoToDefinition -tab<cr>
-  au BufRead,BufNewFile *.ts vnoremap <c-]>     :ALEGoToDefinition<cr>
-  au BufRead,BufNewFile *.ts nnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
-  au BufRead,BufNewFile *.ts nnoremap <leader>t :ALEGoToDefinition -tab<cr>
-  au BufRead,BufNewFile *.ts nnoremap <c-]>     :ALEGoToDefinition<cr>
+  " autocmd BufRead,BufNewFile *.ts vnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
+  " autocmd BufRead,BufNewFile *.ts vnoremap <leader>t :ALEGoToDefinition -tab<cr>
+  " autocmd BufRead,BufNewFile *.ts vnoremap <c-]>     :ALEGoToDefinition<cr>
+  " autocmd BufRead,BufNewFile *.ts nnoremap <leader>v :ALEGoToDefinition -vsplit<cr>
+  " autocmd BufRead,BufNewFile *.ts nnoremap <leader>t :ALEGoToDefinition -tab<cr>
+  " autocmd BufRead,BufNewFile *.ts nnoremap <c-]>     :ALEGoToDefinition<cr>
 
   Plug 'pechorin/any-jump.vim'
   " Disable default keybinds (I kept the default below though)
@@ -652,9 +811,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:any_jump_search_prefered_engine      = 'rg'
 
   " Set custom ignores for different filetypes
-  au filetype * let g:any_jump_ignored_files = ['*.tmp', '*.temp', '*.swp']
+  autocmd filetype * let g:any_jump_ignored_files = ['*.tmp', '*.temp', '*.swp']
   " Ignore definitions/references in JavaScript files while editing TypeScript
-  au filetype typescript call add(g:any_jump_ignored_files, '*.js')
+  autocmd filetype typescript call add(g:any_jump_ignored_files, '*.js')
 
   " Jump to definition under cursor/of selection
   " Also turn colorcolumn off in the result window
@@ -727,10 +886,23 @@ let g:which_key_map = {
     \, 'l'   : 'find [l]ines in project'
     \}
   \, '_'     : {'name': 'TComment Stuff'  }
-  \, 'c'     : {'name': '[c]lear [0-9] or [a]ll highlights'}
+  \, 'c'     : {'name': '[C]oc or [c]lear [0-9] or [a]ll highlights'
+    \, '#'   : '[0-9] Clear highlight of word', '0' : 'which_key_ignore'
+    \, '1'   : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
+    \, '4'   : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
+    \, '7'   : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
+    \, 'c'   : [':CocConfig'     ,'[C]oc [C]onfig']
+    \, 'e'   : [':CocList extensions'  ,'[C]oc [e]xtensions']
+    \, 'm'   : [':CocList marketplace' ,'[C]oc [m]arketplace']
+    \, 'o'   : [':CocList outline'     ,'[C]oc [o]utline']
+    \, 'n'   : [':CocNext'     ,'[C]oc [N]ext']
+    \, 'p'   : [':CocPrev'     ,'[C]oc [P]rev']
+    \, 'd'   : [':CocList diagnostics' ,'[C]oc [d]iagnostics']}
   \, 'd'     : 'Show [d]iagnostics for YouCompleteMe'
   \, 'a'     : {'name': '[a]nyJump mappings'
     \, 'b'   : 'Jump [b]ack'
+    \, 'i'   : [':ALEInfo' ,'[A]LE [I]nfo']
+    \, 'f'   : [':ALEFix'  ,'[A]LE [F]ix']
     \, 'l'   : 'show [l]ast search'
     \}
   \, 'j'     : 'Any[j]ump to word under cursor'
@@ -762,6 +934,7 @@ let g:which_key_map = {
     \, 'rn'  : [',trn',  'toggle [r]elative[n]number']
     \, 'h'   : 'previous tab'
     \, 'l'   : 'next tab'
+    \, 't'   : 'Toggle Hover Tooltips'
     \, 'rim' : [',trim', 't[rim] all trailing whitespace']
     \, 'r'   : {'name': 'which_key_ignore'}
     \ }
