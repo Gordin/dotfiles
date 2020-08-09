@@ -328,9 +328,18 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 ##
 # shell bookmarks with fzf
+# Most of this is taken from here https://asciinema.org/a/161022
+# I just added forced fuzzy matching when used with an argument and the keybind
 #
-# @param {string} [$1] Defined bookmark string.
-##
+# Usage:
+# put your bookmarks in the bookmarks array, reload your shell and
+# b<ENTER> to get interactive fuzzy search for your bookmarks
+# b X<ENTER> to cd to the first thing that (fuzzy) matches X in your bookmarks
+# <ctrl+b> is a shortcut to `b SOMETHING<ENTER>`
+# You can type `X<ctrl+b>` and you will cd to the best (fuzzy) match of X in your bookmarks
+#
+# Works very well with just 1 or 2 keys before pressing <ctrl+b>
+#
 function b() {
     # Bookmarks
     local -A bookmarks=(
@@ -352,9 +361,11 @@ function b() {
     if [[ "$1" != '' ]] {
         selected_bookmark="${bookmarks[$1]}"
         if [[ "$selected_bookmark" == '' ]] {
+          for i in $@; do :; done
+          last_argument=$i
             selected_bookmark=$(
             printf "$bookmarks_table" \
-                | fzf -f $1 -1 --tiebreak=begin,length\
+                | fzf -f $last_argument -1 --tiebreak=begin,length\
                 | cut --delimiter=' ' --fields=2\
                 | head -1
             )
