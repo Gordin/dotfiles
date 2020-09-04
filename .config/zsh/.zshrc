@@ -1,3 +1,9 @@
+# Disable ctrl+s (freeze terminal) and ctrl+q (unfreeze terminal)
+stty ixany
+stty ixoff -ixon
+stty stop undef
+stty start undef
+
 export XDG_CONFIG_HOME=$HOME/.config
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/"
