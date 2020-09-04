@@ -17,7 +17,7 @@ if filereadable(expand('~/.config/pyenv/versions/neovim3/bin/python'))
 endif
 
 if !has('nvim')
-  set luadll=~/.config/lib/liblua.so.5.3
+  set luadll=~/.config/lib/liblua.so
 endif
 
 " This changes the shape of the cursor depending on the current mode.
@@ -204,10 +204,6 @@ autocmd! CmdwinEnter * nnoremap <buffer> q <c-c><c-c>
 autocmd! BufWinEnter quickfix nnoremap <silent> <buffer> q :q<cr>
 
 
-" Put directory of current file in command line mode
-" Useful for editing files that are not in a repository
-cnoremap <leader>. <C-R>=expand('%:p:h').'/'<cr>
-
 " Jump to last known cursor position when opening a file (unless it's a commit message file)
 autocmd BufReadPost * call s:SetCursorPosition()
 function! s:SetCursorPosition()
@@ -290,6 +286,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
     \, {',v': ['Edit vimrc',                 'e $MYVIMRC']}
     \, {',g': ['Edit git config',            'e $HOME/.gitconfig']}
     \, {',s': ['Edit ssh config',            'e $HOME/.ssh/config']}
+    \, {',i': ['Edit i3 config',             'e $HOME/.config/i3/config']}
     \, {',b': ['Edit yadm bootstrap script', 'e $HOME/.config/yadm/bootstrap']}
     \ ]
   let g:startify_update_oldfiles     = 1    " Update most recently used files on the fly
@@ -420,20 +417,21 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Fuzzy search filenames in project
   nnoremap <leader>ff :Files<cr>
   nnoremap <c-p>      :Files<cr>
+  nnoremap <leader>bu :Buffers<cr>
   " Fuzzy search in code in project
   nnoremap <leader>fc :norm <leader>rg<cr>
   nnoremap <leader>rg :Rg<cr>
   " The default :Rg command matches filenames AND Code, this redefined version only matches code
   " This is just copied from the fzf help section `fzf-vim-example-advanced-ripgrep-integration`
   " I have no idea why this one doesn't match the filenames, but it doesn't...
-  function! RipgrepFzf(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-    let initial_command = printf(command_fmt, shellescape(a:query))
-    let reload_command = printf(command_fmt, '{q}')
-    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-  endfunction
-  command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
+  " function! RipgrepFzf(query, fullscreen)
+  "   let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  "   let initial_command = printf(command_fmt, shellescape(a:query))
+  "   let reload_command = printf(command_fmt, '{q}')
+  "   let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  "   call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+  " endfunction
+  " command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
 
 
   " Allows to interactively align code (like on : as in the lines above)
@@ -479,6 +477,13 @@ silent! if plug#begin('~/.config/nvim/plugged')
   else
     Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
   endif
+  if !exists("g:signify_vcs_cmds")
+    let g:signify_vcs_cmds= {}
+  endif
+  let g:signify_vcs_cmds['git'] = 'git diff --no-color --no-ext-diff -U0 -- %f | sed "/^ /d"'
+  let g:signify_vcs_cmds['yadm'] = 'yadm diff --no-color --no-ext-diff -U1 -- %f'
+  let g:signify_sign_show_count = 1
+
   " Only show signcolumn when there are changes or Errors to be shown
   set signcolumn=auto
 
@@ -573,9 +578,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
     autocmd BufEnter *.ts       call YcmMappings()
   augroup end
 
-  inoremap <silent><expr> <CR>
-              \ UltiSnips#ExpandableExact() ? "<C-R>=UltiSnips#ExpandSnippet()<CR>":
-              \ "\<CR>"
+  " inoremap <silent><expr> <CR>
+  "             \ UltiSnips#ExpandableExact() ? "<C-R>=UltiSnips#ExpandSnippet()<CR>":
+  "             \ "\<CR>"
   inoremap <silent><expr> <TAB>
               \ pumvisible() ? "\<c-n>":
               \ "\<TAB>"
@@ -584,13 +589,27 @@ silent! if plug#begin('~/.config/nvim/plugged')
               \ "\<S-TAB>"
 
   " GoTo code navigation.
-  nmap <silent> gd <Plug>(coc-definition)
+  nmap <Plug>(coc-definition-vsplit) :call CocAction('jumpDefinition', 'vsplit')<CR>
+  nmap <Plug>(coc-definition-tabe) :call CocAction('jumpDefinition', 'tabe')<CR>
+  nmap <Plug>(coc-definition-edit) :call CocAction('jumpDefinition', 'edit')<CR>
+  nmap <silent> gv <Plug>(coc-definition-vsplit)
+  nmap <silent> gt <Plug>(coc-definition-tabe)
+  nmap <silent> gd <Plug>(coc-definition-edit)
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
 
-  " Symbol renaming.
+  " Select `inside` and `around` function
+  xmap if <Plug>(coc-funcobj-i)
+  omap if <Plug>(coc-funcobj-i)
+  xmap af <Plug>(coc-funcobj-a)
+  omap af <Plug>(coc-funcobj-a)
+
+  " Refactoring stuff.
   nmap <leader>rn <Plug>(coc-rename)
+  nmap <leader>coa <Plug>(coc-codeaction)
+  nmap <leader>cl <Plug>(coc-codelens-action)
+  nmap <leader>rf <Plug>(coc-refactor)
 
   " Formatting selected code.
   xmap <leader>f  <Plug>(coc-format-selected)
@@ -643,6 +662,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ycm_filetype_blacklist['vim'] = 1
   let g:ycm_filetype_blacklist['json'] = 1
   let g:ycm_filetype_blacklist['jsonc'] = 1
+  let g:ycm_filetype_blacklist['sh'] = 1
 
   Plug 'SirVer/ultisnips'
   Plug 'honza/vim-snippets'
@@ -786,7 +806,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ale_linters= {
         \ 'javascript': [ 'standard' ],
         \ 'typescript': [ 'tsserver', 'tslint' ],
-        \ 'python': ['flake8', 'mypy']
+        \ 'python': ['flake8', 'mypy'],
+        \ 'sh': ['shell', 'shellcheck'],
         \ }
   let g:ale_completion_tsserver_autoimport = 1
   " let g:ale_completion_enabled = 1
@@ -849,9 +870,19 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:rooter_change_directory_for_non_project_files = ''
   let g:rooter_silent_chdir  = 1        " Don't announce when directory is changed
   let g:rooter_resolve_links = 1        " Follow symlinks
+  nnoremap <leader>. :Rooter<CR>
+  " Put directory of current file in command line mode
+  " Useful when you want to do something in command mode relative to the current file path
+  " e.g. To create a new file in the same dir as current file: `:e ,.FILENAME<Enter>`
+  cnoremap <leader>. <C-R>=expand('%:p:h').'/'<cr>
+
 
   " Automatically close opening parenthesis
   Plug 'tmsvg/pear-tree'
+  " if this is 1, closing Braces will be inserted after leaving insert mode
+  " This allows repeating with `.`, but automatic Linters go crazy with this,
+  " so disable it...
+  let g:pear_tree_repeatable_expand = 0
   " Enable Smart pairs
   let g:pear_tree_smart_openers = 1
   let g:pear_tree_smart_closers = 0
@@ -902,6 +933,7 @@ let g:which_key_map = {
   \, 'a'     : {'name': '[a]nyJump mappings'
     \, 'b'   : 'Jump [b]ack'
     \, 'i'   : [':ALEInfo' ,'[A]LE [I]nfo']
+    \, 'd'   : [':ALEDetail' ,'[A]LE [D]etail']
     \, 'f'   : [':ALEFix'  ,'[A]LE [F]ix']
     \, 'l'   : 'show [l]ast search'
     \}
@@ -945,10 +977,6 @@ let g:which_key_map = {
     \, 'k'   : 'go up'
     \ }
   \ }
-
-if has('nvim')
-  lua require'colorizer'.setup()
-endif
 
 " Trim trailing whitespace
 nnoremap <silent> <leader>trim  :%s/\s\+$//<cr>:let @/=''<CR>
