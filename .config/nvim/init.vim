@@ -215,6 +215,10 @@ function! s:SetCursorPosition()
   end
 endfunction
 
+" Opens current file in tab. Better than `:tabe %` because that puts your cursor to line 1,
+" but `:tab split` will keep the cursor position.
+nnoremap <leader>te :tab split<CR>
+
 " Folding
 set foldlevelstart=99
 set foldnestmax=5
@@ -308,9 +312,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " let g:comfortable_motion_scroll_down_key = "j"
   " let g:comfortable_motion_scroll_up_key = "k"
   " Configure scrolling physics
-  let g:comfortable_motion_friction = 200.0
-  let g:comfortable_motion_air_drag = 1.0
-  let g:comfortable_motion_interval = 1000 / 144 " 144 fps scrolling
+  let g:comfortable_motion_friction = 100.0
+  let g:comfortable_motion_air_drag = 5.0
+  let g:comfortable_motion_interval = 1000 / 60 " 60 fps scrolling
   " Smooth scrolling with mousewheel
   " noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(50)<CR>
   " noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-50)<CR>
@@ -331,12 +335,11 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'haya14busa/incsearch.vim'
   let g:incsearch#auto_nohlsearch = 0
   let g:incsearch#consistent_n_direction = 1
-  map /  <Plug>(incsearch-forward)\v
-  map ?  <Plug>(incsearch-backward)\v
-  map g/ <Plug>(incsearch-stay)\v
+  map /  <Plug>(incsearch-forward)
+  map ?  <Plug>(incsearch-backward)
+  map g/ <Plug>(incsearch-stay)
 
   " Fuzzy search with <leader>SEARCH-KEY
-  " Function copied from README. also matches SOME words when they are misspelled
   Plug 'haya14busa/incsearch-fuzzy.vim'
   map <leader>/  <Plug>(incsearch-fuzzy-/)
   map <leader>?  <Plug>(incsearch-fuzzy-?)
@@ -371,7 +374,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Makes the cursor stay in the same position inside the match while iterating over matches.
   " Useful for quick refactorings whene you need to replace part of a word:
   " Example Usage: *cwTYPE-REPLACEMENT<esc>n.n.n.n.n.n.n.
-  let g:asterisk#keeppos = 1
+  " (Turned off now)
+  let g:asterisk#keeppos = 0
 
   " Expand/Shrink current selection around text objects
   " Default is +/_, I added v for expand and <c-v>/- for shrink
@@ -505,6 +509,15 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Meta-Plugin for multiple programming languages, loaded on demand
   Plug 'sheerun/vim-polyglot'
   let g:polyglot_disabled = []
+
+  Plug 'dart-lang/dart-vim-plugin'
+  let g:dart_style_guide = 2
+  let g:dart_format_on_save = 0 " Does not work....
+  let dart_html_in_string=v:true
+  nmap <leader>fd :!flutter dartfmt %
+  " Plug 'natebosch/vim-lsc'
+  " Plug 'natebosch/vim-lsc-dart'
+  " let g:lsc_auto_map = v:true
 
   " Autocompletion with Coc
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -663,6 +676,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ycm_filetype_blacklist['json'] = 1
   let g:ycm_filetype_blacklist['jsonc'] = 1
   let g:ycm_filetype_blacklist['sh'] = 1
+  let g:ycm_filetype_blacklist['zsh'] = 1
+  let g:ycm_filetype_blacklist['dart'] = 1
+  let g:ycm_filetype_blacklist['i3config'] = 1
 
   Plug 'SirVer/ultisnips'
   Plug 'honza/vim-snippets'

@@ -405,3 +405,4 @@ function b() {
 bindkey -s '^B' '^Ab ^M'
 # Bind for when ^A is not bound (vi mode)
 # bindkey -s '^B' '^[Ib ^M'
+alias ho='autorandr ho'
