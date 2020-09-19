@@ -49,7 +49,11 @@ endif
 set noerrorbells                    " no blinking or noises...
 set scrolloff=8                     " Keep X lines around cursor visible when scrolling
 set showmatch                       " Highlight matching (){}[] etc. pairs
-set termguicolors                   " enable true colors support
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors                   " enable true colors support
+endif
 set cmdheight=1                     " Make line below statusbar always 1 line high
 set noshowmode                      " Hide the mode text as airline already shows this
 set showcmd                         " Show partially entered commands in the statusline
