@@ -224,7 +224,7 @@ endfunction
 nnoremap <leader>te :tab split<CR>
 
 " Folding
-set foldlevelstart=99
+set foldlevelstart=1
 set foldnestmax=5
 set foldmethod=indent               " Fold automatically based on indentation level
 " :help foldopen !
@@ -234,6 +234,18 @@ nnoremap zO zczO
 " Space to toggle folds.
 nnoremap <Space> za
 vnoremap <Space> za
+" Easily set foldlevel to get an overview of all attributes of something
+" (Anything above 3 will probably never be used)
+nnoremap <leader>z1 :set foldlevel=1<CR>
+nnoremap <leader>z2 :set foldlevel=2<CR>
+nnoremap <leader>z3 :set foldlevel=3<CR>
+nnoremap <leader>z4 :set foldlevel=4<CR>
+nnoremap <leader>z5 :set foldlevel=5<CR>
+nnoremap <leader>z6 :set foldlevel=6<CR>
+nnoremap <leader>z7 :set foldlevel=7<CR>
+nnoremap <leader>z8 :set foldlevel=8<CR>
+nnoremap <leader>z9 :set foldlevel=9<CR>
+nnoremap <leader>z0 :set foldlevel=0<CR>
 
 " Abbreviations
 iabbrev :ldis: ಠ_ಠ
@@ -675,6 +687,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Turn off ycm for specific programming languages (to use coc instead)
   " let g:ycm_filetype_blacklist['typescript'] = 1
   " let g:ycm_filetype_blacklist['python'] = 1
+  let g:ycm_filetype_blacklist['firestore'] = 1
   let g:ycm_filetype_blacklist['ruby'] = 1
   let g:ycm_filetype_blacklist['vim'] = 1
   let g:ycm_filetype_blacklist['json'] = 1
@@ -855,6 +868,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   autocmd filetype * let g:any_jump_ignored_files = ['*.tmp', '*.temp', '*.swp']
   " Ignore definitions/references in JavaScript files while editing TypeScript
   autocmd filetype typescript call add(g:any_jump_ignored_files, '*.js')
+  Plug 'delphinus/vim-firestore'
 
   " Jump to definition under cursor/of selection
   " Also turn colorcolumn off in the result window

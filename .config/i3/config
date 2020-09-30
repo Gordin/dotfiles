@@ -294,8 +294,10 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 10 -steps 100 -time 50
 
 # screenshot
 # Multy_key = PrntScr...
-bindsym Multi_key --release exec scrot '%Y-%m-%d_%H-%M-%S.png' -e 'mv $f ~/pictures/screenshots/'
-bindsym Ctrl+Multi_key --release exec scrot '%Y-%m-%d_%H-%M-%S.png' -s -e 'mv $f ~/pictures/screenshots/'
+# bindsym Multi_key --release exec scrot '%Y-%m-%d_%H-%M-%S.png' -e 'mv $f ~/pictures/screenshots/'
+# bindsym Ctrl+Multi_key --release exec scrot '%Y-%m-%d_%H-%M-%S.png' -s -e 'mv $f ~/pictures/screenshots/'
+bindsym Multi_key --release exec flameshot screen -p ~/pictures/screenshots/
+bindsym $win+Multi_key --release exec flameshot gui
 
 # set primary gruvbox colorscheme colors
 set $bg #282828
