@@ -21,6 +21,7 @@ if !has('nvim')
 endif
 
 " This changes the shape of the cursor depending on the current mode.
+" Insert Mode will be a line, normal mode will be a block.
 " Different config is needed for gvim, neovim and vim.
 if has("gui_running") || has("nvim")
   " Controls cursor blinking and shapes for gvim and neovim
@@ -46,7 +47,8 @@ else
 endif
 
 " Visual stuff
-set noerrorbells                    " no blinking or noises...
+set visualbell                      " Blink when errors happen instead of making a sound
+set vb t_vb=                        " Also disable the blinking...
 set scrolloff=8                     " Keep X lines around cursor visible when scrolling
 set showmatch                       " Highlight matching (){}[] etc. pairs
 if exists('+termguicolors')
@@ -73,6 +75,47 @@ set listchars+=extends:>        " The character to show in the last column when 
                                 " line continues beyond the right of the screen
 set listchars+=precedes:<       " The character to show in the first column when wrap is off and
                                 " the line continues beyond the left of the screen
+set conceallevel=2
+
+" These function let you select and copy stuff from terminal vim, by disabling vims mouse mappings,
+" and hiding everything you don't want to copy, like line numbers, diff signs, line end markers,
+" etc. It also toggles "paste" mode, which let's you paste stuff into vim witout it messing up the
+" formatting
+let g:mouse_select = 0
+fun! EnableMouseSelection()
+  let g:mouse_select = 1
+  set nolist
+  set nonumber
+  set norelativenumber
+  set mouse=
+  set signcolumn=no
+  set conceallevel=0
+  set paste
+endf
+
+fun! DisableMouseSelection()
+  let g:mouse_select = 0
+  set list
+  set number
+  set relativenumber
+  set mouse=nvi
+  set signcolumn=auto
+  set conceallevel=2
+  set nopaste
+endf
+
+fun! ToggleMouseSelection()
+    if g:mouse_select
+        call DisableMouseSelection()
+    else
+        call EnableMouseSelection()
+    endif
+endf
+
+" [T]oggle [M]ouse mode
+nnoremap <leader>tm :silent call ToggleMouseSelection()<CR>
+" Map right mouse button to toggle mouse selection.
+noremap <RightMouse> <esc>:call ToggleMouseSelection()<CR>
 
 " diffs
 " Add filler lines in diffs and open diffsplit to the left
@@ -107,18 +150,24 @@ else
   endif
 endif
 
-set mouse=nvir                      " Enable mouse controls
-                                    " nvir is the same as [a]ll without command mode.
-                                    " This allows the mouse to act like it normally would in a
-                                    " Terminal when you are in `:` Command mode
+set mouse=nvi                      " Enable mouse controls
+                                   " nvi means mouse is hadled by vime only whene in [n]ormal,
+                                   " [v]isual and [i]nsert mode.
+                                   " This allows the mouse to act like it normally would in a
+                                   " Terminal when you are in `:` Command mode or if a
+                                   " Command output window is open
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
 set updatetime=10
 set splitbelow                      " open vertical splits below current buffer
 set splitright                      " open horizontal splits right of current buffer
-" don't select the newline with $ in visual mode (to $d in visual without deleting the newline)
+" don't select the newline with $ in visual mode. This allows you to use $d in visual mode to expand
+" your selection to the end of the line and delete, without pulling the next line up. Also lets you
+" expand your selection to the end of line and copy without the newline with $y
 vnoremap $ $h
+" enter [v]isual [b]lock mode
+nnoremap <leader>vb <c-q>
 
 " Indentation settings
 set tabstop=4 softtabstop=4         " Show tabs as 4 spaces and make 4 spaces == <tab> for commands
@@ -127,7 +176,7 @@ set smarttab                        " Makes <tab> insert `shiftwidth` amount of 
 set expandtab                       " Put multiple spaces instead of <TAB>s
 set autoindent                      " copy indent from current line when starting a new line
 set smartindent                     " be more context-aware than `autoindent`
-set matchpairs+=<:>                 " Adds <> to list of bracket pairs
+set matchpairs+=<:>                 " Adds <> to list of bracket pairs you can jump between with %
 set nojoinspaces                    " Put (max) 1 space between words when joining 2 lines with `J`
 " Keep cursor at the same position when joining lines with J
 nnoremap J mzJ`z
@@ -137,8 +186,8 @@ set wildmenu            " Completion for :Ex mode. Show list instead of just com
 set wildmode=full,full  " Command <Tab> completion, Show all matches, cycle through with <tab>
 set wildchar=<tab>      " Make sure Tab starts wildmode
 set wildignorecase      " ignore case in wildmode
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Ignore typical Linux/MacOSX files we don't care about
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Ignore typical Windows files we don't care about
 
 " Resize splits when the window is resized
 autocmd VimResized * exe "normal! \<c-w>="
@@ -841,6 +890,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
         \ 'typescript': [ 'tsserver', 'tslint' ],
         \ 'python': ['flake8', 'mypy'],
         \ 'sh': ['shell', 'shellcheck'],
+        \ 'zsh': ['shell', 'shellcheck'],
         \ }
   let g:ale_completion_tsserver_autoimport = 1
   " let g:ale_completion_enabled = 1
@@ -1019,9 +1069,55 @@ nnoremap <silent> <leader>trim  :%s/\s\+$//<cr>:let @/=''<CR>
 set spelllang=de_20,en          " German and English spellchecking
 set nospell                     " disable spellchecking on startup
 
+" Sometimes using 16bit colors in vim will reset the themes set by base16.
+" This function checks if base16 is used, and activates the base16 theme again.
+function! s:RestoreBase16()
+  if !empty($BASE16_THEME) && filereadable($BASE16_SHELL .. "/profile_helper.sh")
+    :silent !eval "$("$BASE16_SHELL/profile_helper.sh")"
+  endif
+endfunction
+
+" This function removes the background color from a given highlight group, so that the background is
+" the same as for text. I wrote this specifically for the "NonText" highlight group that is used for
+" listchars, because in many colorschemes listchars have a different background and it makes
+" everything look bad...
+function! s:ResetBackground(group)
+  let output = execute('hi ' . a:group)
+  " build a command line to execute from the current highlight setting
+  let result = 'highlight! ' .. a:group .. matchstr(output, '\( \w\+=\w\+\)\+')
+  " remove ctermbg and guibg from the command
+  let result = substitute(result, 'ctermbg=\w\+', "", "")
+  let result = substitute(result, 'guibg=\w\+', "", "")
+  " Execute the line once with the backgrounds set to NONE. If I execute just the second line,
+  " for some reason the background colors are still there even though the highlight command should
+  " completely overwrite the setting...
+  execute(result .. ' ctermbg=NONE guibg=NONE')
+  execute(result)
+
+  " Some Highlight groups are linked to other Groups (They inherit settings from a different group)
+  " This gets the currently linked group. (This code probably only works for 0 or 1 linked
+  " group...)
+  let link = get(matchlist(output, '\( links to \(\w\+\)\)\+'), 2, 0)
+  " If there is a link, create and run a command that sets the link again, because it was removed
+  " by the prevous commands
+  if len(link) > 1
+    let linkline = 'highlight! link ' .. a:group .. " " .. link
+    execute(linkline)
+  endif
+endfunction
+
+" nnoremap <f9> :call <SID>ResetBackground("NonText")<CR>
+augroup colorschemes
+  autocmd!
+  autocmd ColorScheme * call s:ResetBackground("NonText")
+  autocmd ColorScheme * call s:RestoreBase16()
+augroup END
+
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 set background=dark                 " Use dark background for color schemes
 silent! colorscheme gruvbox
+" silent! color Atelier_CaveLight
+
 " silent! colorscheme getafe
 " silent! colorscheme ayu
 " silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
