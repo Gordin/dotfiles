@@ -189,7 +189,11 @@ if [ "`hostname`" = workelch ]; then
 else
   # nothing
 fi
-alias ssh='if ssh-add -l 1>/dev/null; then; else ssh-add -t 600; fi; ssh'
+# alias ssh='if ssh-add -l 1>/dev/null; then; else ssh-add -t 600; fi; ssh'
+export HOSTNAME=$(hostname)
+SSH_KEYS="$HOME/.ssh/id_rsa"
+keychain -q --nogui $(echo $SSH_KEYS)
+source "$HOME/.keychain/$HOSTNAME-sh"
 
 if [ -x "$(command -v exa)"  ]; then
   alias l='exa -l'
@@ -406,3 +410,5 @@ bindkey -s '^B' '^Ab ^M'
 # Bind for when ^A is not bound (vi mode)
 # bindkey -s '^B' '^[Ib ^M'
 alias ho='autorandr ho'
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
