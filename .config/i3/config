@@ -10,7 +10,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id setxkbmap -layout us,de -variant dvorak-alt-intl,  -option caps:escape,compose:prsc,grp_led:caps,compose:prsc
 # exec --no-startup-id setxkbmap -layout us,de -variant dvorak-alt-intl,  -option caps:escape,compose:prsc,grp_led:caps,grp:win_space_toggle,compose:prsc
 exec --no-startup-id dropbox
-exec --no-startup-id redshift-gtk
+exec --no-startup-id redshift-gtk -l 50.9425854:6.9318307
 exec --no-startup-id xautolock -detectsleep \
   -time 5 -locker "bash -c 'xset dpms force off && i3lock -d -c 000000'"
   # -notify 30tmttt
@@ -88,8 +88,10 @@ for_window [class="^mpv$"] border pixel 0
 for_window [title="^nmtui$"] floating toggle; border none
 
 # start a terminal
-# bindsym $win+Return exec kitty
+# bindsym $win+Return exec alacritty
+# bindsym $win+Return exec konsole
 bindsym $win+Return exec kitty
+# bindsym $win+Return exec gnome-terminal
 bindsym $win+Shift+Return exec gnome-terminal
 
 # turn display off and lock the screen

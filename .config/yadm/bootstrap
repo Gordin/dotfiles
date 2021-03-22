@@ -129,11 +129,17 @@ if ! [ -x "$(command -v shellcheck)" ]; then
   brew install shellcheck --force-bottle
 fi
 
+# Install ruby stuff if ruby is available
+if ! [ -x "$(command -v gem)" ]; then
+  gem install rubocop pry pry-byebug coderay
+  gem update
+fi
+
 # Install lua
-brew install lua luarocks
+# brew install lua luarocks
 
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 # shellcheck source=../../.config/nvm/nvm.sh # shellcheck can't resolve ~ or $HOME for some reason
 \. "${XDG_CONFIG_HOME}/nvm/nvm.sh" 2> /dev/null || true # This loads nvm
 # Ignore the errors from loading nvm because it errors out if the current version isn't set right

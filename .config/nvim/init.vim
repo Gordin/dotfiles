@@ -3,6 +3,9 @@ if &compatible
 endif
 syntax on
 
+" let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
+let $NVIM_COC_LOG_LEVEL = 'debug'
+
 " Set <leader> to ,
 " The leader key has to be set BEFORE mapping anything to <leader> for the which-key plugin to work
 let mapleader = ","
@@ -235,6 +238,9 @@ nmap <silent> <leader>hl :set invhlsearch<CR>
 " Paste current search
 nmap <leader>p/ "/p
 
+" Copies current file path (relative to repo) into default register
+nmap <silent>y% :call yoink#manualYank(@%)<CR>
+
 " Movement
 " Change tab with <leader>[T]ab H/L
 nnoremap <leader>th :tabprevious<CR>
@@ -353,6 +359,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:startify_commands = [
     \  {',z': ['Edit zshrc',                 'e $HOME/.zshrc']}
     \, {',v': ['Edit vimrc',                 'e $MYVIMRC']}
+    \, {',t': ['Edit tmux config',           'e $HOME/.config/tmux/tmux.conf']}
     \, {',g': ['Edit git config',            'e $HOME/.gitconfig']}
     \, {',s': ['Edit ssh config',            'e $HOME/.ssh/config']}
     \, {',i': ['Edit i3 config',             'e $HOME/.config/i3/config']}
@@ -473,12 +480,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
   endfunction
   autocmd VimEnter * call TempKeywords()
 
+  Plug 'puremourning/vimspector'
+  let g:vimspector_enable_mappings = 'HUMAN'
 
   " Find stuff
   " I install fzf outside of vim anyway so I don't need the next line
-  " Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
+  Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
   Plug 'junegunn/fzf.vim'
-  Plug '~/.fzf'
+  " Plug '~/.fzf'
   " Addon to search in the quickfix window
   Plug 'fszymanski/fzf-quickfix', {'on': 'Quickfix'}
   " Fuzy search in code in current file
@@ -490,6 +499,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Fuzzy search in code in project
   nnoremap <leader>fc :norm <leader>rg<cr>
   nnoremap <leader>rg :Rg<cr>
+
+  " This is commented out becaus for some reason this does not match fuzzy any more -_-
   " The default :Rg command matches filenames AND Code, this redefined version only matches code
   " This is just copied from the fzf help section `fzf-vim-example-advanced-ripgrep-integration`
   " I have no idea why this one doesn't match the filenames, but it doesn't...
@@ -501,6 +512,15 @@ silent! if plug#begin('~/.config/nvim/plugged')
   "   call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
   " endfunction
   " command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
+
+  " Doesn't work yet
+  " function! NoJSFiles(query, fullscreen)
+  "   let command_fmt = 'fd --type f --exclude *.js --exclude .* || true'
+  "   let initial_command = printf(command_fmt, shellescape(a:query))
+  "   let spec = {'options': ['--phony', '--query', a:query, '--bind']}
+  "   call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+  " endfunction
+  " command! -bang Files call NoJSFiles(<q-args>, <bang>0)
 
 
   " Allows to interactively align code (like on : as in the lines above)
@@ -530,6 +550,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
     autocmd BufEnter */coc-settings.json set ft=jsonc
   augroup end
 
+  Plug 'ekalinin/Dockerfile.vim'
 
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Can browse through everything in a git repo
@@ -610,7 +631,10 @@ silent! if plug#begin('~/.config/nvim/plugged')
               \, 'coc-ultisnips'
               \, 'coc-rust-analyzer'
               \, 'coc-rls'
+              \, 'coc-solargraph'
               \, 'coc-vimlsp'
+              \, 'coc-flutter'
+              \, 'coc-flutter-tools'
               \]
   " Use K to show documentation in preview window.
   " (Only needed in neovim, in vim this is always shown for stuff under the cursor)
@@ -652,7 +676,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
     autocmd BufEnter *.rs       call YcmMappings()
 
     autocmd filetype typescript let b:coc_suggest_disable=1
-    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "trigger")
+    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "never")
     autocmd BufEnter *.ts       call YcmMappings()
   augroup end
 
@@ -686,6 +710,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Refactoring stuff.
   nmap <leader>rn <Plug>(coc-rename)
   nmap <leader>coa <Plug>(coc-codeaction)
+  nmap <leader>qf <Plug>(coc-codeaction)
   nmap <leader>cl <Plug>(coc-codelens-action)
   nmap <leader>rf <Plug>(coc-refactor)
 
@@ -871,8 +896,10 @@ silent! if plug#begin('~/.config/nvim/plugged')
   nmap <silent> <C-k> <Plug>(ale_previous_wrap)
   nmap <silent> <C-j> <Plug>(ale_next_wrap)
   " Configure how errors/warnings are shown in the sidebar
-  let g:ale_sign_error           = 'E>'
-  let g:ale_sign_warning         = 'W>'
+  let g:ale_sign_error           = ' ⚠'
+  highlight ALEWarning ctermbg=Yellow
+  let g:ale_sign_warning         = ' ⚠'
+  highlight ALEError ctermbg=Red
   " Configure how errors/warnings are shown in the statusbar
   let g:ale_echo_msg_error_str   = 'Error'
   let g:ale_echo_msg_warning_str = 'Warning'
@@ -968,7 +995,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " so disable it...
   let g:pear_tree_repeatable_expand = 0
   " Enable Smart pairs
-  let g:pear_tree_smart_openers = 1
+  let g:pear_tree_smart_openers = 0
   let g:pear_tree_smart_closers = 0
   let g:pear_tree_smart_backspace = 1
   " If enabled, smart pair functions timeout after 60ms:

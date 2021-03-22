@@ -4,6 +4,7 @@ stty ixoff -ixon
 stty stop undef
 stty start undef
 
+export EDITOR=vim
 export XDG_CONFIG_HOME=$HOME/.config
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/"
@@ -200,7 +201,8 @@ if [ -x "$(command -v exa)"  ]; then
   alias la='exa -la'
 fi
 
-
+export PATH=/opt/flutter/bin:$PATH
+export PATH=${HOME}/.gem/ruby/2.7.0/bin:$PATH
 export PATH=${HOME}/.local/bin:$PATH
 export PATH=${HOME}/.config/bin:$PATH
 export PATH="${HOME}/.pub-cache/bin:$PATH"
@@ -347,6 +349,7 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 # b X<ENTER> to cd to the first thing that (fuzzy) matches X in your bookmarks
 # <ctrl+b> is a shortcut to `b SOMETHING<ENTER>`
 # You can type `X<ctrl+b>` and you will cd to the best (fuzzy) match of X in your bookmarks
+# Also works when you already started typing `cd XXXX`, it only looks at the last argument
 #
 # Works very well with just 1 or 2 keys before pressing <ctrl+b>
 #
@@ -406,9 +409,11 @@ function b() {
     }
 }
 # Bind for when ^A is bound (default)
-bindkey -s '^B' '^Ab ^M'
+# bindkey -s '^B' '^Ab ^M'
+bindkey -M viins -s ',b' '^Ab ^M'
 # Bind for when ^A is not bound (vi mode)
 # bindkey -s '^B' '^[Ib ^M'
+# bindkey -M viins -s ',b' '^[Ib ^M'
 alias ho='autorandr ho'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
