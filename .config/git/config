@@ -10,9 +10,9 @@
 [difftool "default-difftool"]
     cmd = vimdiff $LOCAL $REMOTE
 [alias]
-	co = checkout
-	st = status
-	cached = diff --cached
+    co = checkout
+    st = status
+    cached = diff --cached
 [alias]
     staged = diff --staged
     cached = diff --cached
@@ -43,6 +43,6 @@
 [merge]
     tool = vimdiff
 [pull]
-    rebase = true
+    rebase = false
 [core]
     editor = nvim

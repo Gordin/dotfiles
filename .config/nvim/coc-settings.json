@@ -12,6 +12,9 @@
     "python.linting.enabled": false,
     // Always forward diagnostic data to ALE
     "diagnostic.displayByAle": true,
+    "suggest.timeout": 5000,
+    "coc.preferences.highlightTimeout": 500,
+    "diagnostic.messageDelay": 200,
     "languageserver": {
         "vimls": { // Copied from https://github.com/iamcco/vim-language-server#config
             "command": "vim-language-server",
