@@ -128,7 +128,8 @@ Initialization options:
   %B-a%b|%B--autoload%b <func_name>  Autoload specified function. Default: all valid names inside the
                              module's specified fpath paths.
   %B-s%b|%B--source%b <file_path>    Source specified file. The file path is relative to the module root
-                             directory. Default: the file with largest size matching
+                             directory. Default: %Binit.zsh%b, if the %Bfunctions%b subdirectory also
+                             exists, or the file with largest size matching
                              %B{init.zsh,module_name.{zsh,plugin.zsh,zsh-theme,sh}}%b, if any exist.
   %B-c%b|%B--cmd%b <command>         Execute specified command. Occurrences of the %B{}%b placeholder in the
                              command are substituted by the module root directory path.
@@ -137,12 +138,12 @@ Initialization options:
 "
   if [[ ${${funcfiletrace[1]%:*}:t} != .zimrc ]]; then
     print -u2 -PR "%F{red}${0}: Must be called from %B${ZDOTDIR:-${HOME}}/.zimrc%b%f"$'\n\n'${zusage}
-    return 1
+    return 2
   fi
   if (( ! # )); then
     print -u2 -PR "%F{red}x ${funcfiletrace[1]}: Missing zmodule url%f"$'\n\n'${zusage}
     _zfailed=1
-    return 1
+    return 2
   fi
   setopt LOCAL_OPTIONS CASE_GLOB EXTENDED_GLOB
   local zmodule=${1:t} zurl=${1}
@@ -164,7 +165,7 @@ Initialization options:
     if (( # < 2 )); then
       print -u2 -PR "%F{red}x ${funcfiletrace[1]}:%B${zmodule}:%b Missing argument for zmodule option ${1}%f"$'\n\n'${zusage}
       _zfailed=1
-      return 1
+      return 2
     fi
     shift
     zmodule=${1}
@@ -181,7 +182,7 @@ Initialization options:
         if (( # < 2 )); then
           print -u2 -PR "%F{red}x ${funcfiletrace[1]}:%B${zmodule}:%b Missing argument for zmodule option ${1}%f"$'\n\n'${zusage}
           _zfailed=1
-          return 1
+          return 2
         fi
         ;;
     esac
@@ -221,7 +222,7 @@ Initialization options:
       *)
         print -u2 -PR "%F{red}x ${funcfiletrace[1]}:%B${zmodule}:%b Unknown zmodule option ${1}%f"$'\n\n'${zusage}
         _zfailed=1
-        return 1
+        return 2
         ;;
     esac
     shift
@@ -239,15 +240,24 @@ Initialization options:
         _zfailed=1
         return 1
       fi
-      if (( ! ${#zfpaths} )) zfpaths+=(${zdir}/functions(NF))
+      local -ra prezto_fpaths=(${zdir}/functions(NF))
+      local -ra prezto_scripts=(${zdir}/init.zsh(N))
+      if (( ! ${#zfpaths} && ! ${#zcmds} && ${#prezto_fpaths} && ${#prezto_scripts} )); then
+        # this follows the prezto module format, no need to check for other scripts
+        zfpaths=(${prezto_fpaths})
+        zcmds=("source ${^prezto_scripts[@]:A}")
+      else
+        if (( ! ${#zfpaths} )) zfpaths=(${prezto_fpaths})
+        if (( ! ${#zcmds} )); then
+          # get script with largest size (descending `O`rder by `L`ength, and return only `[1]` first)
+          local -r zscript=(${zdir}/(init.zsh|${zmodule:t}.(zsh|plugin.zsh|zsh-theme|sh))(NOL[1]))
+          zcmds=("source ${^zscript[@]:A}")
+        fi
+      fi
       if (( ! ${#zfunctions} )); then
         # _* functions are autoloaded by compinit
         # prompt_*_setup functions are autoloaded by promptinit
-        zfunctions+=(${^zfpaths}/^(*~|*.zwc(|.old)|_*|prompt_*_setup)(N-.:t))
-      fi
-      if (( ! ${#zcmds} )); then
-        local -r zscript=(${zdir}/(init.zsh|${zmodule:t}.(zsh|plugin.zsh|zsh-theme|sh))(NOL[1]))
-        zcmds+=("source ${^zscript[@]:A}")
+        zfunctions=(${^zfpaths}/^(*~|*.zwc(|.old)|_*|prompt_*_setup)(N-.:t))
       fi
       if (( ! ${#zfpaths} && ! ${#zfunctions} && ! ${#zcmds} )); then
         print -u2 -PR "%F{yellow}! ${funcfiletrace[1]}:%B${zmodule}:%b Nothing found to be initialized. Customize the module name or initialization with %Bzmodule%b options.%f"$'\n\n'${zusage}
@@ -281,9 +291,9 @@ _zimfw_version_check() {
     local -r ztarget=${ZIM_HOME}/.latest_version
     # If .latest_version does not exist or was not modified in the last 30 days
     if [[ -w ${ztarget:h} && ! -f ${ztarget}(#qNm-30) ]]; then
-      command git ls-remote --tags --refs https://github.com/zimfw/zimfw.git 'v*' | \
-          command sed 's?^.*/v??' | command sort -n -t. -k1,1 -k2,2 -k3,3 | \
-          command tail -n1 >! ${ztarget} &!
+      # Get latest version (get all `v*` tags from repo, delete `*v` from beginning, sort in descending `O`rder
+      # `n`umerically, and get the `[1]` first)
+      print ${${(On)${(f)"$(command git ls-remote --tags --refs https://github.com/zimfw/zimfw.git 'v*')"}##*v}[1]} >! ${ztarget} &!
     fi
     if [[ -f ${ztarget} ]]; then
       local -r zlatest_version=$(<${ztarget})
@@ -319,7 +329,7 @@ _zimfw_compile() {
 }
 
 _zimfw_info() {
-  print -R 'zimfw version: '${_zversion}' (built at 2021-01-07 18:39:43 UTC, previous commit is bcae8c0)'
+  print -R 'zimfw version: '${_zversion}' (built at 2021-03-19 23:42:38 UTC, previous commit is 163d36b)'
   print -R 'ZIM_HOME:      '${ZIM_HOME}
   print -R 'Zsh version:   '${ZSH_VERSION}
   print -R 'System info:   '$(command uname -a)
@@ -366,7 +376,7 @@ _zimfw_upgrade() {
 }
 
 zimfw() {
-  local -r _zversion='1.4.0'
+  local -r _zversion='1.4.3'
   local -r zusage="Usage: %B${0}%b <action> [%B-q%b|%B-v%b]
 
 Actions:
@@ -392,14 +402,14 @@ Options:
   local -i _zprintlevel=1
   if (( # > 2 )); then
      print -u2 -PR "%F{red}${0}: Too many options%f"$'\n\n'${zusage}
-     return 1
+     return 2
   elif (( # > 1 )); then
     case ${2} in
       -q) _zprintlevel=0 ;;
       -v) _zprintlevel=2 ;;
       *)
         print -u2 -PR "%F{red}${0}: Unknown option ${2}%f"$'\n\n'${zusage}
-        return 1
+        return 2
         ;;
     esac
   fi
@@ -436,7 +446,7 @@ readonly MODULE=\${1}
 readonly DIR=\${2}
 readonly URL=\${3}
 readonly TYPE=\${4:=branch}
-readonly REV=\${5:=HEAD}
+REV=\${5}
 readonly -i PRINTLEVEL=\${6}
 readonly CLEAR_LINE=$'\E[2K\r'
 if (( PRINTLEVEL > 0 )) print -Rn \${CLEAR_LINE}\"Updating \${MODULE} ...\"
@@ -452,15 +462,22 @@ if [[ \${URL} != \$(command git config --get remote.origin.url) ]]; then
   print -u2 -PR \${CLEAR_LINE}\"%F{red}x %B\${MODULE}:%b URL does not match. Expected \${URL}. Will not try to update.%f\"
   return 1
 fi
+if ! ERR=\$(command git fetch -pq origin 2>&1); then
+  print -u2 -PR \${CLEAR_LINE}\"%F{red}x %B\${MODULE}:%b Error during git fetch%f\"$'\n'\${(F):-  \${(f)^ERR}}
+  return 1
+fi
 if [[ \${TYPE} == tag ]]; then
   if [[ \${REV} == \$(command git describe --tags --exact-match 2>/dev/null) ]]; then
     if (( PRINTLEVEL > 0 )) print -PR \${CLEAR_LINE}\"%F{green})%f %B\${MODULE}:%b Already up to date\"
     return 0
   fi
-fi
-if ! ERR=\$(command git fetch -pq origin \${REV} 2>&1); then
-  print -u2 -PR \${CLEAR_LINE}\"%F{red}x %B\${MODULE}:%b Error during git fetch%f\"$'\n'\${(F):-  \${(f)^ERR}}
-  return 1
+elif [[ -z \${REV} ]]; then
+  # Get HEAD remote branch
+  if ! ERR=\$(command git remote set-head origin -a 2>&1); then
+    print -u2 -PR \${CLEAR_LINE}\"%F{red}x %B\${MODULE}:%b Error during git remote set-head%f\"$'\n'\${(F):-  \${(f)^ERR}}
+    return 1
+  fi
+  REV=\${\$(command git symbolic-ref --short refs/remotes/origin/HEAD)#origin/} || return 1
 fi
 if [[ \${TYPE} == branch ]]; then
   LOG_REV=\${REV}@{u}
@@ -482,14 +499,13 @@ if [[ \${TYPE} == branch ]]; then
 else
   OUT=\"Updating to \${TYPE} \${REV}\"
 fi
-if ERR=\$(command git submodule update --init --recursive -q 2>&1); then
-  if (( PRINTLEVEL > 0 )); then
-    if [[ -n \${LOG} ]] OUT=\${OUT}$'\n'\${(F):-  \${(f)^LOG}}
-    print -PR \${CLEAR_LINE}\"%F{green})%f %B\${MODULE}:%b \${OUT}\"
-  fi
-else
+if ! ERR=\$(command git submodule update --init --recursive -q 2>&1); then
   print -u2 -PR \${CLEAR_LINE}\"%F{red}x %B\${MODULE}:%b Error during git submodule update%f\"$'\n'\${(F):-  \${(f)^ERR}}
   return 1
+fi
+if (( PRINTLEVEL > 0 )); then
+  if [[ -n \${LOG} ]] OUT=\${OUT}$'\n'\${(F):-  \${(f)^LOG}}
+  print -PR \${CLEAR_LINE}\"%F{green})%f %B\${MODULE}:%b \${OUT}\"
 fi
 "
       ;;
@@ -525,7 +541,7 @@ fi
     version) print -PR ${_zversion} ;;
     *)
       print -u2 -PR "%F{red}${0}: Unknown action ${1}%f"$'\n\n'${zusage}
-      return 1
+      return 2
       ;;
   esac
 }

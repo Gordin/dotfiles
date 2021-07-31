@@ -119,7 +119,7 @@ fi
 
 # Install hub (Github Client) binary if it's not available
 if ! [ -x "$(command -v hub)" ]; then
-  brew install ncurses util-linux hub --force-bottle
+  brew install ncurses util-linux gettext hub --force-bottle
   # ncurses and util-linux are dependencies and brew tries to build them without installing them
   # explicitly with --force-bottle
 fi
@@ -178,7 +178,7 @@ mkdir -p "$VIM_DIR/undodir"
 mkdir -p "$VIM_DIR/tmp/backup"
 # Install neovim if it's missing
 if ! [ -x "$(command -v nvim)" ]; then
-  brew install nvim --force-bottle
+  brew install nvim --HEAD
 fi
 # Install plugins. Don't update here because YouCompleteMe Plugin can take a long time
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'

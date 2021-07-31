@@ -165,7 +165,7 @@ alias scpd='scp -r'
 alias rmd='rm -rf'
 alias lS='l -Sr --group-directories-first'
 alias :q=exit
-alias vim='vim -O'
+alias vim='nvim -O'
 alias agv='vim $(ag --nobreak --nonumbers --noheading . | fzf | sed "s/^\([^:]*\).*$/\1/")'
 alias rgv='vim $(rg -N --no-heading --color never . | fzf | sed "s/^\([^:]*\).*$/\1/")'
 

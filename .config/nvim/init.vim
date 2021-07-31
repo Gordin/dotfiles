@@ -385,6 +385,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   nnoremap <silent> <leader>ST :vsp<cr>:Startify<cr>
   nnoremap <silent> <leader>st :Startify<cr>
 
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
   " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
   " (Useful for copypasting files from stacktraces or searches
   Plug 'kopischke/vim-fetch'
