@@ -9,6 +9,7 @@ let mapleader = ","
 let maplocalleader = ","
 
 
+" Use python from special virtual environments just for vim (if it's there)
 if filereadable(expand('~/.config/pyenv/versions/neovim2/bin/python'))
   let g:python_host_prog = '~/.config/pyenv/versions/neovim2/bin/python'
 endif
@@ -16,7 +17,8 @@ if filereadable(expand('~/.config/pyenv/versions/neovim3/bin/python'))
   let g:python3_host_prog = '~/.config/pyenv/versions/neovim3/bin/python'
 endif
 
-if !has('nvim')
+" Use custom lua interpreter (neovim doesn't need it)
+if !has('nvim') && filereadable(expand('~/.config/lib/liblua.so'))
   set luadll=~/.config/lib/liblua.so
 endif
 
@@ -30,8 +32,8 @@ if has("gui_running") || has("nvim")
         \,sm:block-blinkwait500-blinkoff200-blinkon500
 else
   " Taken and adapted from https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
-  " This probably does not works on all terminals, but it works on "Windows Terminal", so I assume
-  " it will work in most cases. I removed the `redraw!` from all the lines because that made my
+  " This probably does not work on all terminals, but it works on "Windows Terminal", so I assume
+  " it will work in most cases. I removed the `redraw!` from the example  because that made my
   " terminal flash each time I entered/left INSERT mode.
   augroup cursorshape
     autocmd!
@@ -48,13 +50,14 @@ endif
 
 " Visual stuff
 set visualbell                      " Blink when errors happen instead of making a sound
-set vb t_vb=                        " Also disable the blinking...
-set scrolloff=8                     " Keep X lines around cursor visible when scrolling
+set vb t_vb=                        " Also disable the blinking, I don't want any bell...
+set scrolloff=8                     " Keep X lines around cursor visible when scrolling up/down
 set showmatch                       " Highlight matching (){}[] etc. pairs
+" enable true colors support if available
 if exists('+termguicolors')
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors                   " enable true colors support
+  set termguicolors
 endif
 set cmdheight=1                     " Make line below statusbar always 1 line high
 set noshowmode                      " Hide the mode text as airline already shows this
@@ -62,7 +65,7 @@ set showcmd                         " Show partially entered commands in the sta
 set shortmess+=c                    " Don't show autocompletion stuff in statusbar.
 set laststatus=2                    " Always show the statusline
 set ruler                           " Show the line and column number of the cursor position,
-set cursorline                      " Highlight the line with the cursor
+set cursorline                      " Highlight the line where the cursor is
 set mousehide                       " Hide the mouse cursor while typing (works only in gvim?)
 
 " Listchars
@@ -70,17 +73,24 @@ set list                        " enable listchars
 set listchars=""                " Reset the listchars
 set listchars=tab:»\            " a tab should display as "»"
 set listchars+=trail:…          " show trailing spaces as "…"
-set listchars+=eol:¬            " show line break
+set listchars+=eol:¬            " show line breaks as "¬"
 set listchars+=extends:>        " The character to show in the last column when wrap is off and the
                                 " line continues beyond the right of the screen
 set listchars+=precedes:<       " The character to show in the first column when wrap is off and
                                 " the line continues beyond the left of the screen
-set conceallevel=2
+set conceallevel=2              " Enable "conceal". Poor mans WYSIWYG. Does something different for
+                                " different languages. For example in Markdown, can show
+                                " "*ABC*" as just "ABC", but actually with a bold font or in python
+                                " "\lambda" can be shown as "λ" (with the right plugins)
 
+" ### "Mouse selection Mode" start ###
+
+" (Should probably extract this as a plugin... )
 " These function let you select and copy stuff from terminal vim, by disabling vims mouse mappings,
-" and hiding everything you don't want to copy, like line numbers, diff signs, line end markers,
+" and hiding everything you don't want to copy like line numbers, diff signs, line end markers,
 " etc. It also toggles "paste" mode, which let's you paste stuff into vim witout it messing up the
 " formatting
+" (Note that this does not save the current values yet, this has to match the rest of the config...)
 let g:mouse_select = 0
 fun! EnableMouseSelection()
   let g:mouse_select = 1
@@ -116,6 +126,8 @@ endf
 nnoremap <leader>tm :silent call ToggleMouseSelection()<CR>
 " Map right mouse button to toggle mouse selection.
 noremap <RightMouse> <esc>:call ToggleMouseSelection()<CR>
+
+" ### "Mouse selection Mode" end ###
 
 " diffs
 " Add filler lines in diffs and open diffsplit to the left
@@ -162,12 +174,11 @@ set mouse=nvi                      " Enable mouse controls
 set updatetime=10
 set splitbelow                      " open vertical splits below current buffer
 set splitright                      " open horizontal splits right of current buffer
+
 " don't select the newline with $ in visual mode. This allows you to use $d in visual mode to expand
 " your selection to the end of the line and delete, without pulling the next line up. Also lets you
 " expand your selection to the end of line and copy without the newline with $y
 vnoremap $ $h
-" enter [v]isual [b]lock mode
-nnoremap <leader>vb <c-q>
 
 " Indentation settings
 set tabstop=4 softtabstop=4         " Show tabs as 4 spaces and make 4 spaces == <tab> for commands
@@ -182,7 +193,7 @@ set nojoinspaces                    " Put (max) 1 space between words when joini
 nnoremap J mzJ`z
 
 " Vim Menu autocompletion
-set wildmenu            " Completion for :Ex mode. Show list instead of just completing
+set wildmenu            " Completion for : mode. Show list instead of just completing
 set wildmode=full,full  " Command <Tab> completion, Show all matches, cycle through with <tab>
 set wildchar=<tab>      " Make sure Tab starts wildmode
 set wildignorecase      " ignore case in wildmode
@@ -804,6 +815,14 @@ silent! if plug#begin('~/.config/nvim/plugged')
     autocmd FileType ruby setlocal tabstop=2
   augroup end
 
+  augroup python_settings
+    autocmd!
+    autocmd FileType python setlocal shiftwidth=4
+    autocmd FileType python setlocal softtabstop=4
+    autocmd FileType python setlocal expandtab
+    autocmd FileType python setlocal tabstop=4
+  augroup end
+
   augroup vim settings
     autocmd!
     autocmd FileType vim setlocal shiftwidth=2
@@ -1053,6 +1072,7 @@ let g:which_key_map = {
     \, 't'   : 'Toggle Hover Tooltips'
     \, 'rim' : [',trim', 't[rim] all trailing whitespace']
     \, 'r'   : {'name': 'which_key_ignore'}
+    \, 'm'   : 'toggle "Mouse selection mode"'
     \ }
   \, 'w'     : { "name" : "[w]indow movement"
     \, 'h'   : 'go left'
