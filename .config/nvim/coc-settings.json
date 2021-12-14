@@ -4,6 +4,9 @@
     "typescript.suggest.enabled": true,
     "typescript.suggestionActions.enabled": false,
     "suggest.keepCompleteopt": false,
+    "typescript.suggest.completeFunctionCalls": false,
+    "typescript.suggest.includeAutomaticOptionalChainCompletions": false,
+    "typescript.suggest.autoImports": true,
     "snippets.loadFromExtensions": false,
     "diagnostic.checkCurrentLine": true,
     "diagnostic.enableSign": true,
@@ -13,8 +16,10 @@
     // Always forward diagnostic data to ALE
     "diagnostic.displayByAle": true,
     "suggest.timeout": 5000,
-    "coc.preferences.highlightTimeout": 500,
     "diagnostic.messageDelay": 200,
+    "solargraph.transport": "stdio",
+    //"tsserver.log": "verbose",
+    //"tsserver.trace.server": "verbose",
     "languageserver": {
         "vimls": { // Copied from https://github.com/iamcco/vim-language-server#config
             "command": "vim-language-server",
