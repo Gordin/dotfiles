@@ -3,8 +3,9 @@ if &compatible
 endif
 syntax on
 
+" let g:node_client_debug = 1
 " let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
-let $NVIM_COC_LOG_LEVEL = 'debug'
+" let $NVIM_COC_LOG_LEVEL = 'debug'
 
 " Set <leader> to ,
 " The leader key has to be set BEFORE mapping anything to <leader> for the which-key plugin to work
@@ -132,7 +133,7 @@ nnoremap <leader>tm :silent call ToggleMouseSelection()<CR>
 " (Can only turn mouse mode off, because with mouse mode off, right click isn't recognized...)
 noremap <silent> <RightMouse> <esc>:call ToggleMouseSelection()<CR>
 
-" ### Mouse selection stuff start ###
+" ### Mouse selection stuff end ###
 
 " diffs
 " Add filler lines in diffs and open diffsplit to the left
@@ -153,7 +154,7 @@ set mouse=nvi                     " Enable mouse controls
                                   " Terminal when you are in `:` Command mode or if a
                                   " Command output window is open
 
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable when doing stuff...
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable delay when doing stuff...
 set updatetime=10
 set splitbelow                      " open vertical splits below current buffer
 set splitright                      " open horizontal splits right of current buffer
@@ -167,8 +168,8 @@ nnoremap <leader>vb <c-q>
 " Indentation settings
 set tabstop=4 softtabstop=4         " Show tabs as 4 spaces and make 4 spaces == <tab> for commands
 set shiftwidth=4                    " Use 4 spaces when changing indentation
-set smarttab                        " Makes <tab> insert `shiftwidth` amount of spaces
 set expandtab                       " Put multiple spaces instead of <TAB>s
+set smarttab                        " Makes <tab> insert `shiftwidth` amount of spaces
 set autoindent                      " copy indent from current line when starting a new line
 set smartindent                     " be more context-aware than `autoindent`
 set matchpairs+=<:>                 " Adds <> to list of bracket pairs you can jump between with %
@@ -248,7 +249,8 @@ nnoremap <leader>wl <c-w>l
 nnoremap <leader>wj <c-w>j
 nnoremap <leader>wk <c-w>k
 " go down or up 1 visual line on wrapped lines instead of line of file. Check the count to only
-" do this without a count. (It will jump over wrapped lines when you give a count)
+" do this without a count. (It will jump over wrapped lines when you give a count, so it works with
+" relative numbers)
 nnoremap <silent><expr> j v:count == 0 ? 'gj' : 'j'
 nnoremap <silent><expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <silent> gj j
@@ -271,7 +273,7 @@ function! s:SetCursorPosition()
   end
 endfunction
 
-" Opens current file in a tab. Better than `:tabe %` because that puts your cursor to line 1,
+" Opens current file again in a tab. Better than `:tabe %` because that puts your cursor to line 1,
 " but `:tab split` will keep the cursor position.
 nnoremap <leader>te :tab split<CR>
 
@@ -357,7 +359,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " \, { 'type': 'bookmarks',                'header': ['   Bookmarks'      ] }
   " I don't use bookmarks because they don't support a description for the file
   let g:startify_bookmarks = []
-  " Edit common config files quickly by opening vim and pressing <leader>X
+  " Edit common config files quickly by just opening vim and pressing <leader>X
   let g:startify_commands = [
     \  {',z': ['Edit zshrc',                 'e $HOME/.zshrc']}
     \, {',v': ['Edit vimrc',                 'e $MYVIMRC']}
@@ -380,7 +382,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " ### vim-fetch start ###
   " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
-  " (Useful for copypasting files from stacktraces or searches
+  " (Useful for copypasting files paths from stacktraces or searches
   Plug 'kopischke/vim-fetch'
   " ### vim-fetch end ###
 
@@ -426,8 +428,13 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Pulses search results when you jump to them. Useful for very dense code
   Plug 'iamFIREcracker/vim-search-pulse'
   let g:vim_search_pulse_mode = 'pattern'
-  let g:vim_search_pulse_duration = 300
-  let g:vim_search_pulse_color_list = [22, 28, 34, 40, 46]
+  let g:vim_search_pulse_duration = 100
+
+  if has("gui_running") || has("nvim")
+    let g:vim_search_pulse_color_list = ["#99ffff", "#ff99ff", "#99ffff", "#ff99ff"]
+  else
+    let g:vim_search_pulse_color_list = [226, 201, 226, 201, 226]
+  endif
   " Disable default mappings becaus we want to combine Pulse with vim-asterisk and incsearch
   let g:vim_search_pulse_disable_auto_mappings = 1
   " This is a fork. Original (seems inactive) (Fork added the Pulse command):
@@ -447,18 +454,12 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " ### vim-asterisk start ###
   Plug 'haya14busa/vim-asterisk'
   " Allows to search for text in visual mode by pressing *
-  " Also has a commend that makes the cursor stay after pressing *
+  " Also has a command that makes the cursor stay after pressing *
   " Map * to stay in place after * and make the search pulse with vim-search-pulse
   map *  <Plug>(asterisk-z*)<Plug>Pulse
   map #  <Plug>(asterisk-z#)<Plug>Pulse
   map g* <Plug>(asterisk-gz*)<Plug>Pulse
   map g# <Plug>(asterisk-gz#)<Plug>Pulse
-
-  " Makes the cursor stay in the same position inside the match while iterating over matches.
-  " Useful for quick refactorings when you need to replace part of a word:
-  " Example Usage: v[select stuff]*cwTYPE-REPLACEMENT<esc>n.n.n.n.n.n.n.
-  " (Turned off now, wasn't that useful...)
-  let g:asterisk#keeppos = 0
   " ### vim-asterisk end ###
 
   " ### vim-expend-region start ###
@@ -476,16 +477,31 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Plug 'terryma/vim-expand-region'
   " ### vim-expend-region end ###
 
-  " ### simple_highlight start ###
-  Plug 'pevhall/simple_highlighting'
-  " These mapping set the default highlight group to NUMBER and then adds current word under cursor
-  " as highlight. (The HighlightWordUnderCursor command doesn't take an argument for the slot...)
-  " (Mappings are <leader>h1 through <leader>9)
-  for i in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    execute 'nmap <silent> <Leader>h'.i ':Hd' i.'<CR><Plug>HighlightWordUnderCursor'
-    execute 'vmap <silent> <Leader>h'.i ':Hd' i.'<CR><Plug>HighlightWordUnderCursor'
-  endfor
-  " ### simple_highlight end ###
+  " ### Highlighter start ###
+  " Allows to highlight word under cursor or visual selection
+  "
+  " Adds a highlight to the current word/selection
+  let HiSet   = '<leader>hs'
+  " Adds a highlight to the current word/selection that goes away when you move the cursor
+  let HiErase = '<leader>he'
+  " Clears all highlight
+  let HiClear = '<leader>hc'
+  " Does some searching stuff, I don't need it.
+  let HiFind  = ''
+  Plug 'azabiong/vim-highlighter'
+  " ### Highlighter end ###
+
+  " ### current_word end ###
+  " Plugin that automatically highlight the word and all other occurences of the word under cursor.
+  " Style can be controlled whith the variables CurrentWord and CurrentWordTwins at the end of this
+  " file (becase colorscheme needs to be loadid first)
+  Plug 'dominikduda/vim_current_word'
+  " Twins of word under cursor:
+  let g:vim_current_word#highlight_twins = 1
+  " The word under cursor:
+  let g:vim_current_word#highlight_current_word = 1
+  nmap <leader>tw :VimCurrentWordToggle<CR>
+  " ### current_word end ###
 
   " ### vimspector start ###
   " I never really tested this, should be a nice alternative to using VSCode/Chromium as debugger
@@ -495,11 +511,11 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " ### fzf start ###
   " Find stuff
-  " I install fzf outside of vim anyway so I don't need the next line
+  " Next line installs fzf for your user (for use outside of vim). This may give an error on updates
+  " if you already have it installed a different way. Will still work though.
   Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
   Plug 'junegunn/fzf.vim'
-  " Plug '~/.fzf'
-  " Fuzy search in code in current file
+  " Fuzzy search in code in current file
   nnoremap <leader>fl :Lines<cr>
   " Fuzzy search filenames in project
   nnoremap <expr> <leader>ff (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
@@ -706,8 +722,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
     autocmd filetype rust       let b:coc_suggest_disable=1
     autocmd BufEnter *.rs       call coc#config('suggest.autoTrigger', "never")
 
-    autocmd filetype typescript let b:coc_suggest_disable=1
-    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "never")
+    autocmd filetype typescript let b:coc_suggest_disable=0
+    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "always")
 
     autocmd filetype javascript let b:coc_suggest_disable=1
     autocmd BufEnter *.js       call coc#config('suggest.autoTrigger', "never")
@@ -751,8 +767,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   omap af <Plug>(coc-funcobj-a)
 
   " Refactoring stuff.
-  " rename word under cursor. If available will use a language server and rename occurences in the
-  " whole repository
+  " [r]e[n]ame word under cursor. If available will use a language server and rename occurences in
+  " the whole repository
   nmap <leader>rn <Plug>(coc-rename)
   " Bring up a small menu for [c]de [a]ctions. Can do stuff like add missing imports from other files
   nmap <leader>ca <Plug>(coc-codeaction)
@@ -771,6 +787,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " ### CoC end ###
 
   " YCM is nice for python, TypeScript and some other languages.
+  " I disabled TypeScript for now because starting tsserver blocks vim for 5+ seconds every time I
+  " start vim and go to a .ts file
   " Remove rest-completer if you don't use rust, it will install rust in the background...
   Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
   " Change selection from list away from <Tab> so ultisnips can use it
@@ -869,7 +887,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
         \  'infolog': 1, 'leaderf': 1,   'mail': 1, 'startify': 1, 'gitcommit': 1
         \}
   " Turn off ycm for specific programming languages (to use coc instead)
-  " let g:ycm_filetype_blacklist['typescript'] = 1
+  let g:ycm_filetype_blacklist['typescript'] = 1
   " let g:ycm_filetype_blacklist['python'] = 1
   let g:ycm_filetype_blacklist['firestore'] = 1
   let g:ycm_filetype_blacklist['ruby'] = 1
@@ -993,7 +1011,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   vmap <leader>s/ :s//*/<cr>
   nmap <leader>s/ :%s//*/<cr>
 
-  let g:ale_disable_lsp = 1
+  let g:ale_disable_lsp = 0
   let g:ale_set_balloons = 1
   " Set to 1 to open another buffer with error information when there is any
   let g:ale_cursor_detail = 0
@@ -1265,6 +1283,10 @@ silent! colorscheme gruvbox
 " silent! colorscheme ayu
 " silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
                                     " start vim the first time and the scheme isn't installed yet.
+
+" This is here for the 'vim_current_word' plugin, this has to be done after loading a colorscheme
+hi CurrentWord guifg=NONE guibg=NONE gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
+hi CurrentWordTwins guifg=NONE guibg=NONE gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
 
 if !has('clipboard')
   echo 'VIM IS NOT COMPILED WITH +cliboard!'
