@@ -1285,8 +1285,8 @@ silent! colorscheme gruvbox
                                     " start vim the first time and the scheme isn't installed yet.
 
 " This is here for the 'vim_current_word' plugin, this has to be done after loading a colorscheme
-hi CurrentWord guifg=NONE guibg=NONE gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
-hi CurrentWordTwins guifg=NONE guibg=NONE gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
+hi CurrentWord guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
+hi CurrentWordTwins guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
 
 if !has('clipboard')
   echo 'VIM IS NOT COMPILED WITH +cliboard!'
