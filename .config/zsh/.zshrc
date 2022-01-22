@@ -166,8 +166,8 @@ alias rmd='rm -rf'
 alias lS='l -Sr --group-directories-first'
 alias :q=exit
 alias vim='nvim -O'
-alias agv='vim $(ag --nobreak --nonumbers --noheading . | fzf | sed "s/^\([^:]*\).*$/\1/")'
-alias rgv='vim $(rg -N --no-heading --color never . | fzf | sed "s/^\([^:]*\).*$/\1/")'
+alias agv='nvim $(ag --nobreak --nonumbers --noheading . | fzf | sed "s/^\([^:]*\).*$/\1/")'
+alias rgv='nvim $(rg -N --no-heading --color never . | fzf | sed "s/^\([^:]*\).*$/\1/")'
 
 alias psa='ps aux | grep -v "grep --color=auto" | grep'
 alias lsport='sudo lsof -Pan -i tcp -i udp'
@@ -192,7 +192,7 @@ else
 fi
 # alias ssh='if ssh-add -l 1>/dev/null; then; else ssh-add -t 600; fi; ssh'
 export HOSTNAME=$(hostname)
-SSH_KEYS="$HOME/.ssh/id_rsa"
+SSH_KEYS="$HOME/.ssh/id_rsa $HOME/.ssh/gordin_rsa $HOME/.ssh/docker_key"
 keychain -q --nogui $(echo $SSH_KEYS)
 source "$HOME/.keychain/$HOSTNAME-sh"
 
@@ -202,7 +202,7 @@ if [ -x "$(command -v exa)"  ]; then
 fi
 
 export PATH=/opt/flutter/bin:$PATH
-export PATH=${HOME}/.gem/ruby/2.7.0/bin:$PATH
+export PATH=${HOME}/.gem/ruby/3.0.0/bin:$PATH
 export PATH=${HOME}/.local/bin:$PATH
 export PATH=${HOME}/.config/bin:$PATH
 export PATH="${HOME}/.pub-cache/bin:$PATH"
@@ -362,6 +362,7 @@ function b() {
         'firebase' "~/work/studibase/app/functions"
         'club' "~/work/clubhouse"
         'app' "~/work/student-services-app"
+        'domain-events' "~/work/domain-events"
     )
 
     local selected_bookmark

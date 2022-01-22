@@ -47,7 +47,7 @@ pyenv exec pip install wheel
 pyenv exec pip install neovim
 
 # PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
-PY3VER='3.8.3'
+PY3VER='3.9.7'
 pyenv install "$PY3VER" -s
 pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" neovim3
 set +u; pyenv activate neovim3; set -u
@@ -108,7 +108,7 @@ if ! [ -x "$(command -v brew)" ]; then
 fi
 eval "$(brew shellenv)"
 brew update
-brew upgrade -v --force-bottle
+#brew upgrade -v --force-bottle
 # Install homebrew END
 
 # Install rigpgrep binary if it's not available
@@ -175,6 +175,7 @@ cd "$VIM_DIR/spell"
 wget -c -N http://ftp.vim.org/pub/vim/runtime/spell/{de,en}.utf-8.{spl,sug}
 cd
 mkdir -p "$VIM_DIR/undodir"
+mkdir -p "$VIM_DIR/tmp/swap"
 mkdir -p "$VIM_DIR/tmp/backup"
 # Install neovim if it's missing
 if ! [ -x "$(command -v nvim)" ]; then
