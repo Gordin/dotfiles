@@ -47,7 +47,7 @@ pyenv exec pip install wheel
 pyenv exec pip install neovim
 
 # PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
-PY3VER='3.9.7'
+PY3VER='3.9.6'
 pyenv install "$PY3VER" -s
 pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" neovim3
 set +u; pyenv activate neovim3; set -u

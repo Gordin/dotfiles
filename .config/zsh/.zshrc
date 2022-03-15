@@ -185,6 +185,7 @@ set_git_vars() {
 
 alias yvim="yadm enter vim"
 alias ggit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git -c user.name=Gordin -c user.email=9ordin@gmail.com $@"
+alias wgit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/id_work' git -c user.name=andreasguthstuditemps -c user.email=andreas.guth@studitemps.de $@"
 if [ "`hostname`" = workelch ]; then
   alias yadm="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' yadm $@"
 else
@@ -192,9 +193,11 @@ else
 fi
 # alias ssh='if ssh-add -l 1>/dev/null; then; else ssh-add -t 600; fi; ssh'
 export HOSTNAME=$(hostname)
-SSH_KEYS="$HOME/.ssh/id_rsa $HOME/.ssh/gordin_rsa $HOME/.ssh/docker_key"
-keychain -q --nogui $(echo $SSH_KEYS)
-source "$HOME/.keychain/$HOSTNAME-sh"
+if [ "`hostname`" = workelch ]; then
+  SSH_KEYS="$HOME/.ssh/id_rsa $HOME/.ssh/gordin_rsa $HOME/.ssh/docker_key"
+  keychain -q --nogui $(echo $SSH_KEYS)
+  source "$HOME/.keychain/$HOSTNAME-sh"
+fi
 
 if [ -x "$(command -v exa)"  ]; then
   alias l='exa -l'

@@ -609,6 +609,10 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'sheerun/vim-polyglot'
   let g:polyglot_disabled = []
 
+  Plug 'elixir-editors/vim-elixir'
+  Plug 'mhinz/vim-mix-format'
+  let g:mix_format_on_save = 1
+
   Plug 'dart-lang/dart-vim-plugin'
   let g:dart_style_guide = 2
   let g:dart_format_on_save = 0 " Does not work....
@@ -640,6 +644,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
               \, 'coc-json'
               \, 'coc-marketplace'
               \, 'coc-python'
+              \, 'coc-elixir'
               \, 'coc-snippets'
               \, 'coc-ultisnips'
               \, 'coc-rust-analyzer'
@@ -680,9 +685,13 @@ silent! if plug#begin('~/.config/nvim/plugged')
     autocmd BufEnter *          call CocMappings()
     autocmd filetype *          let b:coc_suggest_disable=0
 
-    autocmd filetype python     let b:coc_suggest_disable=1
-    autocmd BufEnter *.py       call coc#config('suggest.autoTrigger', "never")
-    autocmd BufEnter *.py       call YcmMappings()
+    autocmd filetype python     let b:coc_suggest_disable=0
+    autocmd BufEnter *.py       call coc#config('suggest.autoTrigger', "always")
+    autocmd BufEnter *.py       call CocMappings()
+
+    autocmd filetype elixir     let b:coc_suggest_disable=0
+    autocmd BufEnter *.ex       call coc#config('suggest.autoTrigger', "always")
+    autocmd BufEnter *.ex       call CocMappings()
 
     autocmd filetype rust       let b:coc_suggest_disable=1
     autocmd BufEnter *.rs       call coc#config('suggest.autoTrigger', "never")
@@ -773,7 +782,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
               \}
   " Turn off ycm for specific programming languages (to use coc instead)
   " let g:ycm_filetype_blacklist['typescript'] = 1
-  " let g:ycm_filetype_blacklist['python'] = 1
+  let g:ycm_filetype_blacklist['python'] = 1
+  let g:ycm_filetype_blacklist['elixir'] = 1
   let g:ycm_filetype_blacklist['firestore'] = 1
   let g:ycm_filetype_blacklist['ruby'] = 1
   let g:ycm_filetype_blacklist['vim'] = 1
@@ -936,10 +946,12 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ale_linters= {
         \ 'javascript': [ 'standard' ],
         \ 'typescript': [ 'tsserver', 'tslint' ],
-        \ 'python': ['flake8', 'mypy'],
+        \ 'python': ['flake8'],
         \ 'sh': ['shell', 'shellcheck'],
         \ 'zsh': ['shell', 'shellcheck'],
         \ }
+        " \ 'python': ['flake8', 'mypy'],
+  let g:ale_python_flake8_options = '--ignore=E501'
   let g:ale_completion_tsserver_autoimport = 1
   " let g:ale_completion_enabled = 1
   let g:ale_typescript_tslint_config_path = '.'
@@ -1161,6 +1173,24 @@ augroup colorschemes
   autocmd ColorScheme * call s:ResetBackground("NonText")
   autocmd ColorScheme * call s:RestoreBase16()
 augroup END
+
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained",
+  sync_install = false,
+  indent = {
+    enable = true
+  },
+  highlight = {
+    enable = true,
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 set background=dark                 " Use dark background for color schemes
