@@ -184,8 +184,8 @@ set splitright                      " open horizontal splits right of current bu
 vnoremap $ $h
 
 " Indentation settings
-set tabstop=4 softtabstop=4         " Show tabs as 4 spaces and make 4 spaces == <tab> for commands
-set shiftwidth=4                    " Use 4 spaces when changing indentation
+set tabstop=2 softtabstop=2         " Show tabs as 2 spaces and make 2 spaces == <tab> for commands
+set shiftwidth=2                    " Use 2 spaces when changing indentation
 set smarttab                        " Makes <tab> insert `shiftwidth` amount of spaces
 set expandtab                       " Put multiple spaces instead of <TAB>s
 set autoindent                      " copy indent from current line when starting a new line
@@ -1191,6 +1191,10 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 EOF
+
+" Use treesitter for folding. I like folding by indentation more...
+" set foldmethod=expr
+" set foldexpr=nvim_treesitter#foldexpr()
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 set background=dark                 " Use dark background for color schemes
