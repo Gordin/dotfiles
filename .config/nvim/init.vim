@@ -226,6 +226,9 @@ set smartcase  " Switch to case sensitive again when you use capital letters
 set incsearch  " Highlight search results while typing
 set gdefault   " substitutions have the g (replace all matches on a line) flag by default.
                " (Add g after s/// to turn off)
+set wrapscan   " Makes searches loop around to the beginning of file after the last result
+
+autocmd! BufWinEnter * set wrapscan " Something keeps resetting this -_-
 
 " Turn off search result highlights when you go to insert mode toggle it back on afterwards
 autocmd InsertEnter * :setlocal nohlsearch
@@ -615,6 +618,13 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " ### Signify end ###
 
+  " ### Abolish end ###
+  " Does a lot of word-conversion stuff
+  " Has mappings to convert between snake/camel/mixed/dash etc. cases
+  " Mappings: crs (snake_case), crm (MixedCase), crc (camelCase), cr- (dash-case), cr. (dot.case)
+  Plug 'tpope/vim-abolish'
+  " ### Abolish end ###
+
   " ### Undotree start ###
 
   " Adds Undotree commands to show vim undo history like a git history
@@ -888,7 +898,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
         \}
   " Turn off ycm for specific programming languages (to use coc instead)
   let g:ycm_filetype_blacklist['typescript'] = 1
-  " let g:ycm_filetype_blacklist['python'] = 1
+  let g:ycm_filetype_blacklist['python'] = 1
+  let g:ycm_filetype_blacklist['html'] = 1
   let g:ycm_filetype_blacklist['firestore'] = 1
   let g:ycm_filetype_blacklist['ruby'] = 1
   let g:ycm_filetype_blacklist['vim'] = 1
