@@ -671,6 +671,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Detect indentation settings of current files and use them
   Plug 'tpope/vim-sleuth'
 
+  " Plug 'phaazon/hop.nvim'
+
+
   " Meta-Plugin for multiple programming languages, loaded on demand
   Plug 'sheerun/vim-polyglot'
   let g:polyglot_disabled = []
@@ -1351,6 +1354,17 @@ EOF
 " Use treesitter for folding. I like folding by indentation more...
 " set foldmethod=expr
 " set foldexpr=nvim_treesitter#foldexpr()
+
+" Hop config
+" lua << EOF
+" require'hop'.setup()
+" vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+" vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+" vim.api.nvim_set_keymap('o', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+" vim.api.nvim_set_keymap('o', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+" vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+" vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+" EOF
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 set background=dark                 " Use dark background for color schemes
