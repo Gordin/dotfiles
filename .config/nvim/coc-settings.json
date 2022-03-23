@@ -18,6 +18,8 @@
     "suggest.timeout": 5000,
     "diagnostic.messageDelay": 200,
     "solargraph.transport": "stdio",
+    "codeLens.enable": false,
+    "solargraph.useBundler": false,
     //"tsserver.log": "verbose",
     //"tsserver.trace.server": "verbose",
     "languageserver": {

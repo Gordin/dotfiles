@@ -3,14 +3,14 @@ if &compatible
 endif
 syntax on
 
+" let g:node_client_debug = 1
 " let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
-let $NVIM_COC_LOG_LEVEL = 'debug'
+" let $NVIM_COC_LOG_LEVEL = 'debug'
 
 " Set <leader> to ,
 " The leader key has to be set BEFORE mapping anything to <leader> for the which-key plugin to work
 let mapleader = ","
 let maplocalleader = ","
-
 
 " Use python from special virtual environments just for vim (if it's there)
 if filereadable(expand('~/.config/pyenv/versions/neovim2/bin/python'))
@@ -68,7 +68,7 @@ set showcmd                         " Show partially entered commands in the sta
 set shortmess+=c                    " Don't show autocompletion stuff in statusbar.
 set laststatus=2                    " Always show the statusline
 set ruler                           " Show the line and column number of the cursor position,
-set cursorline                      " Highlight the line where the cursor is
+set cursorline                      " Highlight the line with the cursor
 set mousehide                       " Hide the mouse cursor while typing (works only in gvim?)
 
 " Listchars
@@ -86,14 +86,17 @@ set conceallevel=2              " Enable "conceal". Poor mans WYSIWYG. Does some
                                 " "*ABC*" as just "ABC", but actually with a bold font or in python
                                 " "\lambda" can be shown as "λ" (with the right plugins)
 
+
 " ### "Mouse selection Mode" start ###
 
 " (Should probably extract this as a plugin... )
 " These function let you select and copy stuff from terminal vim, by disabling vims mouse mappings,
-" and hiding everything you don't want to copy like line numbers, diff signs, line end markers,
+" and hiding everything you don't want to copy, like line numbers, diff signs, line end markers,
 " etc. It also toggles "paste" mode, which let's you paste stuff into vim witout it messing up the
-" formatting
-" (Note that this does not save the current values yet, this has to match the rest of the config...)
+" formatting due to auto-formatting
+" (Sidenote: Should not be needed if you have set up yanking to the system clipboard, but it's
+" nice to have when this doesn't work if you are working through SSH/tmux/screen, or whatever else
+" would need a properly setup X-Forwarding to reach your system clipboard)
 let g:mouse_select = 0
 fun! EnableMouseSelection()
   let g:mouse_select = 1
@@ -125,16 +128,17 @@ fun! ToggleMouseSelection()
     endif
 endf
 
-" [T]oggle [M]ouse mode
+" [T]oggle [M]ouse Selection mode in Terminal on/off
 nnoremap <leader>tm :silent call ToggleMouseSelection()<CR>
 " Map right mouse button to toggle mouse selection.
-noremap <RightMouse> <esc>:call ToggleMouseSelection()<CR>
+" (Can only turn mouse mode off, because with mouse mode off, right click isn't recognized...)
+noremap <silent> <RightMouse> <esc>:call ToggleMouseSelection()<CR>
 
 " ### "Mouse selection Mode" end ###
 
 " diffs
 " Add filler lines in diffs and open diffsplit to the left
-set diffopt=filler,vertical
+set diffopt=filler,vertical,closeoff
 " Automatically update/fold the diff after [o]btaining or [p]utting and go to next change
 nnoremap do do:diffupdate<cr>]c
 nnoremap dp dp:diffupdate<cr>]c
@@ -144,50 +148,30 @@ let g:gruvbox_contrast_dark = 'medium'
 let g:gruvbox_invert_selection='0'
 
 set hidden                        " Allow to switch files without having saved
-if !has('clipboard')
-  echo 'VIM IS NOT COMPILED WITH +cliboard!'
-else
-  set clipboard=unnamed             " Use system clipboard as default register
-  " If xsel is available, use it instead of xclip (default) because vim-yoink has a bug with xclip
-  if executable('xsel')
-    let g:clipboard = {
-          \   'name': 'xsel_override',
-          \   'copy': {
-          \      '+': 'xsel --input --clipboard',
-          \      '*': 'xsel --input --primary',
-          \    },
-          \   'paste': {
-          \      '+': 'xsel --output --clipboard',
-          \      '*': 'xsel --output --primary',
-          \   },
-          \   'cache_enabled': 1,
-          \ }
-  endif
-endif
+set mouse=nvi                     " Enable mouse controls
+                                  " nvi means mouse is hadled by vim only whene in [n]ormal,
+                                  " [v]isual and [i]nsert mode.
+                                  " This allows the mouse to act like it normally would in a
+                                  " Terminal when you are in `:` Command mode or if a
+                                  " Command output window is open
 
-set mouse=nvi                      " Enable mouse controls
-                                   " nvi means mouse is hadled by vime only whene in [n]ormal,
-                                   " [v]isual and [i]nsert mode.
-                                   " This allows the mouse to act like it normally would in a
-                                   " Terminal when you are in `:` Command mode or if a
-                                   " Command output window is open
-
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" delays and poor user experience.
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable delay when doing stuff...
 set updatetime=10
 set splitbelow                      " open vertical splits below current buffer
 set splitright                      " open horizontal splits right of current buffer
 
 " don't select the newline with $ in visual mode. This allows you to use $d in visual mode to expand
 " your selection to the end of the line and delete, without pulling the next line up. Also lets you
-" expand your selection to the end of line and copy without the newline with $y
+" expand your selection to the end of line and copy without the newline with $y in visual mode
 vnoremap $ $h
+" enter [v]isual [b]lock mode (If you don't like ctrl+v...)
+nnoremap <leader>vb <c-q>
 
 " Indentation settings
 set tabstop=2 softtabstop=2         " Show tabs as 2 spaces and make 2 spaces == <tab> for commands
 set shiftwidth=2                    " Use 2 spaces when changing indentation
-set smarttab                        " Makes <tab> insert `shiftwidth` amount of spaces
 set expandtab                       " Put multiple spaces instead of <TAB>s
+set smarttab                        " Makes <tab> insert `shiftwidth` amount of spaces
 set autoindent                      " copy indent from current line when starting a new line
 set smartindent                     " be more context-aware than `autoindent`
 set matchpairs+=<:>                 " Adds <> to list of bracket pairs you can jump between with %
@@ -220,18 +204,19 @@ set colorcolumn=100                 " Highlight colomn 100
 " highlight ColorColumn ctermbg=0 guibg=lightgrey " Set color for column 100
 
 " Backup/History
-set noswapfile                      " Don't create swap files
-set backup                          " Enable backups ...
-set backupdir=~/.config/nvim/tmp/backup//   " set directory for backups
-set history=10000                   " 10000 is the max history size...
+set swapfile                              " create swap files to recover from crashes
+set directory=~/.config/nvim/tmp/swap//   " set directory for swap files
+set backup                                " Enable backups ...
+set backupdir=~/.config/nvim/tmp/backup// " set directory for backups
+set history=10000                         " 10000 is the max history size...
 if has('nvim')
-  set shada=!,'100,<50,s10,h          " Some new vim 8+ session/history thing?
+  set shada=!,'100,<50,s10,h              " Some new vim 8+ session/history thing?
 endif
-if has('persistent_undo')           " Most vims should have this...
-  set undofile                      " Save undo history to file
-  set undodir=~/.config/nvim/undodir//   " Set directory for undo history
-  set undolevels=100000             " Maximum number of undos
-  set undoreload=100000             " Save complete files for undo on reload if it has less lines
+if has('persistent_undo')                 " Most vims should have this...
+  set undofile                            " Save undo history to file
+  set undodir=~/.config/nvim/undodir//    " Set directory for undo history
+  set undolevels=100000                   " Maximum number of undos
+  set undoreload=100000                   " Save complete files for undo on reload if it has less lines
 endif
 
 " Searching
@@ -248,6 +233,7 @@ autocmd! BufWinEnter * set wrapscan " Something keeps resetting this -_-
 " Turn off search result highlights when you go to insert mode toggle it back on afterwards
 autocmd InsertEnter * :setlocal nohlsearch
 autocmd InsertLeave * :setlocal hlsearch
+
 " Toggle :[hl]search with <leader>hl
 nmap <silent> <leader>hl :set invhlsearch<CR>
 " Paste current search
@@ -257,7 +243,7 @@ nmap <leader>p/ "/p
 nmap <silent>y% :call yoink#manualYank(@%)<CR>
 
 " Movement
-" Change tab with <leader>[T]ab H/L
+" Change tab with <leader>[t]ab H/L
 nnoremap <leader>th :tabprevious<CR>
 nnoremap <leader>tl :tabnext<CR>
 " Change window with <leader>[w]indow [hjkl]
@@ -266,11 +252,12 @@ nnoremap <leader>wl <c-w>l
 nnoremap <leader>wj <c-w>j
 nnoremap <leader>wk <c-w>k
 " go down or up 1 visual line on wrapped lines instead of line of file. Check the count to only
-" do this without a count. (It will jump over wrapped lines when you give a count)
+" do this without a count. (It will jump over wrapped lines when you give a count, so it works with
+" relative numbers)
 nnoremap <silent><expr> j v:count == 0 ? 'gj' : 'j'
 nnoremap <silent><expr> k v:count == 0 ? 'gk' : 'k'
-nnoremap gj j
-nnoremap gk k
+nnoremap <silent> gj j
+nnoremap <silent> gk k
 set virtualedit=block               " Allows to select beyond end of lines in block selection mode
 
 " Make q close the quickfix/command/search history window (That thing when you hit q: or q/)
@@ -289,15 +276,15 @@ function! s:SetCursorPosition()
   end
 endfunction
 
-" Opens current file in tab. Better than `:tabe %` because that puts your cursor to line 1,
+" Opens current file again in a tab. Better than `:tabe %` because that puts your cursor to line 1,
 " but `:tab split` will keep the cursor position.
 nnoremap <leader>te :tab split<CR>
 
 " Folding
-set foldlevelstart=1
-set foldnestmax=5
+set foldlevelstart=1                " Files will be folded to the first level on opening
+set foldnestmax=5                   " Maximum fold level
 set foldmethod=indent               " Fold automatically based on indentation level
-" :help foldopen !
+" sets the actions that will open a fold when performed on a fold. See :help foldopen !
 set foldopen=block,jump,mark,percent,quickfix,search,tag,undo
 " Make zO recursively open whatever fold we're in, even if it's partially open.
 nnoremap zO zczO
@@ -306,6 +293,7 @@ nnoremap <Space> za
 vnoremap <Space> za
 " Easily set foldlevel to get an overview of all attributes of something
 " (Anything above 3 will probably never be used)
+nnoremap <leader>z0 :set foldlevel=0<CR>
 nnoremap <leader>z1 :set foldlevel=1<CR>
 nnoremap <leader>z2 :set foldlevel=2<CR>
 nnoremap <leader>z3 :set foldlevel=3<CR>
@@ -315,9 +303,8 @@ nnoremap <leader>z6 :set foldlevel=6<CR>
 nnoremap <leader>z7 :set foldlevel=7<CR>
 nnoremap <leader>z8 :set foldlevel=8<CR>
 nnoremap <leader>z9 :set foldlevel=9<CR>
-nnoremap <leader>z0 :set foldlevel=0<CR>
 
-" Abbreviations
+" Abbreviations (left side will be replaced automatically when typed in insert mode)
 iabbrev :ldis: ಠ_ಠ
 iabbrev :shrug: ¯\_(ツ)_/¯
 iabbrev :flip: (╯°□°)╯︵ ┻━┻
@@ -328,12 +315,15 @@ iabbrev :check: ✓
 
 
 " Automatically reload vim settings on save
-autocmd! bufwritepost $MYVIMRC source $MYVIMRC
+" SOME PLUGINS DON'T LIKE TO BE LOADED MULTIPLE TIMES, IF YOU ARE PLAYING AROUND WITH THE CONFIG
+" AND STUFF DOESN'T SEEM TO WORK, TRY RESTARTING VIM INSTEAD!
+" Mostly a problem with highlighting/color/other visual stuff plugins though
+" autocmd! bufwritepost $MYVIMRC source $MYVIMRC
 
-" Make sure all markdown files have the correct filetype set
+" Make sure all markdown (and txt) files are treated as markdown
 autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} set filetype=markdown
 
-" Treat JSON files like JavaScript (do I really need this? 0.o)
+" Treat JSON files like JSON instead of JavaScript (Not sure if still needed, too lazy to test)
 autocmd BufNewFile,BufRead *.json set ft=json
 
 " Disable Ex mode
@@ -343,8 +333,10 @@ nnoremap Q <Nop>
 " Add Plugins between plug#begin and plug#end
 " :PlugUpgrade to update Plug, :PlugUpdate/Install/Clean to handle plugins
 silent! if plug#begin('~/.config/nvim/plugged')
+  " ### Startify start ###
   " Adds a homescreen to vim that shows recently used files when you open vim without a file
   Plug 'mhinz/vim-startify'
+
   " returns all modified files of the current git repo
   " `2>/dev/null` makes the command fail quietly, so that when we are not
   " in a git repo, the list will be empty
@@ -370,7 +362,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " \, { 'type': 'bookmarks',                'header': ['   Bookmarks'      ] }
   " I don't use bookmarks because they don't support a description for the file
   let g:startify_bookmarks = []
-  " Edit common config files quickly by opening vim and pressing <leader>X
+  " Edit common config files quickly by just opening vim and pressing <leader>X
   let g:startify_commands = [
     \  {',z': ['Edit zshrc',                 'e $HOME/.zshrc']}
     \, {',v': ['Edit vimrc',                 'e $MYVIMRC']}
@@ -381,7 +373,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
     \, {',b': ['Edit yadm bootstrap script', 'e $HOME/.config/yadm/bootstrap']}
     \ ]
   let g:startify_update_oldfiles     = 1    " Update most recently used files on the fly
-  let g:startify_change_to_vcs_root  = 0    " cd into root of repository if possible
+  let g:startify_change_to_vcs_root  = 1    " cd into root of repository if possible
   let g:startify_change_to_dir       = 1    " When opening a file or bookmark, change directory
   let g:startify_fortune_use_unicode = 1    " Use unicode symbors instead of just ASCII
   " Open Startify with ,st in current buffer or in a split with Shift
@@ -389,58 +381,68 @@ silent! if plug#begin('~/.config/nvim/plugged')
   nnoremap <silent> <leader>ST :vsp<cr>:Startify<cr>
   nnoremap <silent> <leader>st :Startify<cr>
 
+  " ### Startify end ###
+
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
+  " ### vim-fetch start ###
   " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
-  " (Useful for copypasting files from stacktraces or searches
+  " (Useful for copypasting files paths from stacktraces or searches
   Plug 'kopischke/vim-fetch'
+  " ### vim-fetch end ###
 
-  " Smooth scrolling for vim
-  " Plug 'yuttie/comfortable-motion.vim'
-  " Make scrolling control the cursor. (Default is just scrolling the viewport)
-  " let g:comfortable_motion_scroll_down_key = "j"
-  " let g:comfortable_motion_scroll_up_key = "k"
-  " Configure scrolling physics
-  let g:comfortable_motion_friction = 100.0
-  let g:comfortable_motion_air_drag = 5.0
-  let g:comfortable_motion_interval = 1000 / 60 " 60 fps scrolling
-  " Smooth scrolling with mousewheel
-  " noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(50)<CR>
-  " noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-50)<CR>
-
+  " ### vim-help start ###
   " adds maps to Vim help files
   " jump to ... option: o/O ,link: s/S, anchor: t/T
   " jump to selected: <enter>/<backspace>
   Plug 'dahu/vim-help'
+  " ### vim-help end ###
 
+  " ### DidYouMean start ###
   " When you open a new file but a file with a similar name exists Vim will ask to open that one
+  " Useful for when you open vim with vim ABC<TAB><Enter>, but the tab completion only partly
+  " completed the file name.
   Plug 'EinfachToll/DidYouMean'
   let g:dym_use_fzf = 1
+  " ### DidYouMean end ###
 
+  " ### auto_mkdir start ###
   " Automatically create folders that don't exist when saving a new file
   Plug 'DataWraith/auto_mkdir'
+  " ### auto_mkdir end ###
 
+  " ### incsearch start ###
   " Highlight ALL matching searches while typing (For regexes)
   Plug 'haya14busa/incsearch.vim'
-  let g:incsearch#auto_nohlsearch = 0
-  let g:incsearch#consistent_n_direction = 1
+  let g:incsearch#auto_nohlsearch = 0           " Don't disable hlsearch after searching
+  let g:incsearch#consistent_n_direction = 1    " n is always the next match down, even for ?
   map /  <Plug>(incsearch-forward)
   map ?  <Plug>(incsearch-backward)
   map g/ <Plug>(incsearch-stay)
+  " ### incsearch end ###
 
-  " Fuzzy search with <leader>SEARCH-KEY
+  " ### incsearch-fuzzy start ###
+  " Makes searching fuzzy with <leader>/
   Plug 'haya14busa/incsearch-fuzzy.vim'
   map <leader>/  <Plug>(incsearch-fuzzy-/)
   map <leader>?  <Plug>(incsearch-fuzzy-?)
   map <leader>g/ <Plug>(incsearch-fuzzy-stay)
+  " ### incsearch-fuzzy start ###
 
+  " ### vim-search-pulse start ###
   " Pulses search results when you jump to them. Useful for very dense code
   Plug 'iamFIREcracker/vim-search-pulse'
   let g:vim_search_pulse_mode = 'pattern'
-  let g:vim_search_pulse_duration = 300
+  let g:vim_search_pulse_duration = 100
+
+  if has("gui_running") || has("nvim")
+    let g:vim_search_pulse_color_list = ["#99ffff", "#ff99ff", "#99ffff", "#ff99ff"]
+  else
+    let g:vim_search_pulse_color_list = [226, 201, 226, 201, 226]
+  endif
   " Disable default mappings becaus we want to combine Pulse with vim-asterisk and incsearch
   let g:vim_search_pulse_disable_auto_mappings = 1
-  " This is a fork. Original (seems inactive):
+  " This is a fork. Original (seems inactive) (Fork added the Pulse command):
   " Plug 'inside/vim-search-pulse'
 
   " Integrate incsearch plugin with Pulse
@@ -452,72 +454,84 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Alternative to vim-search-pulse
   " Plug 'danilamihailov/beacon.nvim'
 
+  " ### vim-search-pulse end ###
+
+  " ### vim-asterisk start ###
   Plug 'haya14busa/vim-asterisk'
-  " Allows to search for selected text with *
-  " Also has a commend that makes the cursor stay after pressing *
+  " Allows to search for text in visual mode by pressing *
+  " Also has a command that makes the cursor stay after pressing *
   " Map * to stay in place after * and make the search pulse with vim-search-pulse
   map *  <Plug>(asterisk-z*)<Plug>Pulse
   map #  <Plug>(asterisk-z#)<Plug>Pulse
   map g* <Plug>(asterisk-gz*)<Plug>Pulse
   map g# <Plug>(asterisk-gz#)<Plug>Pulse
-  " Makes the cursor stay in the same position inside the match while iterating over matches.
-  " Useful for quick refactorings whene you need to replace part of a word:
-  " Example Usage: *cwTYPE-REPLACEMENT<esc>n.n.n.n.n.n.n.
-  " (Turned off now)
-  let g:asterisk#keeppos = 0
+  " ### vim-asterisk end ###
 
+  " ### vim-expend-region start ###
   " Expand/Shrink current selection around text objects
   " Default is +/_, I added v for expand and <c-v>/- for shrink
   " With this you can just press v multiple times from normal mode to get the selection you want
   Plug 'landock/vim-expand-region'
-  " Adds extra text objecst to stop extending/shrinking around. No idea what those are any more...
+  " Adds extra text objecst to stop extending/shrinking around.
+  " No idea what those are any more... :help expand_region has examples
   autocmd VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 })
   vmap v     <Plug>(expand_region_expand)
   vmap -     <Plug>(expand_region_shrink)
   vmap <c-v> <Plug>(expand_region_shrink)
   " This is a fork. Original is this, but hasn't been updated since 2013:
   " Plug 'terryma/vim-expand-region'
+  " ### vim-expend-region end ###
 
-  " Maps <leader>1-9 to "Highlight word under cursor with color"
-  " Useful when you want to see occurences of multiple variables at the same time
-  " <leader>ca (c)lears (a)ll highlights, <leader>c1-9 (c)lears color 1-9
-  Plug 'BlueCatMe/TempKeyword'
-  let TempKeywordCmdPrefix = "<leader>"
-  function! TempKeywords()
-    call DeclareTempKeyword('1', 'bold', 'LightYellow', 'Black')
-    call DeclareTempKeyword('2', 'bold', 'Green', 'Black')
-    call DeclareTempKeyword('3', 'bold', 'LightGreen', 'Black')
-    call DeclareTempKeyword('4', 'bold', 'Brown', 'Black')
-    call DeclareTempKeyword('5', 'bold', 'LightMagenta', 'Black')
-    call DeclareTempKeyword('6', 'bold', 'LightCyan', 'Black')
-    call DeclareTempKeyword('7', 'bold', 'White', 'DarkRed')
-    call DeclareTempKeyword('8', 'bold', 'White', 'DarkGreen')
-    call DeclareTempKeyword('9', 'bold', 'White', 'DarkBlue')
-    call DeclareTempKeyword('0', 'bold', 'White', 'DarkMagenta')
-  endfunction
-  autocmd VimEnter * call TempKeywords()
+  " ### Highlighter start ###
+  " Allows to highlight word under cursor or visual selection
+  "
+  " Adds a highlight to the current word/selection
+  let HiSet   = '<leader>hs'
+  " Adds a highlight to the current word/selection that goes away when you move the cursor
+  let HiErase = '<leader>he'
+  " Clears all highlight
+  let HiClear = '<leader>hc'
+  " Does some searching stuff, I don't need it.
+  let HiFind  = ''
+  Plug 'azabiong/vim-highlighter'
+  " ### Highlighter end ###
 
+  " ### current_word end ###
+  " Plugin that automatically highlight the word and all other occurences of the word under cursor.
+  " Style can be controlled whith the variables CurrentWord and CurrentWordTwins at the end of this
+  " file (becase colorscheme needs to be loadid first)
+  Plug 'dominikduda/vim_current_word'
+  " Twins of word under cursor:
+  let g:vim_current_word#highlight_twins = 1
+  " The word under cursor:
+  let g:vim_current_word#highlight_current_word = 1
+  nmap <leader>tw :VimCurrentWordToggle<CR>
+  " ### current_word end ###
+
+  " ### vimspector start ###
+  " I never really tested this, should be a nice alternative to using VSCode/Chromium as debugger
   Plug 'puremourning/vimspector'
   let g:vimspector_enable_mappings = 'HUMAN'
+  " ### vimspector end ###
 
+  " ### fzf start ###
   " Find stuff
-  " I install fzf outside of vim anyway so I don't need the next line
+  " Next line installs fzf for your user (for use outside of vim). This may give an error on updates
+  " if you already have it installed a different way. Will still work though.
   Plug 'junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'}
   Plug 'junegunn/fzf.vim'
-  " Plug '~/.fzf'
-  " Addon to search in the quickfix window
-  Plug 'fszymanski/fzf-quickfix', {'on': 'Quickfix'}
-  " Fuzy search in code in current file
+  " Fuzzy search in code in current file
   nnoremap <leader>fl :Lines<cr>
   " Fuzzy search filenames in project
-  nnoremap <leader>ff :Files<cr>
-  nnoremap <c-p>      :Files<cr>
+  nnoremap <expr> <leader>ff (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+  nnoremap <expr> <c-p>      (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
   nnoremap <leader>bu :Buffers<cr>
   " Fuzzy search in code in project
   nnoremap <leader>fc :norm <leader>rg<cr>
   nnoremap <leader>rg :Rg<cr>
+  " ### fzf end ###
 
-  " This is commented out becaus for some reason this does not match fuzzy any more -_-
+  " This is commented out because for some reason this does not match fuzzy any more -_-
   " The default :Rg command matches filenames AND Code, this redefined version only matches code
   " This is just copied from the fzf help section `fzf-vim-example-advanced-ripgrep-integration`
   " I have no idea why this one doesn't match the filenames, but it doesn't...
@@ -539,27 +553,50 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " endfunction
   " command! -bang Files call NoJSFiles(<q-args>, <bang>0)
 
+  " ### easy-align start ###
 
-  " Allows to interactively align code (like on : as in the lines above)
+  " Allows to interactively align code on = || && etc. to make variable definitions look more clean
+  " This can do A LOT of stuff, but I only use it by selecting stuff in visual mode, activate this,
+  " press the character I want to align to, play around with hjkl until I have the alignment I want.
+  " (Enter changes the alignment of the right side, you have to press the aligned character again
+  " to confirm the alignment)
+  "
   " Plug 'junegunn/vim-easy-align'
-  " I forked this and added hjkl as alternatives for arrow keys
+  " I forked this and added hjkl as alternatives for arrow keys. Development seems dead
   " Pull Request here: https://github.com/junegunn/vim-easy-align/pull/138/files
   Plug 'Gordin/vim-easy-align', { 'branch': 'real_main' }
-  " Start interactive EasyAlign in visual mode (e.g. vipga)
+  " Start interactive EasyAlign in visual mode (e.g. vipga) [g]o [a]lign
   xmap ga <Plug>(EasyAlign)
-  " Additional mapping to remember this plugin because = indents
+  " Easier mapping to remember this plugin because = indents and <leader>= aligns
   xmap <leader>= <Plug>(LiveEasyAlign)
-  " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+  " Start interactive EasyAlign for a motion/text object (e.g. gaip) [g]o [a]lign (motion)
   nmap ga <Plug>(EasyAlign)
+
+  " ### easy-align end ###
+
+  " ### vim-recover start ###
+  " Shows a diff with recovery files by pressing c
+  Plug 'chrisbra/Recover.vim'
+  nnoremap <leader>fr :FinishRecovery<CR>
+  " ### vim-recover end ###
+
+  " ### Sneak start ###
 
   " Press s and two keys to jump to the next occurence of those 2 characters together
   " Like f/t, but for two characters...
+  " If there are more than one possible places, will show a character you need to press to go there
+  " with this config.
+  " (USE THIS, THIS IS FASTER THAN ANYTHING ELSE FOR MOVING AROUND IN ONE SCREEN!)
   Plug 'justinmk/vim-sneak'
   let g:sneak#s_next     = 1 " Press s/S again to jump through all targets"
   let g:sneak#label      = 1 " Put labels on possible jump target after activating
   let g:sneak#use_ic_scs = 1 " Make sneak follow ignorecase and smartcase setting
 
-  " Syntax fire for jsonc (json as config files with comments)
+  " ### Sneak end ###
+
+  Plug 'jparise/vim-graphql'
+
+  " Syntax file for jsonc (json with comments...)
   Plug 'kevinoid/vim-jsonc'
   augroup jsonc
     autocmd!
@@ -569,14 +606,23 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   Plug 'ekalinin/Dockerfile.vim'
 
+  " ### git stuff start ###
+
   " Adds Commands :Gdiff X to diff with other branches or add stuff to staging area in vimsplit
   " Also has :Gblame and other stuff. Can browse through everything in a git repo
   Plug 'tpope/vim-fugitive'
-  " [g]it: Go to [n]ext/[p]revious change in current file
+  " [g]it: Go to [n]ext/[p]revious change in current file (maps ]c and [c itself, but I don't like
+  " it)
   nmap <leader>gn ]c
   nmap <leader>gp [c
+  " Gblame tells you to use :Git blame instead, but I like Gblame -_-
+  command! Gblame Git blame
   " Rhubarb extends fugitive with some stuff when `hub` in installed (Github Client)
   Plug 'tpope/vim-rhubarb'
+
+  " ### git stuff end ###
+
+  " ### Signify start ###
 
   " Show changed lines in files under version control next to the line numbers
   if has('nvim') || has('patch-8.0.902')
@@ -591,7 +637,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:signify_vcs_cmds['yadm'] = 'yadm diff --no-color --no-ext-diff -U1 -- %f'
   let g:signify_sign_show_count = 1
 
-  " Only show signcolumn when there are changes or Errors to be shown
+  " Hide signcolumn when there are no changes or Errors to be shown
   set signcolumn=auto
 
   " ### Signify end ###
@@ -606,6 +652,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " ### Undotree start ###
 
   " Adds Undotree commands to show vim undo history like a git history
+  " Lets you go back to provious versions of a file by selecting and pressing enter.
+  " Useful when you pressed undo to copy stuff, but accidentally changed stuff, so you can't redo
+  " anymore to get back. This let's you get back to where you want easily.
   Plug 'mbbill/undotree'
   let g:undotree_WindowLayout=2
   let g:undotree_SetFocusWhenToggle=1
@@ -616,6 +665,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   endfunc
   " Show/Hide Untotree and switch to it with ,ut
   nnoremap <silent> <leader>ut :UndotreeToggle<cr>
+
+  " ### Undotree end ###
 
   " Detect indentation settings of current files and use them
   Plug 'tpope/vim-sleuth'
@@ -628,14 +679,23 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'mhinz/vim-mix-format'
   let g:mix_format_on_save = 1
 
+  " ### Dart stuff start ###
+  " (needs some work...)
   Plug 'dart-lang/dart-vim-plugin'
   let g:dart_style_guide = 2
-  let g:dart_format_on_save = 0 " Does not work....
+  let g:dart_format_on_save = 0 " Does not work?....
   let dart_html_in_string=v:true
   nmap <leader>fd :!flutter dartfmt %
   " Plug 'natebosch/vim-lsc'
   " Plug 'natebosch/vim-lsc-dart'
   " let g:lsc_auto_map = v:true
+
+  " ### Dart stuff end ###
+
+  " ### CoC start ###
+  " I'M TRYING TO MAKE COC WORK TOGETHER WITH YouCompleteMe HERE, YOU ARE PROBABLY BETTER OFF
+  " REMOVING ANYTHING RELATED TO YCM FROM THIS CONFIG AND JUST USE COC!
+  " You have been warned...
 
   " Autocompletion with Coc
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -696,25 +756,23 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Disable/enable completion based on languages (others are handled by YouCompleteMe)
   augroup coc
     autocmd!
-    autocmd BufEnter *          call coc#config('suggest.autoTrigger', "always")
-    autocmd BufEnter *          call CocMappings()
     autocmd filetype *          let b:coc_suggest_disable=0
+    autocmd BufEnter *          call coc#config('suggest.autoTrigger', "always")
 
     autocmd filetype python     let b:coc_suggest_disable=0
     autocmd BufEnter *.py       call coc#config('suggest.autoTrigger', "always")
-    autocmd BufEnter *.py       call CocMappings()
 
     autocmd filetype elixir     let b:coc_suggest_disable=0
     autocmd BufEnter *.ex       call coc#config('suggest.autoTrigger', "always")
-    autocmd BufEnter *.ex       call CocMappings()
 
     autocmd filetype rust       let b:coc_suggest_disable=1
     autocmd BufEnter *.rs       call coc#config('suggest.autoTrigger', "never")
-    autocmd BufEnter *.rs       call YcmMappings()
 
-    autocmd filetype typescript let b:coc_suggest_disable=1
-    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "never")
-    autocmd BufEnter *.ts       call YcmMappings()
+    autocmd filetype typescript let b:coc_suggest_disable=0
+    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "always")
+
+    autocmd filetype javascript let b:coc_suggest_disable=0
+    autocmd BufEnter *.js       call coc#config('suggest.autoTrigger', "always")
   augroup end
 
   " inoremap <silent><expr> <CR>
@@ -728,42 +786,56 @@ silent! if plug#begin('~/.config/nvim/plugged')
               \ "\<S-TAB>"
 
   " GoTo code navigation.
+  " Setup Mappings to use
   nmap <Plug>(coc-definition-vsplit) :call CocAction('jumpDefinition', 'vsplit')<CR>
   nmap <Plug>(coc-definition-tabe) :call CocAction('jumpDefinition', 'tabe')<CR>
   nmap <Plug>(coc-definition-edit) :call CocAction('jumpDefinition', 'edit')<CR>
+  " Use the mappings
+  " [g]o to definition of current word in [v]split
   nmap <silent> gv <Plug>(coc-definition-vsplit)
+  " [g]o to definition of current word in new [t]ab
   nmap <silent> gt <Plug>(coc-definition-tabe)
+  " [g]o to [d]efinition of current word (in the current window)
   nmap <silent> gd <Plug>(coc-definition-edit)
+  " [g]o to [t]ype definition of current word (in the current window (I guess?))
   nmap <silent> gy <Plug>(coc-type-definition)
+  " [g]o to [i]mplementation of current word (in the current window)
   nmap <silent> gi <Plug>(coc-implementation)
+  " [g]o to [r]eferences of current word (shows window to select which one)
   nmap <silent> gr <Plug>(coc-references)
 
   " Select `inside` and `around` function
+  " In visual mode, lets you press af/if to expand the selection to the whole function you are in
+  " either the whole thing with af or just the code inside with if
   xmap if <Plug>(coc-funcobj-i)
   omap if <Plug>(coc-funcobj-i)
   xmap af <Plug>(coc-funcobj-a)
   omap af <Plug>(coc-funcobj-a)
 
   " Refactoring stuff.
+  " [r]e[n]ame word under cursor. If available will use a language server and rename occurences in
+  " the whole repository
   nmap <leader>rn <Plug>(coc-rename)
-  nmap <leader>coa <Plug>(coc-codeaction)
-  nmap <leader>qf <Plug>(coc-codeaction)
+  " Bring up a small menu for [c]de [a]ctions. Can do stuff like add missing imports from other files
+  nmap <leader>ca <Plug>(coc-codeaction)
+  " Same thing for codelens actions I guess, whatever those are... ¯\_(ツ)_/¯
   nmap <leader>cl <Plug>(coc-codelens-action)
+  " Like rename, but with more options?
   nmap <leader>rf <Plug>(coc-refactor)
 
-  " Formatting selected code.
+  " Formatting selected code. (Needs a properly configured language server for current language)
   xmap <leader>f  <Plug>(coc-format-selected)
   nmap <leader>f  <Plug>(coc-format-selected)
 
-  fun! YcmMappings()
-  endfunction
-
-  fun! CocMappings()
-  endfunction
-
+  " Go through automatic completion suggestions with TAB
   let g:coc_snippet_next = '<tab>'
 
-  " YCM is nice for python, TypeScript and some other languages. You can also try coc
+  " ### CoC end ###
+
+  " YCM is nice for python, TypeScript and some other languages.
+  " I disabled TypeScript for now because starting tsserver blocks vim for 5+ seconds every time I
+  " start vim and go to a .ts file
+  " Remove rest-completer if you don't use rust, it will install rust in the background...
   Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
   " Change selection from list away from <Tab> so ultisnips can use it
   let g:ycm_key_list_select_completion                = ['<TAB>', '<Down>']
@@ -772,29 +844,96 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ycm_autoclose_preview_window_after_insertion  = 1
   let g:ycm_autoclose_preview_window_after_completion = 1
   let g:ycm_auto_hover                                = 'CursorHold'
+  let g:ycm_auto_trigger                              = 1
+
+  " This toggles YCM automatically displaying tooltips with context help on words under cursor
   nmap <silent> <leader>tt <esc>:call HoverToggle()<CR><plug>(YCMHover)
   " nmap <esc> <plug>(YCMHover)
   " This toggles YCMs hover tooltips with context help
   " I'm overriding the b:ycm_hover variable because g:ycm_auto_hover seems to be read only when
   " a file is (re)loaded.
   function! HoverToggle()
-    if g:ycm_auto_hover == 'CursorHold'
-      let g:ycm_auto_hover = ''
-      let b:ycm_hover      = { 'command': '',       'syntax': '' }
-      echo "Turned Hover Tooltips Off"
-    else
-      let g:ycm_auto_hover = 'CursorHold'
-      let b:ycm_hover      = { 'command': 'GetDoc', 'syntax': &filetype }
-      echo "Turned Hover Tooltips On"
-    endif
+      if g:ycm_auto_hover == 'CursorHold'
+          let g:ycm_auto_hover = ''
+          let b:ycm_hover      = { 'command': '',       'syntax': '' }
+          echo "Turned Hover Tooltips Off"
+          if has("nvim")
+              call Close_all_floating_windows()
+          endif
+      else
+          let g:ycm_auto_hover = 'CursorHold'
+          let b:ycm_hover      = { 'command': 'GetDoc', 'syntax': &filetype }
+          echo "Turned Hover Tooltips On"
+          if has("nvim")
+              call <SID>Hover()
+          endif
+      endif
   endfunction
+
+  " neovim has floating windows instead of tooltips, I copied this from here and changed some stuff
+  " https://zhuanlan.zhihu.com/p/137734416
+  if has("nvim")
+    function Close_all_floating_windows()
+        let all_window_ids = nvim_list_wins()
+        let floating_window_ids = filter(all_window_ids, {k,v->nvim_win_get_config(v).relative=="win"})
+        let closed = map(floating_window_ids, {k,v->nvim_win_close(v, v:true)})
+    endf
+
+    function s:Hover()
+      set lazyredraw
+      call Close_all_floating_windows()
+      if g:ycm_auto_hover == ''
+          set nolazyredraw
+          return
+      endif
+      " get the doc string from YCM
+      let response = youcompleteme#GetCommandResponse('GetDoc')
+      if response == ''
+        return
+      endif
+      " set the width
+      let s:width = 1
+      " calculate the height to show the whole doc with wrap enabled
+      let stripped_response = substitute(response, '\(\n\|\s\)\+$', '', 'g')
+      let lines = ['']+map(split(stripped_response, '\n'), {k,v->" ".v." "})+['']
+      let s:height = len(lines)
+      for s:line in lines
+        let s:width = max([len(s:line), s:width])
+      endfor
+      " let s:width = min([len(s:line), min([winwidth('%') * 9 / 10, 100])])
+      " echo s:width
+      " nvim floating window interface
+      let buf = nvim_create_buf(v:false, v:true)
+      call nvim_buf_set_lines(buf, 0, -1, v:true, lines)
+      " let opts = {'relative': 'cursor', 'width': s:width, 'height': s:height, 'col': -3,
+      "       \ 'row': -1, 'anchor': 'SW', 'style': 'minimal', 'focusable': v:false}
+      let opts = {'relative': 'cursor', 'width': s:width, 'height': s:height, 'col': -3,
+            \ 'row': 2, 'anchor': 'NW', 'style': 'minimal', 'focusable': v:false}
+      call Close_all_floating_windows()
+      let s:win = nvim_open_win(buf, 0, opts)
+      set nolazyredraw
+      " set the window option
+      call nvim_win_set_option(s:win, 'winhl', 'Normal:NormalFloat')
+      call nvim_win_set_option(s:win, 'wrap', v:true)
+      call nvim_win_set_option(s:win, 'linebreak', v:true)
+      redraw!
+      " close the window once the cursor moved
+      " autocmd CursorMoved <buffer> ++once call nvim_win_close(s:win, v:true)
+      " autocmd CursorMoved <buffer> ++once call Close_all_floating_windows()
+    endfunction
+
+    command YcmGetDocFloatWin :call <SID>Hover()
+    autocmd FileType c,cpp,h,hpp,ts,py,rb,vim nmap K :YcmGetDocFloatWin<cr>
+    au! CursorHold * ++nested call <SID>Hover()
+  else
+  endif
 
   " Turn off ycm on plugin specific buffers
   let g:ycm_filetype_blacklist = {
-              \ 'any-jump': 1,     'fzf': 1, 'tagbar': 1,    'notes': 1,  'markdown': 1,
-              \    'netrw': 1,   'unite': 1,   'text': 1,  'vimwiki': 1,    'pandoc': 1,
-              \  'infolog': 1, 'leaderf': 1,   'mail': 1, 'startify': 1, 'gitcommit': 1
-              \}
+        \ 'any-jump': 1,     'fzf': 1, 'tagbar': 1,    'notes': 1,  'markdown': 1,
+        \    'netrw': 1,   'unite': 1,   'text': 1,  'vimwiki': 1,    'pandoc': 1,
+        \  'infolog': 1, 'leaderf': 1,   'mail': 1, 'startify': 1, 'gitcommit': 1
+        \}
   " Turn off ycm for specific programming languages (to use coc instead)
   let g:ycm_filetype_blacklist['typescript'] = 1
   let g:ycm_filetype_blacklist['python'] = 1
@@ -930,7 +1069,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   vmap <leader>s/ :s//*/<cr>
   nmap <leader>s/ :%s//*/<cr>
 
-  let g:ale_disable_lsp = 1
+  let g:ale_disable_lsp = 0
   let g:ale_set_balloons = 1
   " Set to 1 to open another buffer with error information when there is any
   let g:ale_cursor_detail = 0
@@ -1063,14 +1202,14 @@ nnoremap <silent> <leader>      :<c-u>WhichKey ','<CR>
 " nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
 " Help Menu for my leader mappings
 let g:which_key_map = {
-  \  '#'     : '[0-9] highlight word under cursor', '0' : 'which_key_ignore'
-  \, '1'     : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
-  \, '4'     : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
-  \, '7'     : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
-  \, '/'     : 'fuzzy search'
+  \  '/'     : 'fuzzy search'
   \, '<Tab>' : 'Pick UltiSnips snippet from list'
   \, '?'     : 'fuzzy search backwards'
-  \, 'g/'    : [',g/', 'fuzzy search, cursor stays'], 'g' : {'name': 'which_key_ignore'}
+  \, 'g'     : {'name': 'which_key_ignore'
+    \, '/'   : 'fuzzy search, but cursor stays'
+    \, 'n'   : '[g]o to [n]ext changed line (according to git)'
+    \, 'p'   : '[g]o to [p]revious changed line (according to git)'
+    \}
   \, 'f'     : { 'name': '[f]ind Files, search in code (FZF)'
     \, 'f'   : 'find [f]ilenames in project'
     \, 'c'   : 'find [c]ode in project'
@@ -1083,6 +1222,7 @@ let g:which_key_map = {
     \, '4'   : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
     \, '7'   : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
     \, 'c'   : [':CocConfig'     ,'[C]oc [C]onfig']
+    \, 'a'   : 'Coc Code Actions'
     \, 'e'   : [':CocList extensions'  ,'[C]oc [e]xtensions']
     \, 'm'   : [':CocList marketplace' ,'[C]oc [m]arketplace']
     \, 'o'   : [':CocList outline'     ,'[C]oc [o]utline']
@@ -1221,3 +1361,29 @@ silent! colorscheme gruvbox
 " silent! colorscheme ayu
 " silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
                                     " start vim the first time and the scheme isn't installed yet.
+
+" This is here for the 'vim_current_word' plugin, this has to be done after loading a colorscheme
+hi CurrentWord guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
+hi CurrentWordTwins guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
+
+if !has('clipboard')
+  echo 'VIM IS NOT COMPILED WITH +cliboard!'
+else
+  set clipboard=unnamed             " Use system clipboard as default register
+  " If xsel is available, use it instead of xclip (default) because vim-yoink has a bug with xclip
+  if executable('xsel')
+    let g:clipboard = {
+          \   'name': 'xsel_override',
+          \   'copy': {
+          \      '+': 'xsel --input --clipboard',
+          \      '*': 'xsel --input --primary',
+          \    },
+          \   'paste': {
+          \      '+': 'xsel --output --clipboard',
+          \      '*': 'xsel --output --primary',
+          \   },
+          \   'cache_enabled': 1,
+          \ }
+  endif
+endif
+
