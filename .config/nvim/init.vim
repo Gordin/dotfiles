@@ -582,15 +582,17 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " ### Sneak start ###
 
+  " I replaced this with "Hop". this is still nice if you prever to press 2 chars instead of 1
+
   " Press s and two keys to jump to the next occurence of those 2 characters together
   " Like f/t, but for two characters...
   " If there are more than one possible places, will show a character you need to press to go there
   " with this config.
   " (USE THIS, THIS IS FASTER THAN ANYTHING ELSE FOR MOVING AROUND IN ONE SCREEN!)
-  Plug 'justinmk/vim-sneak'
-  let g:sneak#s_next     = 1 " Press s/S again to jump through all targets"
-  let g:sneak#label      = 1 " Put labels on possible jump target after activating
-  let g:sneak#use_ic_scs = 1 " Make sneak follow ignorecase and smartcase setting
+  " Plug 'justinmk/vim-sneak'
+  " let g:sneak#s_next     = 1 " Press s/S again to jump through all targets"
+  " let g:sneak#label      = 1 " Put labels on possible jump target after activating
+  " let g:sneak#use_ic_scs = 1 " Make sneak follow ignorecase and smartcase setting
 
   " ### Sneak end ###
 
@@ -671,7 +673,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Detect indentation settings of current files and use them
   Plug 'tpope/vim-sleuth'
 
-  " Plug 'phaazon/hop.nvim'
+  Plug 'phaazon/hop.nvim'
 
 
   " Meta-Plugin for multiple programming languages, loaded on demand
@@ -1351,20 +1353,23 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
-" Use treesitter for folding. I like folding by indentation more...
+" Use treesitter for folding. (Actually, don't, I like folding by indentation more...)
 " set foldmethod=expr
 " set foldexpr=nvim_treesitter#foldexpr()
 
 " Hop config
-" lua << EOF
-" require'hop'.setup()
-" vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
-" vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
-" vim.api.nvim_set_keymap('o', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
-" vim.api.nvim_set_keymap('o', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
-" vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
-" vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
-" EOF
+lua << EOF
+require'hop'.setup()
+-- [n]ormal mode mappings. Press fX / FX to highlight all X to jump to one.
+-- vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = false })<cr>", {})
+-- vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = false })<cr>", {})
+-- [o]visual??? mode mappings. Press fX / FX to jump to the next X.
+vim.api.nvim_set_keymap('o', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = false, inclusive_jump = true })<cr>", {})
+vim.api.nvim_set_keymap('o', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = false, inclusive_jump = true })<cr>", {})
+-- normal and visual mapping mode mappings. Press tX / TX to highlight all X to jump to one.
+vim.api.nvim_set_keymap('', 's', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = false })<cr>", {})
+vim.api.nvim_set_keymap('', 'S', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = false })<cr>", {})
+EOF
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...
 set background=dark                 " Use dark background for color schemes
