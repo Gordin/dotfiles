@@ -6,6 +6,7 @@ if [ -x "$(command -v pacman)" ]; then
   sudo pacman -Syu
   sudo pacman -S \
     base-devel inetutils \
+    bpytop lm_sensors lsof strace \
     ripgrep ripgrep-all \
     hub \
     shellcheck \
