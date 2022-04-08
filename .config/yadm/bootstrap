@@ -5,6 +5,7 @@ IFS=$'\n\t'
 if [ -x "$(command -v pacman)" ]; then
   sudo pacman -Syu
   sudo pacman -S --needed \
+    wget curl \
     base-devel inetutils \
     bpytop lm_sensors lsof strace \
     ripgrep ripgrep-all \
