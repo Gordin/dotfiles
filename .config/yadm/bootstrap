@@ -167,16 +167,15 @@ if ! [ -x "$(command -v pacman)" ]; then
     brew install shellcheck --force-bottle
   fi
 
-  # Install ruby stuff if ruby is available
-  if ! [ -x "$(command -v gem)" ]; then
-    gem install rubocop pry pry-byebug coderay
-    gem update
-  fi
-
   # Install lua
   # brew install lua luarocks
 fi
 
+# Install ruby stuff if ruby is available
+if ! [ -x "$(command -v gem)" ]; then
+  gem install rubocop pry pry-byebug coderay neovim
+  gem update
+fi
 
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
@@ -223,4 +222,9 @@ mkdir -p "$VIM_DIR/tmp/backup"
 if ! [ -x "$(command -v nvim)" ]; then
   brew install nvim --HEAD
 fi
+
+if [ -x "$(command -v yay)" ]; then
+  yay -S --needed neovim-git python2-neovim python-neovim ruby-neovim xclip
+fi
+
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall!' '+qall'
