@@ -2,6 +2,23 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+if [ -x "$(command -v pacman)" ]; then
+  sudo pacman -Syu
+  sudo pacman -S \
+    ripgrep ripgrep-all \
+    hub \
+    shellcheck \
+    rubygems \
+    lua luarocks \
+    perl \
+    python python-pip\
+    python2 \
+    neovim \
+    python-neovim pyenv \
+    fzf
+  ARCHLINUX=1
+fi
+
 export XDG_CONFIG_HOME=$HOME/.config
 BINS=$XDG_CONFIG_HOME/bin
 mkdir -p "$BINS"
@@ -47,7 +64,7 @@ pyenv exec pip install wheel
 pyenv exec pip install neovim
 
 # PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
-PY3VER='3.9.6'
+PY3VER='3.11.0a6'
 pyenv install "$PY3VER" -s
 pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" neovim3
 set +u; pyenv activate neovim3; set -u
@@ -91,52 +108,59 @@ fi
 
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
-FZFDIR=$XDG_CONFIG_HOME/fzf
-git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null || (cd "$FZFDIR" ; git pull)
-"$FZFDIR/install" --xdg --completion --key-bindings --update-rc
-ln -sf "$FZFDIR" ~/.fzf
+# Don't need this, because the vim plugin installs this
+# FZFDIR=$XDG_CONFIG_HOME/fzf
+# git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZFDIR" 2> /dev/null || (cd "$FZFDIR" ; git pull)
+# "$FZFDIR/install" --xdg --completion --key-bindings --update-rc
+# ln -sf "$FZFDIR" ~/.fzf
 
-# Install homebrew START
-# I only use brew to install small binaries without many dependencies, because the binary version
-# of many bigger packages only work when there is a user called homebrew set up
-if ! [ -x "$(command -v brew)" ]; then
-  BREW_DIR=~/.linuxbrew/Homebrew
-  mkdir -p $BREW_DIR
-  echo created brew dir
-  git clone https://github.com/Homebrew/brew "${BREW_DIR}" 2> /dev/null || (cd "$BREW_DIR" ; git pull)
-  ln -sf "${BREW_DIR}/bin/brew" "${BINS}"
+
+
+# Skip all of this stuff, because we already installed it with pacman
+if ! [ -x "$(command -v pacman)" ]; then
+  # Install homebrew START
+  # I only use brew to install small binaries without many dependencies, because the binary version
+  # of many bigger packages only work when there is a user called homebrew set up
+  if ! [ -x "$(command -v brew)" ]; then
+    BREW_DIR=~/.linuxbrew/Homebrew
+    mkdir -p $BREW_DIR
+    echo created brew dir
+    git clone https://github.com/Homebrew/brew "${BREW_DIR}" 2> /dev/null || (cd "$BREW_DIR" ; git pull)
+    ln -sf "${BREW_DIR}/bin/brew" "${BINS}"
+  fi
+  eval "$(brew shellenv)"
+  brew update
+  #brew upgrade -v --force-bottle
+  # Install homebrew END
+
+  # Install ripgrep binary if it's not available
+  if ! [ -x "$(command -v rg)" ]; then
+    brew install ripgrep ripgrep-all --force-bottle
+    # ripgrep-all adds the rga binary that can also search in PDFS, .docs, zip, etc.
+  fi
+
+  # Install hub (Github Client) binary if it's not available
+  if ! [ -x "$(command -v hub)" ]; then
+    brew install ncurses util-linux gettext hub --force-bottle
+    # ncurses and util-linux are dependencies and brew tries to build them without installing them
+    # explicitly with --force-bottle
+  fi
+
+  # Install Shellcheck (bash linter) if it's not available
+  if ! [ -x "$(command -v shellcheck)" ]; then
+    brew install shellcheck --force-bottle
+  fi
+
+  # Install ruby stuff if ruby is available
+  if ! [ -x "$(command -v gem)" ]; then
+    gem install rubocop pry pry-byebug coderay
+    gem update
+  fi
+
+  # Install lua
+  # brew install lua luarocks
 fi
-eval "$(brew shellenv)"
-brew update
-#brew upgrade -v --force-bottle
-# Install homebrew END
 
-# Install rigpgrep binary if it's not available
-if ! [ -x "$(command -v rg)" ]; then
-  brew install ripgrep ripgrep-all --force-bottle
-  # ripgrep-all adds the rga binary that can also search in PDFS, .docs, zip, etc.
-fi
-
-# Install hub (Github Client) binary if it's not available
-if ! [ -x "$(command -v hub)" ]; then
-  brew install ncurses util-linux gettext hub --force-bottle
-  # ncurses and util-linux are dependencies and brew tries to build them without installing them
-  # explicitly with --force-bottle
-fi
-
-# Install Shellcheck (bash linter) if it's not available
-if ! [ -x "$(command -v shellcheck)" ]; then
-  brew install shellcheck --force-bottle
-fi
-
-# Install ruby stuff if ruby is available
-if ! [ -x "$(command -v gem)" ]; then
-  gem install rubocop pry pry-byebug coderay
-  gem update
-fi
-
-# Install lua
-# brew install lua luarocks
 
 # Install npm/node with nvm, Install yarn with npm. (For vim stuff)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
