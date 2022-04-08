@@ -18,7 +18,15 @@ if [ -x "$(command -v pacman)" ]; then
     python2 \
     neovim \
     python-neovim pyenv \
-    fzf
+    fzf \
+    go
+  if [ -x "$(command -v yay)" ]; then
+    cd /tmp &&\
+    git clone https://aur.archlinux.org/yay.git &&\
+    cd yay &&\
+    makepkg -si &&\
+    cd
+  fi
 fi
 
 export XDG_CONFIG_HOME=$HOME/.config
