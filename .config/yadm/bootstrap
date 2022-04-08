@@ -71,7 +71,8 @@ pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" ne
 set +u; pyenv activate neovim3; set -u
 pyenv exec pip install --upgrade pip
 pyenv exec pip install wheel
-pyenv exec pip install neovim flake8 mypy pylint black
+pyenv exec pip install neovim
+# pyenv exec pip install neovim flake8 mypy pylint black
 pyenv exec pip install ipython ipdb ptpython
 
 
