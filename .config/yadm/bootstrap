@@ -6,7 +6,7 @@ if [ -x "$(command -v pacman)" ]; then
   sudo pacman -Syu
   sudo pacman -S --needed \
     wget curl \
-    base-devel inetutils \
+    base-devel inetutils cmake \
     bpytop lm_sensors lsof strace \
     ripgrep ripgrep-all \
     hub \
@@ -215,5 +215,4 @@ mkdir -p "$VIM_DIR/tmp/backup"
 if ! [ -x "$(command -v nvim)" ]; then
   brew install nvim --HEAD
 fi
-# Install plugins. Don't update here because YouCompleteMe Plugin can take a long time
-nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall' '+qall'
+nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall!' '+qall'
