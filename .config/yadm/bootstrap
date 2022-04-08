@@ -177,11 +177,13 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 # Ignore the errors from loading nvm because it errors out if the current version isn't set right
 # Set a version instead of just stable, because the lazy loading in .zshrc needs that
 NODEVER="$(nvm version-remote stable)"
+set +u
 nvm install "$NODEVER"
 nvm alias default "$NODEVER"
 nvm use "$NODEVER"
 npm install -g yarn neovim vim-language-server
 yarn global add neovim vim-language-server
+set -u
 
 # Install perl stuff (just for neovim, probably useless...)
 # PLENV_DIR=$HOME/.plenv
