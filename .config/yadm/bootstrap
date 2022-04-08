@@ -5,7 +5,7 @@ IFS=$'\n\t'
 if [ -x "$(command -v pacman)" ]; then
   sudo pacman -Syu
   sudo pacman -S \
-    base-devel \
+    base-devel inetutils \
     ripgrep ripgrep-all \
     hub \
     shellcheck \
