@@ -54,6 +54,7 @@ eval "$(pyenv init -)"
 set +u
 eval "$(pyenv virtualenv-init -)" || true
 set -u
+pyenv update
 # Get latest available python 2 and 3 versions
 # PY2VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '2\.7.\+' -o | tail -1)
 PY2VER='2.7.18'
@@ -65,14 +66,13 @@ pyenv exec pip install wheel
 pyenv exec pip install neovim
 
 # PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
-PY3VER='3.11.0a6'
+PY3VER='3.10.4'
 pyenv install "$PY3VER" -s
 pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" neovim3
 set +u; pyenv activate neovim3; set -u
 pyenv exec pip install --upgrade pip
 pyenv exec pip install wheel
-pyenv exec pip install neovim
-# pyenv exec pip install neovim flake8 mypy pylint black
+pyenv exec pip install neovim flake8 mypy pylint black
 pyenv exec pip install ipython ipdb ptpython
 
 
