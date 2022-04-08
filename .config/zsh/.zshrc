@@ -285,7 +285,8 @@ if (cat /proc/version | grep -qi microsoft); then
 
   # Set ip address for X server
   # export DISPLAY="$(ipconfig.exe | grep IPv4 | cut -d: -f2 | tr -d ' ' | head -1 | sed 's/[^[:print:]]//g'):0"
-  export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+  # export DISPLAY=$(ip route show default | head -1 | cut -d ' ' -f3):0
+  export DISPLAY=$(ip route show default | awk 'NR==1 { print $3 }'):0
 fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
