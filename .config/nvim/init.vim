@@ -234,8 +234,8 @@ autocmd! BufWinEnter * set wrapscan " Something keeps resetting this -_-
 autocmd InsertEnter * :setlocal nohlsearch
 autocmd InsertLeave * :setlocal hlsearch
 
-" Toggle :[hl]search with <leader>hl
-nmap <silent> <leader>hl :set invhlsearch<CR>
+" Toggle :[t]oggle [hl]search with <leader>thl
+nmap <silent> <leader>t/ :set invhlsearch<CR>
 " Paste current search
 nmap <leader>p/ "/p
 
@@ -486,7 +486,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Allows to highlight word under cursor or visual selection
   "
   " Adds a highlight to the current word/selection
-  let HiSet   = '<leader>hs'
+  let HiSet   = '<leader>hl'
   " Adds a highlight to the current word/selection that goes away when you move the cursor
   let HiErase = '<leader>he'
   " Clears all highlight
@@ -848,10 +848,12 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:ycm_key_invoke_completion                     = '<C-Space>'
   let g:ycm_autoclose_preview_window_after_insertion  = 1
   let g:ycm_autoclose_preview_window_after_completion = 1
-  let g:ycm_auto_hover                                = 'CursorHold'
+  let g:ycm_auto_hover                                = ''
+  " let g:ycm_auto_hover                                = 'CursorHold'
   let g:ycm_auto_trigger                              = 1
 
   " This toggles YCM automatically displaying tooltips with context help on words under cursor
+  " Toggled off by default, because it makes scrolling slow...
   nmap <silent> <leader>tt <esc>:call HoverToggle()<CR><plug>(YCMHover)
   " nmap <esc> <plug>(YCMHover)
   " This toggles YCMs hover tooltips with context help

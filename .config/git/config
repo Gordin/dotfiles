@@ -40,11 +40,15 @@
     fdiff = feature
 [credential]
     helper = cache --timeout=3600
+[mergetool "nvim"]
+    cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
 [merge]
-    tool = vimdiff
+    tool = nvim
+[mergetool]
+    prompt = false
 [pull]
     rebase = false
 [core]
     editor = nvim
 [init]
-	defaultBranch = main
+    defaultBranch = main
