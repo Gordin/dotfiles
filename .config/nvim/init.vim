@@ -492,7 +492,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Clears all highlight
   let HiClear = '<leader>hc'
   " Does some searching stuff, I don't need it.
-  let HiFind  = ''
+  let HiFind  = '<leader>h/'
   Plug 'azabiong/vim-highlighter'
   " ### Highlighter end ###
 
@@ -1038,22 +1038,12 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Icons for different filetypes in NerdTree
   Plug 'ryanoasis/vim-webdevicons'
 
-  " Yoink let's you cycle through clipboard after pasting
-  Plug 'svermeulen/vim-yoink'
-  nmap <c-h> <plug>(YoinkPostPasteSwapBack)
-  nmap <c-l> <plug>(YoinkPostPasteSwapForward)
-
-  nmap p <plug>(YoinkPaste_p)
-  nmap P <plug>(YoinkPaste_P)
-
-  nmap y <plug>(YoinkYankPreserveCursorPosition)
-  xmap y <plug>(YoinkYankPreserveCursorPosition)
-
-  let g:yoinkMaxItems=20
-  let g:yoinkIncludeDeleteOperations=1  " Includes entries from `d` in the history
-  if has('nvim')
-    let g:yoinkSavePersistently=1       " Save history when you close vim. Needs the `shada` stuff
-  endif
+  " Lets you cycle through previous yanked things after pasting
+  Plug 'bfredl/nvim-miniyank'
+  map p <Plug>(miniyank-autoput)
+  map P <Plug>(miniyank-autoPut)
+  nmap < <Plug>(miniyank-cycle)
+  nmap > <Plug>(miniyank-cycleback)
 
   " Syntax definitions for i3 config files
   Plug 'mboughaba/i3config.vim'
@@ -1062,15 +1052,6 @@ silent! if plug#begin('~/.config/nvim/plugged')
       autocmd BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
       autocmd BufNewFile,BufRead ~/.config/sway/config set filetype=i3config
   aug end
-
-  Plug 'svermeulen/vim-subversive'
-  " make vim-yoink work when you paste in visual mode
-  xmap s <plug>(SubversiveSubstitute)plug
-  xmap p <plug>(SubversiveSubstitute)
-  xmap P <plug>(SubversiveSubstitute)
-
-  " Substitute current word inside next Motion with something
-  nmap <leader>sw <plug>(SubversiveSubstituteWordRange)
 
   " Replace every occurence of your current search with content of your clipboard
   vmap <leader>s/ :s//*/<cr>
@@ -1339,20 +1320,29 @@ augroup END
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained",
-  sync_install = false,
-  indent = {
-    enable = true
-  },
-  highlight = {
-    enable = true,
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-}
+    -- A list of parser names, or "all"
+    ensure_installed = "all",
+
+    -- Install parsers synchronously (only applied to `ensure_installed`)
+    sync_install = false,
+
+    -- List of parsers to ignore installing (for "all")
+    -- ignore_install = { "javascript" },
+
+    highlight = {
+      -- `false` will disable the whole extension
+      enable = true,
+
+      -- list of language that will be disabled
+      -- disable = { "c", "rust" },
+
+      -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+      -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+      -- Using this option may slow down your editor, and you may see some duplicate highlights.
+      -- Instead of true it can also be a list of languages
+      additional_vim_regex_highlighting = false,
+    },
+  }
 EOF
 
 " Use treesitter for folding. (Actually, don't, I like folding by indentation more...)

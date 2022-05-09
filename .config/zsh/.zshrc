@@ -210,6 +210,8 @@ export PATH=${HOME}/.local/bin:$PATH
 export PATH=${HOME}/.config/bin:$PATH
 export PATH="${HOME}/.pub-cache/bin:$PATH"
 
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
+
 if [ -d "$HOME/.cargo/bin" ]; then
   export PATH=$HOME/.cargo/bin:$PATH
 fi
