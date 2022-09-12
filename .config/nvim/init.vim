@@ -54,10 +54,11 @@ endif
 " Visual stuff
 set visualbell                      " Blink when errors happen instead of making a sound
 set vb t_vb=                        " Also disable the blinking, I don't want any bell...
-set scrolloff=8                     " Keep X lines around cursor visible when scrolling up/down
+set scrolloff=20                    " Keep X lines around cursor visible when scrolling up/down
 set showmatch                       " Highlight matching (){}[] etc. pairs
 " enable true colors support if available
 if exists('+termguicolors')
+  " setting some special escape sequences for terminals. No idea what they do ¯\_(ツ)_/¯
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
@@ -70,6 +71,7 @@ set laststatus=2                    " Always show the statusline
 set ruler                           " Show the line and column number of the cursor position,
 set cursorline                      " Highlight the line with the cursor
 set mousehide                       " Hide the mouse cursor while typing (works only in gvim?)
+set nolazyredraw
 
 " Listchars
 set list                        " enable listchars
@@ -166,6 +168,12 @@ set splitright                      " open horizontal splits right of current bu
 vnoremap $ $h
 " enter [v]isual [b]lock mode (If you don't like ctrl+v...)
 nnoremap <leader>vb <c-q>
+" Pressing I/A when in visual block mode allows to add something in front of/after the block in all
+" lines of the block. !!vim will only show the edit to current line until you leave edit mode!!
+" I just put this here as a reminder, because TComment and CoC already have visual mapping that
+" start with i/a
+" vnoremap i I
+" vnoremap a A
 
 " Indentation settings
 set tabstop=2 softtabstop=2         " Show tabs as 2 spaces and make 2 spaces == <tab> for commands
@@ -321,7 +329,7 @@ iabbrev :check: ✓
 " autocmd! bufwritepost $MYVIMRC source $MYVIMRC
 
 " Make sure all markdown (and txt) files are treated as markdown
-autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} set filetype=markdown
+" autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} set filetype=markdown
 
 " Treat JSON files like JSON instead of JavaScript (Not sure if still needed, too lazy to test)
 autocmd BufNewFile,BufRead *.json set ft=json
@@ -371,6 +379,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
     \, {',s': ['Edit ssh config',            'e $HOME/.ssh/config']}
     \, {',i': ['Edit i3 config',             'e $HOME/.config/i3/config']}
     \, {',b': ['Edit yadm bootstrap script', 'e $HOME/.config/yadm/bootstrap']}
+    \, {',l': ['Edit lazygit config',        'LazyGitConfig']}
+    \, {'lg': ['Open lazygit',               'LazyGit']}
     \ ]
   let g:startify_update_oldfiles     = 1    " Update most recently used files on the fly
   let g:startify_change_to_vcs_root  = 1    " cd into root of repository if possible
@@ -505,6 +515,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:vim_current_word#highlight_twins = 1
   " The word under cursor:
   let g:vim_current_word#highlight_current_word = 1
+  let g:vim_current_word#highlight_delay = 100
   nmap <leader>tw :VimCurrentWordToggle<CR>
   " ### current_word end ###
 
@@ -624,6 +635,24 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " ### git stuff end ###
 
+  Plug 'nvim-lua/plenary.nvim'
+
+  " ### lazygit start ###
+  "
+  Plug 'kdheepak/lazygit.nvim'
+
+  let g:lazygit_floating_window_winblend = 0 " transparency of floating window
+  let g:lazygit_floating_window_scaling_factor = 0.9 " scaling factor for floating window
+  let g:lazygit_floating_window_corner_chars = ['╭', '╮', '╰', '╯'] " customize lazygit popup window corner characters
+  let g:lazygit_floating_window_use_plenary = 0 " use plenary.nvim to manage floating window if available
+  let g:lazygit_use_neovim_remote = 1 " fallback to 0 if neovim-remote is not installed
+  nmap <leader>lg :LazyGit<CR>
+
+  if has('nvim') && executable('nvr')
+    let $GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
+  endif
+  " ### lazygit end ###
+
   " ### Signify start ###
 
   " Show changed lines in files under version control next to the line numbers
@@ -635,9 +664,15 @@ silent! if plug#begin('~/.config/nvim/plugged')
   if !exists("g:signify_vcs_cmds")
     let g:signify_vcs_cmds= {}
   endif
-  let g:signify_vcs_cmds['git'] = 'git diff --no-color --no-ext-diff -U0 -- %f | sed "/^ /d"'
+  " let g:signify_vcs_cmds['git'] = 'git diff --no-color --no-ext-diff -U0 -- %f | sed "/^ /d"'
   let g:signify_vcs_cmds['yadm'] = 'yadm diff --no-color --no-ext-diff -U1 -- %f'
   let g:signify_sign_show_count = 1
+  let g:signify_number_highlight = 0
+  let g:signify_line_highlight = 0
+
+  " show or undo current hunk (changed lines)
+  noremap <leader>gd :SignifyHunkDiff<CR>
+  noremap <leader>gu :SignifyHunkUndo<CR>
 
   " Hide signcolumn when there are no changes or Errors to be shown
   set signcolumn=auto
@@ -661,7 +696,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:undotree_WindowLayout=2
   let g:undotree_SetFocusWhenToggle=1
   " Scroll back in history, while updating the file
-  function g:Undotree_CustomMap()
+  function! g:Undotree_CustomMap()
     nmap <buffer> K <plug>UndotreeNextState
     nmap <buffer> J <plug>UndotreePreviousState
   endfunc
@@ -705,44 +740,76 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Autocompletion with Coc
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   " Use <c-space> to trigger completion.
-  " if has('nvim')
-  "   inoremap <silent><expr> <c-space> coc#refresh()
-  " else
-  "   inoremap <silent><expr> <c-@> coc#refresh()
-  " endif
+  if has('nvim')
+    inoremap <silent><expr> <C-Space> coc#refresh()
+  else
+    inoremap <silent><expr> <c-@> coc#refresh()
+  endif
 
-  " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-  " position. Coc only does snippet and additional edit on confirm.
-  " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-  " if exists('*complete_info')
-  "   inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-  " else
-  "   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-  " endif
+  " Automatically open signature help when entering insert mode.
+  " (Sounds helpful, but it can be kinda annoying, because the help hides other stuff...)
+  augroup cocsignaturehelp
+    autocmd!
+    autocmd InsertEnter *       call CocActionAsync('showSignatureHelp')
+  augroup end
+
+  " Show [s]ignature [h]elp again while in insert mode
+  inoremap <leader>sh <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
+
+  " Use tab for trigger completion with characters ahead and navigate.
+  " NOTE: There's always complete item selected by default, you may want to enable
+  " no select by `"suggest.noselect": true` in your configuration file.
+  " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+  " other plugin before putting this into your config.
+  inoremap <silent><expr> <TAB>
+        \ coc#pum#visible() ? coc#pum#next(1) :
+        \ CheckBackspace() ? "\<Tab>" :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+  " Make <CR> to accept selected completion item or notify coc.nvim to format
+  " <C-g>u breaks current undo, please make your own choice.
+  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
   let g:coc_global_extensions = [
-              \  'coc-tsserver'
-              \, 'coc-json'
-              \, 'coc-marketplace'
-              \, 'coc-python'
-              \, 'coc-elixir'
-              \, 'coc-snippets'
-              \, 'coc-ultisnips'
-              \, 'coc-rust-analyzer'
-              \, 'coc-rls'
-              \, 'coc-solargraph'
-              \, 'coc-vimlsp'
-              \, 'coc-flutter'
-              \, 'coc-flutter-tools'
-              \]
+        \  'coc-tsserver'
+        \, 'coc-json'
+        \, 'coc-marketplace'
+        \, 'coc-python'
+        \, 'coc-elixir'
+        \, 'coc-snippets'
+        \, 'coc-rust-analyzer'
+        \, 'coc-rls'
+        \, 'coc-solargraph'
+        \, 'coc-vimlsp'
+        \, 'coc-flutter'
+        \, 'coc-flutter-tools'
+        \]
   " Use K to show documentation in preview window.
   " (Only needed in neovim, in vim this is always shown for stuff under the cursor)
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
+  nnoremap <silent> K :call ShowDocumentation()<CR>
 
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
+  " Highlight the symbol and its references when holding the cursor.
+  autocmd CursorHold * silent call CocActionAsync('highlight')
+
+  " Use <C-l> for trigger snippet expand.
+  imap <C-l> <Plug>(coc-snippets-expand)
+
+  " Use <C-j> for select text for visual placeholder of snippet.
+  vmap <C-j> <Plug>(coc-snippets-select)
+
+  " Use <C-j> for jump to next placeholder, it's default of coc.nvim
+  let g:coc_snippet_next = '<c-j>'
+
+  " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+  let g:coc_snippet_prev = '<c-k>'
+
+  function! ShowDocumentation()
+    if CocAction('hasProvider', 'hover')
+      call CocActionAsync('doHover')
     else
-      call CocAction('doHover')
+      call feedkeys('K', 'in')
     endif
   endfunction
 
@@ -755,40 +822,6 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " autocmd User CocOpenFloat call coc#util#close_floats()
 
-  " Highlight the symbol and its references when holding the cursor.
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-
-  " Disable/enable completion based on languages (others are handled by YouCompleteMe)
-  augroup coc
-    autocmd!
-    autocmd filetype *          let b:coc_suggest_disable=0
-    autocmd BufEnter *          call coc#config('suggest.autoTrigger', "always")
-
-    autocmd filetype python     let b:coc_suggest_disable=0
-    autocmd BufEnter *.py       call coc#config('suggest.autoTrigger', "always")
-
-    autocmd filetype elixir     let b:coc_suggest_disable=0
-    autocmd BufEnter *.ex       call coc#config('suggest.autoTrigger', "always")
-
-    autocmd filetype rust       let b:coc_suggest_disable=1
-    autocmd BufEnter *.rs       call coc#config('suggest.autoTrigger', "never")
-
-    autocmd filetype typescript let b:coc_suggest_disable=0
-    autocmd BufEnter *.ts       call coc#config('suggest.autoTrigger', "always")
-
-    autocmd filetype javascript let b:coc_suggest_disable=0
-    autocmd BufEnter *.js       call coc#config('suggest.autoTrigger', "always")
-  augroup end
-
-  " inoremap <silent><expr> <CR>
-  "             \ UltiSnips#ExpandableExact() ? "<C-R>=UltiSnips#ExpandSnippet()<CR>":
-  "             \ "\<CR>"
-  inoremap <silent><expr> <TAB>
-              \ pumvisible() ? "\<c-n>":
-              \ "\<TAB>"
-  inoremap <silent><expr> <S-TAB>
-              \ pumvisible() ? "\<c-p>":
-              \ "\<S-TAB>"
 
   " GoTo code navigation.
   " Setup Mappings to use
@@ -821,6 +854,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " [r]e[n]ame word under cursor. If available will use a language server and rename occurences in
   " the whole repository
   nmap <leader>rn <Plug>(coc-rename)
+  " Show inspectEdit view. (For checking renamings for coc-rename)
+  nmap <leader>ie :CocCommand workspace.inspectEdit<CR>
   " Bring up a small menu for [c]de [a]ctions. Can do stuff like add missing imports from other files
   nmap <leader>ca <Plug>(coc-codeaction)
   " Same thing for codelens actions I guess, whatever those are... ¯\_(ツ)_/¯
@@ -837,136 +872,18 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
   " ### CoC end ###
 
-  " YCM is nice for python, TypeScript and some other languages.
-  " I disabled TypeScript for now because starting tsserver blocks vim for 5+ seconds every time I
-  " start vim and go to a .ts file
-  " Remove rest-completer if you don't use rust, it will install rust in the background...
-  Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
-  " Change selection from list away from <Tab> so ultisnips can use it
-  let g:ycm_key_list_select_completion                = ['<TAB>', '<Down>']
-  let g:ycm_key_list_previous_completion              = ['<S-TAB>', '<Up>']
-  let g:ycm_key_invoke_completion                     = '<C-Space>'
-  let g:ycm_autoclose_preview_window_after_insertion  = 1
-  let g:ycm_autoclose_preview_window_after_completion = 1
-  let g:ycm_auto_hover                                = ''
-  " let g:ycm_auto_hover                                = 'CursorHold'
-  let g:ycm_auto_trigger                              = 1
-
-  " This toggles YCM automatically displaying tooltips with context help on words under cursor
-  " Toggled off by default, because it makes scrolling slow...
-  nmap <silent> <leader>tt <esc>:call HoverToggle()<CR><plug>(YCMHover)
-  " nmap <esc> <plug>(YCMHover)
-  " This toggles YCMs hover tooltips with context help
-  " I'm overriding the b:ycm_hover variable because g:ycm_auto_hover seems to be read only when
-  " a file is (re)loaded.
-  function! HoverToggle()
-      if g:ycm_auto_hover == 'CursorHold'
-          let g:ycm_auto_hover = ''
-          let b:ycm_hover      = { 'command': '',       'syntax': '' }
-          echo "Turned Hover Tooltips Off"
-          if has("nvim")
-              call Close_all_floating_windows()
-          endif
-      else
-          let g:ycm_auto_hover = 'CursorHold'
-          let b:ycm_hover      = { 'command': 'GetDoc', 'syntax': &filetype }
-          echo "Turned Hover Tooltips On"
-          if has("nvim")
-              call <SID>Hover()
-          endif
-      endif
-  endfunction
-
-  " neovim has floating windows instead of tooltips, I copied this from here and changed some stuff
-  " https://zhuanlan.zhihu.com/p/137734416
-  if has("nvim")
-    function Close_all_floating_windows()
-        let all_window_ids = nvim_list_wins()
-        let floating_window_ids = filter(all_window_ids, {k,v->nvim_win_get_config(v).relative=="win"})
-        let closed = map(floating_window_ids, {k,v->nvim_win_close(v, v:true)})
-    endf
-
-    function s:Hover()
-      set lazyredraw
-      call Close_all_floating_windows()
-      if g:ycm_auto_hover == ''
-          set nolazyredraw
-          return
-      endif
-      " get the doc string from YCM
-      let response = youcompleteme#GetCommandResponse('GetDoc')
-      if response == ''
-        return
-      endif
-      " set the width
-      let s:width = 1
-      " calculate the height to show the whole doc with wrap enabled
-      let stripped_response = substitute(response, '\(\n\|\s\)\+$', '', 'g')
-      let lines = ['']+map(split(stripped_response, '\n'), {k,v->" ".v." "})+['']
-      let s:height = len(lines)
-      for s:line in lines
-        let s:width = max([len(s:line), s:width])
-      endfor
-      " let s:width = min([len(s:line), min([winwidth('%') * 9 / 10, 100])])
-      " echo s:width
-      " nvim floating window interface
-      let buf = nvim_create_buf(v:false, v:true)
-      call nvim_buf_set_lines(buf, 0, -1, v:true, lines)
-      " let opts = {'relative': 'cursor', 'width': s:width, 'height': s:height, 'col': -3,
-      "       \ 'row': -1, 'anchor': 'SW', 'style': 'minimal', 'focusable': v:false}
-      let opts = {'relative': 'cursor', 'width': s:width, 'height': s:height, 'col': -3,
-            \ 'row': 2, 'anchor': 'NW', 'style': 'minimal', 'focusable': v:false}
-      call Close_all_floating_windows()
-      let s:win = nvim_open_win(buf, 0, opts)
-      set nolazyredraw
-      " set the window option
-      call nvim_win_set_option(s:win, 'winhl', 'Normal:NormalFloat')
-      call nvim_win_set_option(s:win, 'wrap', v:true)
-      call nvim_win_set_option(s:win, 'linebreak', v:true)
-      redraw!
-      " close the window once the cursor moved
-      " autocmd CursorMoved <buffer> ++once call nvim_win_close(s:win, v:true)
-      " autocmd CursorMoved <buffer> ++once call Close_all_floating_windows()
-    endfunction
-
-    command YcmGetDocFloatWin :call <SID>Hover()
-    autocmd FileType c,cpp,h,hpp,ts,py,rb,vim nmap K :YcmGetDocFloatWin<cr>
-    au! CursorHold * ++nested call <SID>Hover()
-  else
-  endif
-
-  " Turn off ycm on plugin specific buffers
-  let g:ycm_filetype_blacklist = {
-        \ 'any-jump': 1,     'fzf': 1, 'tagbar': 1,    'notes': 1,  'markdown': 1,
-        \    'netrw': 1,   'unite': 1,   'text': 1,  'vimwiki': 1,    'pandoc': 1,
-        \  'infolog': 1, 'leaderf': 1,   'mail': 1, 'startify': 1, 'gitcommit': 1
-        \}
-  " Turn off ycm for specific programming languages (to use coc instead)
-  let g:ycm_filetype_blacklist['typescript'] = 1
-  let g:ycm_filetype_blacklist['python'] = 1
-  let g:ycm_filetype_blacklist['html'] = 1
-  let g:ycm_filetype_blacklist['elixir'] = 1
-  let g:ycm_filetype_blacklist['firestore'] = 1
-  let g:ycm_filetype_blacklist['ruby'] = 1
-  let g:ycm_filetype_blacklist['vim'] = 1
-  let g:ycm_filetype_blacklist['json'] = 1
-  let g:ycm_filetype_blacklist['jsonc'] = 1
-  let g:ycm_filetype_blacklist['sh'] = 1
-  let g:ycm_filetype_blacklist['zsh'] = 1
-  let g:ycm_filetype_blacklist['dart'] = 1
-  let g:ycm_filetype_blacklist['i3config'] = 1
-
   Plug 'SirVer/ultisnips'
+  let g:UltiSnipsExpandTrigger="<c-`>"
   Plug 'honza/vim-snippets'
-  let g:UltiSnipsExpandTrigger       = "<c-l>"
-  let g:UltiSnipsJumpForwardTrigger  = "<tab>"
-  let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+  " let g:UltiSnipsExpandTrigger       = "<c-l>"
+  " let g:UltiSnipsJumpForwardTrigger  = "<tab>"
+  " let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
   " let g:UltiSnipsListSnippets        = "<leader><tab>"
-  let g:UltiSnipsListSnippets        = ""
-  inoremap <leader><tab> <esc>:Snippets<CR>
+  " let g:UltiSnipsListSnippets        = ""
+  " inoremap <leader><tab> <esc>:Snippets<CR>
   " Open :UltiSnipsEdit in a vsplit
-  let g:UltiSnipsEditSplit           = "vertical"
-  let g:ycm_use_ultisnips_completer  = 1
+  " let g:UltiSnipsEditSplit           = "vertical"
+  " let g:ycm_use_ultisnips_completer  = 1
 
   " Colorschemes
   Plug 'morhetz/gruvbox'
@@ -990,12 +907,15 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'tpope/vim-surround'
   " Change surrounding quotes to different ones by quickly pressing the
   " current quote and the quote type you want to change to
-  nmap '` cs'`
-  nmap `' cs`'
-  nmap `" cs`"
-  nmap "` cs"`
-  nmap '" cs'"
-  nmap "' cs"'
+  " mx  -> `x  pust the cursor on the same position after the change
+  " lazyredraw -> nolazyredraw stops the cursor from flickering
+  " <silent> disables showing the lazyredraw settings change in the statusline
+  nmap <silent> '` :set lazyredraw<CR>mxcs'``x:set nolazyredraw<CR>
+  nmap <silent> `' :set lazyredraw<CR>mxcs`'`x:set nolazyredraw<CR>
+  nmap <silent> `" :set lazyredraw<CR>mxcs`"`x:set nolazyredraw<CR>
+  nmap <silent> "` :set lazyredraw<CR>mxcs"``x:set nolazyredraw<CR>
+  nmap <silent> '" :set lazyredraw<CR>mxcs'"`x:set nolazyredraw<CR>
+  nmap <silent> "' :set lazyredraw<CR>mxcs"'`x:set nolazyredraw<CR>
 
   " Make some plugin functions repeatable with .
   Plug 'tpope/vim-repeat'
@@ -1042,8 +962,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   Plug 'bfredl/nvim-miniyank'
   map p <Plug>(miniyank-autoput)
   map P <Plug>(miniyank-autoPut)
-  nmap < <Plug>(miniyank-cycle)
-  nmap > <Plug>(miniyank-cycleback)
+  nmap <CR> <Plug>(miniyank-cycle)
+  nmap <BS> <Plug>(miniyank-cycleback)
 
   " Syntax definitions for i3 config files
   Plug 'mboughaba/i3config.vim'
@@ -1165,7 +1085,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
 
 
   " Automatically close opening parenthesis
-  Plug 'tmsvg/pear-tree'
+  " Plug 'tmsvg/pear-tree'
   " if this is 1, closing Braces will be inserted after leaving insert mode
   " This allows repeating with `.`, but automatic Linters go crazy with this,
   " so disable it...
@@ -1209,7 +1129,8 @@ let g:which_key_map = {
     \, '1'   : 'which_key_ignore', '2' : 'which_key_ignore', '3' : 'which_key_ignore'
     \, '4'   : 'which_key_ignore', '5' : 'which_key_ignore', '6' : 'which_key_ignore'
     \, '7'   : 'which_key_ignore', '8' : 'which_key_ignore', '9' : 'which_key_ignore'
-    \, 'c'   : [':CocConfig'     ,'[C]oc [C]onfig']
+    \, 'g'   : [':CocConfig'     ,'[C]oc confi[g]']
+    \, 'c'   : [':CocCommand'    ,'[C]oc [C]ommand']
     \, 'a'   : 'Coc Code Actions'
     \, 'e'   : [':CocList extensions'  ,'[C]oc [e]xtensions']
     \, 'm'   : [':CocList marketplace' ,'[C]oc [m]arketplace']
@@ -1372,6 +1293,24 @@ silent! colorscheme gruvbox
 " silent! colorscheme ayu
 " silent! colorscheme monokain        " Sets Colorscheme. silent! suppresses the warning when you
                                     " start vim the first time and the scheme isn't installed yet.
+
+" Something is setting my terminal colors, but my terminal colors work fine...
+silent! unlet g:terminal_color_0
+silent! unlet g:terminal_color_1
+silent! unlet g:terminal_color_2
+silent! unlet g:terminal_color_3
+silent! unlet g:terminal_color_4
+silent! unlet g:terminal_color_5
+silent! unlet g:terminal_color_6
+silent! unlet g:terminal_color_7
+silent! unlet g:terminal_color_8
+silent! unlet g:terminal_color_9
+silent! unlet g:terminal_color_10
+silent! unlet g:terminal_color_11
+silent! unlet g:terminal_color_12
+silent! unlet g:terminal_color_13
+silent! unlet g:terminal_color_14
+silent! unlet g:terminal_color_15
 
 " This is here for the 'vim_current_word' plugin, this has to be done after loading a colorscheme
 hi CurrentWord guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline

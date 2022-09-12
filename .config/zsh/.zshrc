@@ -8,9 +8,9 @@ export EDITOR=vim
 export XDG_CONFIG_HOME=$HOME/.config
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/"
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        eval "$("$BASE16_SHELL/profile_helper.sh")"
+[ -n "$PS1" ] && [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+    $BASE16_SHELL/profile_helper.sh
+    # eval "$("$BASE16_SHELL/profile_helper.sh")"
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -165,7 +165,7 @@ alias scpd='scp -r'
 alias rmd='rm -rf'
 alias lS='l -Sr --group-directories-first'
 alias :q=exit
-alias vim='nvim -O'
+alias vim='nvim'
 alias agv='nvim $(ag --nobreak --nonumbers --noheading . | fzf | sed "s/^\([^:]*\).*$/\1/")'
 alias rgv='nvim $(rg -N --no-heading --color never . | fzf | sed "s/^\([^:]*\).*$/\1/")'
 
@@ -181,6 +181,27 @@ scan_local_network() {
 set_git_vars() {
     echo $PWD
     GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git
+}
+
+search_and_replace() {
+  if [[ "$1" == '' ]]; then
+    return
+  fi
+
+  inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
+  if [ "$inside_git_repo" ]; then
+    search_cmd=(git grep)
+  else
+    search_cmd=(grep -R)
+  fi
+
+  if [[ "$2" == '' ]]; then
+    ${search_cmd[@]} --color=auto -I "$1"
+  elif [[ "$3" == '' ]]; then
+    ${search_cmd[@]} -I "$1" | sed "s/$1/$2/g" | grep --color=auto "$2"
+  elif [[ "$3" == '!' ]]; then
+    ${search_cmd[@]} -Il "$1" | xargs sed -i "s/$1/$2/g"
+  fi
 }
 
 alias yvim="yadm enter vim"
@@ -423,4 +444,22 @@ bindkey -M viins -s ',b' '^Ab ^M'
 # bindkey -M viins -s ',b' '^[Ib ^M'
 alias ho='autorandr ho'
 
+if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+    alias nvim="nvr -cc split --remote-wait +'set bufhidden=wipe'"
+fi
+
+if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+    export VISUAL="nvr -cc split --remote-wait +'set bufhidden=wipe'"
+    export EDITOR="nvr -cc split --remote-wait +'set bufhidden=wipe'"
+else
+    export VISUAL="nvim -O"
+    export EDITOR="nvim -O"
+fi
+
+export COLORTERM=truecolor
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+. /opt/asdf-vm/asdf.sh
+
+export GITSUBREPODIR=~/.config/git-subrepo
+source "${GITSUBREPODIR}/.rc"

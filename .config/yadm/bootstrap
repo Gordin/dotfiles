@@ -16,10 +16,10 @@ if [ -x "$(command -v pacman)" ]; then
     perl \
     python python-pip\
     python2 \
-    neovim \
     python-neovim pyenv \
     fzf \
-    go
+    go \
+    lazygit
   if ! [ -x "$(command -v yay)" ]; then
     cd /tmp &&\
     git clone https://aur.archlinux.org/yay.git &&\
@@ -27,6 +27,7 @@ if [ -x "$(command -v pacman)" ]; then
     makepkg -si &&\
     cd
   fi
+  yay -S --needed neovim-git python2-pynvim python-neovim ruby-neovim xclip neovim-remote
 fi
 
 export XDG_CONFIG_HOME=$HOME/.config
@@ -53,6 +54,9 @@ zsh "$XDG_CONFIG_HOME/zsh/zim/zimfw.zsh" update
 BASE16DIR=~/.config/base16-shell
 git clone https://github.com/chriskempson/base16-shell.git $BASE16DIR 2> /dev/null || (cd "$BASE16DIR" ; git pull)
 
+# Install git subrepo
+GITSUBREPODIR=~/.config/git-subrepo
+git clone https://github.com/ingydotnet/git-subrepo $GITSUBREPODIR 2> /dev/null || (cd "$GITSUBREPODIR" ; git pull)
 
 export PYENV_ROOT=~/.config/pyenv
 if ! [ -d "$PYENV_ROOT" ]; then
@@ -86,7 +90,7 @@ pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" ne
 set +u; pyenv activate neovim3; set -u
 pyenv exec pip install --upgrade pip
 pyenv exec pip install wheel
-pyenv exec pip install neovim flake8 mypy pylint black
+pyenv exec pip install neovim flake8 mypy pylint black neovim-remote
 pyenv exec pip install ipython ipdb ptpython
 
 
@@ -110,6 +114,7 @@ if [[ ! "$OS" == "OSX" ]]; then
   fi
   # Install same stuff as for neovim3 env (and maybe more stuff)
   pip install --user wheel
+  pip install --user neovim-remote
   pip install --user neovim flake8 mypy pylint black
   pip install --user ipython ipdb ptpython
 else
@@ -118,6 +123,7 @@ else
   pyenv global $PY3VER
   set +u; pyenv activate; set -u
   pip install wheel
+  pip install neovim-remote
   pip install neovim flake8 mypy pylint black
   pip install ipython ipdb ptpython
 fi
@@ -153,6 +159,10 @@ if ! [ -x "$(command -v pacman)" ]; then
   if ! [ -x "$(command -v rg)" ]; then
     brew install ripgrep ripgrep-all --force-bottle
     # ripgrep-all adds the rga binary that can also search in PDFS, .docs, zip, etc.
+  fi
+
+  if ! [ -x "$(command -v lazygit)" ]; then
+    brew install lazygit
   fi
 
   # Install hub (Github Client) binary if it's not available
@@ -221,10 +231,6 @@ mkdir -p "$VIM_DIR/tmp/backup"
 # Install neovim if it's missing
 if ! [ -x "$(command -v nvim)" ]; then
   brew install nvim --HEAD
-fi
-
-if ! [ -x "$(command -v yay)" ]; then
-  yay -S --needed neovim-git python2-neovim python-neovim ruby-neovim xclip
 fi
 
 nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall!' '+qall'
