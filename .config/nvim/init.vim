@@ -579,7 +579,8 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " Plug 'junegunn/vim-easy-align'
   " I forked this and added hjkl as alternatives for arrow keys. Development seems dead
   " Pull Request here: https://github.com/junegunn/vim-easy-align/pull/138/files
-  Plug 'Gordin/vim-easy-align', { 'branch': 'real_main' }
+  " Edit: changed it to the repo of some other guy that used my fork...
+  Plug 'njhoffman/vim-easy-align'
   " Start interactive EasyAlign in visual mode (e.g. vipga) [g]o [a]lign
   xmap ga <Plug>(EasyAlign)
   " Easier mapping to remember this plugin because = indents and <leader>= aligns
@@ -675,8 +676,9 @@ silent! if plug#begin('~/.config/nvim/plugged')
   let g:signify_line_highlight = 0
 
   " show or undo current hunk (changed lines)
-  noremap <leader>gd :SignifyHunkDiff<CR>
-  noremap <leader>gu :SignifyHunkUndo<CR>
+  " [G]it [d]iff / [G]it [u]ndo
+  noremap <leader>Gd :SignifyHunkDiff<CR>
+  noremap <leader>Gu :SignifyHunkUndo<CR>
 
   " Hide signcolumn when there are no changes or Errors to be shown
   set signcolumn=auto
