@@ -242,6 +242,9 @@ autocmd! BufWinEnter * set wrapscan " Something keeps resetting this -_-
 autocmd InsertEnter * :setlocal nohlsearch
 autocmd InsertLeave * :setlocal hlsearch
 
+" Clear the current search register with // to remove highlighting
+" (For me setting nohlsearch doesn't work, because I toggle it on when Leaving Insert mode)
+nmap <silent> // :let @/ = ""<CR>
 " Toggle :[t]oggle [hl]search with <leader>thl
 nmap <silent> <leader>t/ :set invhlsearch<CR>
 " Paste current search
@@ -522,6 +525,7 @@ silent! if plug#begin('~/.config/nvim/plugged')
   " ### vimspector start ###
   " I never really tested this, should be a nice alternative to using VSCode/Chromium as debugger
   Plug 'puremourning/vimspector'
+  let g:vimspector_base_dir='/home/aguth/.config/nvim/plugged/vimspector'
   let g:vimspector_enable_mappings = 'HUMAN'
   " ### vimspector end ###
 
@@ -641,10 +645,10 @@ silent! if plug#begin('~/.config/nvim/plugged')
   "
   Plug 'kdheepak/lazygit.nvim'
 
-  let g:lazygit_floating_window_winblend = 0 " transparency of floating window
-  let g:lazygit_floating_window_scaling_factor = 0.9 " scaling factor for floating window
+  let g:lazygit_floating_window_winblend = 10 " transparency of floating window
+  let g:lazygit_floating_window_scaling_factor = 0.95 " scaling factor for floating window
   let g:lazygit_floating_window_corner_chars = ['╭', '╮', '╰', '╯'] " customize lazygit popup window corner characters
-  let g:lazygit_floating_window_use_plenary = 0 " use plenary.nvim to manage floating window if available
+  let g:it_floating_window_use_plenary = 1 " use plenary.nvim to manage floating window if available
   let g:lazygit_use_neovim_remote = 1 " fallback to 0 if neovim-remote is not installed
   nmap <leader>lg :LazyGit<CR>
 
@@ -916,6 +920,12 @@ silent! if plug#begin('~/.config/nvim/plugged')
   nmap <silent> "` :set lazyredraw<CR>mxcs"``x:set nolazyredraw<CR>
   nmap <silent> '" :set lazyredraw<CR>mxcs'"`x:set nolazyredraw<CR>
   nmap <silent> "' :set lazyredraw<CR>mxcs"'`x:set nolazyredraw<CR>
+  nmap <silent> "/ :set lazyredraw<CR>mxcs"/`x:set nolazyredraw<CR>
+  nmap <silent> '/ :set lazyredraw<CR>mxcs'/`x:set nolazyredraw<CR>
+  nmap <silent> `/ :set lazyredraw<CR>mxcs`/`x:set nolazyredraw<CR>
+  nmap <silent> /" :set lazyredraw<CR>mxcs/"`x:set nolazyredraw<CR>
+  nmap <silent> /' :set lazyredraw<CR>mxcs/'`x:set nolazyredraw<CR>
+  nmap <silent> /` :set lazyredraw<CR>mxcs/``x:set nolazyredraw<CR>
 
   " Make some plugin functions repeatable with .
   Plug 'tpope/vim-repeat'
@@ -1280,8 +1290,8 @@ require'hop'.setup()
 vim.api.nvim_set_keymap('o', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = false, inclusive_jump = true })<cr>", {})
 vim.api.nvim_set_keymap('o', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = false, inclusive_jump = true })<cr>", {})
 -- normal and visual mapping mode mappings. Press tX / TX to highlight all X to jump to one.
-vim.api.nvim_set_keymap('', 's', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = false })<cr>", {})
-vim.api.nvim_set_keymap('', 'S', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = false })<cr>", {})
+vim.api.nvim_set_keymap('n', 's', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = false })<cr>", {})
+vim.api.nvim_set_keymap('n', 'S', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = false })<cr>", {})
 EOF
 
 " Colorschemes have to be after Plugins because they aren't there before loading plugins...

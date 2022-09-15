@@ -1,6 +1,10 @@
 {
     "coc.preferences.jumpCommand": "vsplit",
     "suggest.autoTrigger": "always",
+    "suggest.noselect": false,
+    "suggest.selection": "recentlyUsedByPrefix",
+    "suggest.virtualText": true,
+    "suggest.enablePreselect": true,
     "typescript.suggest.enabled": true,
     "typescript.referencesCodeLens.showOnAllFunctions": true,
     "typescript.referencesCodeLens.enable": true,
