@@ -15,7 +15,6 @@ if [ -x "$(command -v pacman)" ]; then
     lua luarocks \
     perl \
     python python-pip\
-    python2 \
     python-neovim pyenv \
     fzf \
     go \
@@ -27,7 +26,8 @@ if [ -x "$(command -v pacman)" ]; then
     makepkg -si &&\
     cd
   fi
-  yay -S --needed neovim-git python2-pynvim python-neovim ruby-neovim xclip neovim-remote
+  # yay -S --needed neovim-git python2-bin python2-pynvim python-neovim ruby-neovim xclip neovim-remote
+  yay -S --needed python-neovim ruby-neovim xclip neovim-remote
 fi
 
 export XDG_CONFIG_HOME=$HOME/.config

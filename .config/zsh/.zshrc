@@ -475,7 +475,7 @@ fi
 export COLORTERM=truecolor
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-. /opt/asdf-vm/asdf.sh
+# . /opt/asdf-vm/asdf.sh
 
 export GITSUBREPODIR=~/.config/git-subrepo
 source "${GITSUBREPODIR}/.rc"
