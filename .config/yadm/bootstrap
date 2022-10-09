@@ -75,8 +75,8 @@ pyenv install "$PY2VER" -s
 pyenv virtualenvs --skip-aliases | grep neovim2 || pyenv virtualenv "$PY2VER" neovim2
 set +u; pyenv activate neovim2; set -u
 pyenv exec pip install --upgrade pip
-pyenv exec pip install wheel
-pyenv exec pip install neovim
+pyenv exec pip install --upgrade wheel
+pyenv exec pip install --upgrade neovim
 
 # PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
 PY3VER='3.10.4'
@@ -89,9 +89,9 @@ fi
 pyenv virtualenvs --skip-aliases | grep neovim3 || pyenv virtualenv "$PY3VER" neovim3
 set +u; pyenv activate neovim3; set -u
 pyenv exec pip install --upgrade pip
-pyenv exec pip install wheel
-pyenv exec pip install neovim flake8 mypy pylint black neovim-remote
-pyenv exec pip install ipython ipdb ptpython
+pyenv exec pip install --upgrade wheel
+pyenv exec pip install --upgrade neovim flake8 mypy pylint black neovim-remote
+pyenv exec pip install --upgrade ipython ipdb ptpython
 
 
 # move all paths ending in 'sbin' to the back of PATH
@@ -198,8 +198,8 @@ set +u
 nvm install "$NODEVER"
 nvm alias default "$NODEVER"
 nvm use "$NODEVER"
-npm install -g yarn neovim vim-language-server
-yarn global add neovim vim-language-server
+npm install -g yarn neovim vim-language-server pyright
+yarn global add neovim vim-language-server pyright
 set -u
 
 # Install perl stuff (just for neovim, probably useless...)
