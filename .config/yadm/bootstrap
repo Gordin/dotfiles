@@ -79,7 +79,7 @@ pyenv exec pip install --upgrade wheel
 pyenv exec pip install --upgrade neovim
 
 # PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
-PY3VER='3.10.4'
+PY3VER='3.10.7'
 pyenv install "$PY3VER" -s
 CUR_PY3VER=$(pyenv virtualenvs --skip-aliases | grep neovim3 | cut -d/ -f1 | tr -d ' ')
 if ! [ "$CUR_PY3VER" = "$PY3VER" ]; then
