@@ -235,12 +235,13 @@ if [ -x "$(command -v exa)"  ]; then
 fi
 
 export PATH=/opt/flutter/bin:$PATH
-export PATH=${HOME}/.gem/ruby/3.0.0/bin:$PATH
 export PATH=${HOME}/.gem/ruby/2.7.0/bin:$PATH
 export PATH=${HOME}/.local/share/gem/ruby/3.0.0/bin:$PATH
+# export PATH=${HOME}/.gem/ruby/3.0.0/bin:$PATH
 export PATH=${HOME}/.local/bin:$PATH
 export PATH=${HOME}/.config/bin:$PATH
 export PATH="${HOME}/.pub-cache/bin:$PATH"
+
 
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
 

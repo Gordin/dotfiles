@@ -29,6 +29,7 @@
     lga = log --graph --decorate --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
     lgref = !git log --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --graph --decorate --abbrev-commit `git reflog | cut -c1-7`
     reflg = lgref
+    rs = reset
     last = log -1 HEAD
     cp = cherry-pick
     sl = stash list
