@@ -1,0 +1,14 @@
+-- local neoroot = require('neo-root')
+-- neoroot.setup { CUR_MODE = 2  }
+--  -- 1 for file/buffer mode, 2 for proj-mode
+--
+-- vim.cmd[[
+-- au BufEnter * NeoRoot
+-- ]]
+
+--vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
+  --pattern = {"$HOME/.config/nvim/*"},
+  --callback = function ()
+    --vim.cmd('lcd $HOME/.config/nvim/')
+  --end
+--})

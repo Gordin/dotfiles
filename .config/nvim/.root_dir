@@ -1,0 +1,2 @@
+This is just here, so plugins detect this directory as a project root
+(They don't because this is managed with yadm, so there is no .git here)
