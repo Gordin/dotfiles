@@ -4,3 +4,4 @@ tmp/*
 tmp
 *.swp
 *~
+./plugin/packer_compiled.lua

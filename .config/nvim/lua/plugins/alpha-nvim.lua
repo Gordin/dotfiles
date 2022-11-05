@@ -8,7 +8,7 @@ if not path_ok then
   return
 end
 
--- local startify = require("alpha.themes.startify")
+local startify = require("alpha.themes.startify")
 local dashboard = require("alpha.themes.dashboard")
 local nvim_web_devicons = require "nvim-web-devicons"
 local cdir = vim.fn.getcwd()
@@ -64,8 +64,8 @@ end
 local default_mru_ignore = { "gitcommit" }
 
 local mru_opts = {
-  ignore = function(path, ext)
-    return (string.find(path, "COMMIT_EDITMSG")) or (vim.tbl_contains(default_mru_ignore, ext))
+  ignore = function(pathh, ext)
+    return (string.find(pathh, "COMMIT_EDITMSG")) or (vim.tbl_contains(default_mru_ignore, ext))
   end,
 }
 
@@ -94,7 +94,7 @@ local function mru(start, cwd, items_number, opts)
   end
 
   local special_shortcuts = {}
-  local target_width = 35
+  local target_width = 50
 
   local tbl = {}
   for i, fn in ipairs(oldfiles) do
@@ -144,7 +144,7 @@ local section_header = {
   opts = {
     hl = "Operator",
     shrink_margin = false,
-    position = "center",
+    position = "left",
   }
 }
 
@@ -157,7 +157,7 @@ local section_mru = {
       opts = {
         hl = "Constant",
         shrink_margin = false,
-        position = "center",
+        position = "left",
       },
     },
     { type = "padding", val = 1 },
@@ -173,54 +173,59 @@ local section_mru = {
 
 local buttons = {
   type = "group",
+  position = "left",
   val = {
-    { type = "text", val = "Quick links", opts = { hl = "Constant", position = "center" } },
-    { type = "padding", val = 1 },
-    dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
-    dashboard.button("z", "  zshrc", ":e ~/.zshrc<CR>"),
-    dashboard.button("v", "  vimrc", ":e $MYVIMRC<CR>"),
-    dashboard.button("t", "  tmux config", ":e ~/.config/tmux/tmux.conf<CR>"),
-    dashboard.button("g", "  git config", ":e ~/.gitconfig<CR>"),
-    dashboard.button("s", "  ssh config", ":e ~/.ssh/config<CR>"),
-    dashboard.button("i", "  i3 config", ":e ~/.config/i3/config<CR>"),
-    dashboard.button("y", "  yadm bootstrap script", ":e $HOME/.config/yadm/bootstrap<CR>"),
-    dashboard.button("o", "  old vim config", ":e $HOME/.config/nvim_old/oldconfig.vim<CR>"),
-    -- dashboard.button("g", "  Edit config", ""),
-    dashboard.button("p", "  plugins", ":e ~/.config/nvim/lua/plugins.lua<CR>"),
-    dashboard.button("P", "  plugin dir", ":e ~/.local/share/nvim/site/pack/packer/<CR>"),
-    dashboard.button("l", "  lazygit", ":LazyGit<CR>"),
-    dashboard.button("c", "  lazygit config", ":LazyGitConfig<CR>"),
+    { type = "text", val = "Quick links", opts = { hl = "Constant", position = "left" } },
+    { type = "padding", val = 1, opts = { position = "left" } },
+    -- startify.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+    startify.button("z", "  zshrc", ":e ~/.zshrc<CR>"),
+    startify.button("v", "  vimrc", ":e $MYVIMRC<CR>"),
+    startify.button("t", "  tmux config", ":e ~/.config/tmux/tmux.conf<CR>"),
+    startify.button("g", "  git config", ":e ~/.gitconfig<CR>"),
+    startify.button("s", "  ssh config", ":e ~/.ssh/config<CR>"),
+    startify.button("i", "  i3 config", ":e ~/.config/i3/config<CR>"),
+    startify.button("y", "  yadm bootstrap script", ":e $HOME/.config/yadm/bootstrap<CR>"),
+    startify.button("o", "  old vim config", ":e $HOME/.config/nvim_old/oldconfig.vim<CR>"),
+    -- startify.button("g", "  Edit config", ""),
+    startify.button("p", "  plugins", ":e ~/.config/nvim/lua/plugins.lua<CR>"),
+    startify.button("P", "  plugin dir", ":e ~/.local/share/nvim/site/pack/packer/<CR>"),
+    startify.button("l", "  lazygit", ":LazyGit<CR>"),
+    startify.button("c", "  lazygit config", ":LazyGitConfig<CR>"),
 
-    -- dashboard.button("o", "ﭯ  Recently opened files", ":Telescope oldfiles<CR>"),
-    -- dashboard.button("f", "  Find file", ":lua require('plugins.telescope').project_files()<CR>"),
-    -- dashboard.button("p", "  Find project", ":Telescope repo list<CR>"),
-    -- dashboard.button("r", "  Find word", ":lua require('telescope.builtin').live_grep()<CR>"),
-    -- dashboard.button("g", "  Find modified file", ":lua require('plugins.telescope').my_git_status()<CR>"),
-    -- dashboard.button("m", "  Show mark", ":Telescope marks"),
-    -- dashboard.button("t", "  Show todo", ":TodoTelescope<CR>"),
-    dashboard.button("u", "  Sync plugins", ":PackerSync<CR>"),
-    dashboard.button("h", "  Neovim Check health", ":checkhealth<CR>"),
-    dashboard.button("q", "  Quit", "<Cmd>qa<CR>")
+    -- startify.button("o", "ﭯ  Recently opened files", ":Telescope oldfiles<CR>"),
+    -- startify.button("f", "  Find file", ":lua require('plugins.telescope').project_files()<CR>"),
+    -- startify.button("p", "  Find project", ":Telescope repo list<CR>"),
+    -- startify.button("r", "  Find word", ":lua require('telescope.builtin').live_grep()<CR>"),
+    -- startify.button("g", "  Find modified file", ":lua require('plugins.telescope').my_git_status()<CR>"),
+    -- startify.button("m", "  Show mark", ":Telescope marks"),
+    -- startify.button("t", "  Show todo", ":TodoTelescope<CR>"),
+    startify.button("u", "  Sync plugins", ":PackerSync<CR>"),
+    startify.button("h", "  Neovim Check health", ":checkhealth<CR>"),
+    startify.button("q", "  Quit", "<Cmd>qa<CR>")
   },
-  position = "center",
 }
 
 local section_footer = {
   type = "group",
   val = {
-    { type = "text", val = footer(), opts = { hl = "Constant", position = "center" } },
+    { type = "text", val = footer(), opts = { hl = "Constant", position = "left" } },
   }
 }
 
 local opts = {
   layout = {
-    { type = "padding", val = 2 },
+    { type = "padding", val = 1 },
     section_header,
     { type = "padding", val = 2 },
-    section_mru,
-    { type = "padding", val = 2 },
+    startify.section.top_buttons,
+    { type = "padding", val = 1 },
+    startify.section.mru_cwd,
+    -- section_mru,
+    -- { type = "padding", val = 1 },
+    startify.section.mru,
+    { type = "padding", val = 1 },
     buttons,
-    { type = "padding", val = 2 },
+    { type = "padding", val = 1 },
     section_footer,
   },
   opts = {
