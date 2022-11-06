@@ -191,13 +191,18 @@ for _, mapping in ipairs(surround_mappings) do
   vim.cmd([[nmap ]] .. mapping .. [[ mxcs]] .. mapping .. [[`x]])
 end
 
+local group = vim.api.nvim_create_augroup("Mappings", {})
+vim.api.nvim_clear_autocmds({ group = group })
+
 vim.api.nvim_create_autocmd("BufEnter", {
+  group = group,
   pattern = "Help",
   command = 'noremap <CR> K',
 })
 
 -- Make q close the quickfix/command/search history window (That thing when you hit q: or q/)
 vim.api.nvim_create_autocmd("CmdwinEnter", {
+  group = group,
   pattern = "*",
   callback = function ()
     remap('n', 'q', '<c-c><c-c>', { buffer = true})
@@ -205,6 +210,7 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
 })
 
 vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = group,
   pattern = "quickfix",
   callback = function ()
     remap('n', 'q', '<CMD>q<CR>', { buffer = true})

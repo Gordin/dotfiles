@@ -1,6 +1,10 @@
 local utils = require('utils')
 
+
+local group = vim.api.nvim_create_augroup("ColorschemeStuff", {})
+vim.api.nvim_clear_autocmds({ group = group })
 vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
+  group = group,
   pattern = "*",
   callback = function ()
     local groups = {

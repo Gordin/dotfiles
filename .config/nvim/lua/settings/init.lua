@@ -61,8 +61,11 @@ vim.opt.gdefault   = true -- substitutions have the g (replace all matches on a 
 vim.opt.wrapscan   = true -- Makes searches loop around to the beginning of file after the last result
 
 -- Turn off search result highlights when you go to insert mode toggle it back on afterwards
-vim.api.nvim_create_autocmd("InsertEnter", { pattern = "*", command = ":setlocal nohlsearch " })
-vim.api.nvim_create_autocmd("InsertLeave", { pattern = "*", command = ":setlocal hlsearch " })
+
+local group = vim.api.nvim_create_augroup("AutoHLSearch", {})
+vim.api.nvim_clear_autocmds({ group = group })
+vim.api.nvim_create_autocmd("InsertEnter", { group = group, pattern = "*", command = ":setlocal nohlsearch " })
+vim.api.nvim_create_autocmd("InsertLeave", { group = group, pattern = "*", command = ":setlocal hlsearch " })
 
 vim.opt.termguicolors = true
 
@@ -126,7 +129,10 @@ vim.opt.splitbelow = true
 vim.opt.clipboard = "unnamed"
 
 -- AutoCmd that restores the last cursor position after re-opening a file
+local cursor_group = vim.api.nvim_create_augroup("CursorPos", {})
+vim.api.nvim_clear_autocmds({ group = cursor_group })
 vim.api.nvim_create_autocmd("BufReadPost", {
+  group = cursor_group,
   callback = function()
     local ft = vim.bo.filetype
     if string.find(ft, "commit") then return end
@@ -142,7 +148,10 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
+local yank_group = vim.api.nvim_create_augroup("YankGroup", {})
+vim.api.nvim_clear_autocmds({ group = yank_group })
 vim.api.nvim_create_autocmd("TextYankPost", {
+  group = group,
   callback =  function()
     vim.highlight.on_yank()
   end,
