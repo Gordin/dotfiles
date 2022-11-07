@@ -93,15 +93,8 @@ local noice_cmd_types = {
   Search     = "TransparentSearch"
 }
 
-local noice_hl = vim.api.nvim_create_augroup("NoiceHighlights", {})
-vim.api.nvim_clear_autocmds({ group = noice_hl })
-vim.api.nvim_create_autocmd("BufEnter", {
-  group = noice_hl,
-  callback = function()
-    for type, hl in pairs(noice_cmd_types) do
-      vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder" .. type, { link = hl })
-      vim.api.nvim_set_hl(0, "NoiceCmdlineIcon" .. type, { link = hl })
-    end
-    vim.api.nvim_set_hl(0, "NoiceConfirmBorder", { link = cmdGroup })
-  end,
-})
+for type, hl in pairs(noice_cmd_types) do
+  vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder" .. type, { link = hl })
+  vim.api.nvim_set_hl(0, "NoiceCmdlineIcon" .. type,        { link = hl })
+end
+vim.api.nvim_set_hl(0, "NoiceConfirmBorder", { link = cmdGroup })
