@@ -81,11 +81,11 @@ vim.api.nvim_set_hl(0, 'TransparentSearch', { fg = search.foreground })
 local help = vim.api.nvim_get_hl_by_name("IncSearch", true)
 vim.api.nvim_set_hl(0, 'TransparentHelp', { fg = help.foreground })
 
-local cmdGroup = 'DevIconLua'
+local cmdGroup = 'Title'
 local noice_cmd_types = {
   CmdLine    = cmdGroup,
   Input      = cmdGroup,
-  Lua        = cmdGroup,
+  Lua        = 'DevIconLua',
   Filter     = cmdGroup,
   Rename     = cmdGroup,
   Substitute = "Define",
