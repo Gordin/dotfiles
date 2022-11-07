@@ -1,6 +1,6 @@
 local M = {}
 
-function change_ruby_color(color)
+M.change_ruby_color = function(color)
   -- local ruby_color = "#701516"
   color = color or "#fb4934"
 
@@ -20,6 +20,6 @@ function change_ruby_color(color)
   end
 end
 
-change_ruby_color('#fb4934')
+M.change_ruby_color('#fb4934')
 
 return M
