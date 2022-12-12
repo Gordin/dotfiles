@@ -59,6 +59,11 @@ local lsp_flags = {
   debounce_text_changes = 150
 }
 local lspconfig = require("lspconfig")
+lspconfig.jedi_language_server.setup({
+  on_attach = on_attach,
+  flags = lsp_flags,
+  capabilities = capabilities
+})
 lspconfig.pyright.setup({
   on_attach = on_attach,
   flags = lsp_flags,
