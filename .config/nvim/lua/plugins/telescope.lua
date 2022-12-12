@@ -47,9 +47,19 @@ telescope.setup{
     },
   },
   extensions = {
-    fzy_native = {
-      override_generic_sorter = false,
-      override_file_sorter = true,
+    ["zf-native"] = {
+      -- options for sorting file-like items
+      file = {
+        enable = true,            -- override default telescope file sorter
+        highlight_results = true, -- highlight matching text in results
+        match_filename = true,    -- enable zf filename match priority
+      },
+      -- options for sorting all other items
+      generic = {
+        enable = true,            -- override default telescope generic item sorter
+        highlight_results = true, -- highlight matching text in results
+        match_filename = false,   -- disable zf filename match priority
+      },
     }
   }
 }
@@ -57,7 +67,7 @@ telescope.setup{
 -- Extensions
 
 -- telescope.load_extension('octo')
-telescope.load_extension('fzy_native')
+telescope.load_extension('zf-native')
 telescope.load_extension('repo')
 telescope.load_extension('neoclip')
 telescope.load_extension('notify')
@@ -65,6 +75,7 @@ telescope.load_extension('dap')
 telescope.load_extension("yadm_files")
 telescope.load_extension("git_or_yadm_files")
 telescope.load_extension('projects') -- project.nvim
+telescope.load_extension("yank_history")
 
 local builtin = require('telescope.builtin')
 local M = {}
