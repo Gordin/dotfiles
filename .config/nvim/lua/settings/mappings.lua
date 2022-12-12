@@ -22,14 +22,14 @@ remap('n', '<leader>wl', "<c-w>l",           SILENT_NORE)
 remap('n', '<leader>wj', "<c-w>j",           SILENT_NORE)
 remap('n', '<leader>wk', "<c-w>k",           SILENT_NORE)
 -- Change window with <c-[hjkl]> (I don't actually use this...)
--- remap('n', '<c-h>',      "<c-w>h",           SILENT_NOREMAP)
--- remap('n', '<c-l>',      "<c-w>l",           SILENT_NOREMAP)
--- remap('n', '<c-j>',      "<c-w>j",           SILENT_NOREMAP)
--- remap('n', '<c-k>',      "<c-w>k",           SILENT_NOREMAP)
+-- remap('n', '<c-h>',      "<c-w>h",           SILENT_NORE)
+-- remap('n', '<c-l>',      "<c-w>l",           SILENT_NORE)
+-- remap('n', '<c-j>',      "<c-w>j",           SILENT_NORE)
+-- remap('n', '<c-k>',      "<c-w>k",           SILENT_NORE)
 
 -- Opens current file again in a tab. Better than `:tabe %` because that puts your cursor to line 1,
 -- but `:tab split` will keep the cursor position.
-remap('n', '<leader>te', '<CMD>tab split<CR>', SILENT_NOREMAP)
+remap('n', '<leader>te', '<CMD>tab split<CR>', SILENT_NORE)
 
 -- go down or up 1 visual line on wrapped lines instead of line of file. Check the count to only
 -- do this without a count. (It will jump over wrapped lines when you give a count, so it works with
@@ -39,7 +39,7 @@ remap('n', 'k',  "v:count == 0 ? 'gk' : 'k'", { noremap = true, silent = true, e
 remap('n', 'gj', "j",                         SILENT_NORE)
 remap('n', 'gk', "k",                         SILENT_NORE)
 
-remap("n",    "<C-e>",  ":TSHighlightCapturesUnderCursor<CR>",   SILENT_NOREMAP)
+remap("n",    "<C-e>",  ":TSHighlightCapturesUnderCursor<CR>",   SILENT_NORE)
 
 vim.cmd[[
 nnoremap <f1> :echo synIDattr(synID(line('.'), col('.'), 0), 'name')<cr>
@@ -69,8 +69,8 @@ remap('x', 'g*', '<Plug>(asterisk-gz*)')
 remap('x', 'g#', '<Plug>(asterisk-gz#)')
 
 -- Telescope
--- remap('n', '<c-p>',   "<CMD>Telescope git_or_yadm_files<CR>",                                  SILENT_NOREMAP)
---remap('n', '<leader>t',  "<CMD>lua require('telescope.builtin').treesitter()<CR>",                SILENT_NOREMAP)
+-- remap('n', '<c-p>',   "<CMD>Telescope git_or_yadm_files<CR>",                                  SILENT_NORE)
+--remap('n', '<leader>t',  "<CMD>lua require('telescope.builtin').treesitter()<CR>",                SILENT_NORE)
 -- live fuzzy text search, matches filename + code (separete filename from code easily with "::" )
 remap('n', '<leader>rg', '<cmd>lua require("telescope.builtin").grep_string({ search = "" })<cr>',                SILENT_NORE)
 -- live fuzzy code search, but only in code
@@ -101,7 +101,7 @@ remap('n', '<leader>lg', "<cmd>LazyGit<cr>",                                 SIL
 -- remap('n', '<leader>ll', "<CMD>lua require('telescope.builtin').grep_string({ search = vim.fn.input('GREP -> ') })<CR>", {noremap = true, silent = true})
 
 -- Alpha
-remap('n', '<leader>st', "<CMD>Alpha<CR>",         SILENT_NORE) -- aoeu
+remap('n', '<leader>st', "<CMD>Alpha<CR>",         SILENT_NORE)
 remap('n', '<leader>St', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
 remap('n', '<leader>ST', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
 
@@ -136,6 +136,7 @@ remap('v', 'a', 'A')
 
 -- nvim-tree
 remap('n', '<leader>tt', '<CMD>NvimTreeToggle<CR>', SILENT_NORE) -- [t]oggle [t]ree
+-- remap('n', '<leader>tr', '<CMD>lua require"nvim-tree".open_replacing_current_buffer()<CR>', SILENT_NORE) -- [t]oggle [t]ree
 
 -- vim-expand-region
 -- With this you can just press v multiple times from normal mode to get the selection you want
@@ -160,23 +161,27 @@ remap({'n', 'v'}, "<Space>", 'za')
 -- Easily set foldlevel to get an overview of all attributes of something
 -- (Anything above 3 will probably never be used)
 for i=0, 9 do
-  remap("n", "<leader>z"..i, "<CMD>set foldlevel=".. i .. "<CR>", SILENT_NOREMAP)
+  remap("n", "<leader>z"..i, "<CMD>set foldlevel=".. i .. "<CR>", SILENT_NORE)
 end
 
 -- debugging / nvim-dap
 remap('n', "<leader>dt", '<CMD>lua require("dapui").toggle()<CR>',          SILENT_NORE)
 remap('n', '<F5>',       '<CMD>lua require"osv".launch({port = 8086})<CR>', SILENT_NORE)
 remap('n', '<F8>',       '<CMD>lua require"dap".toggle_breakpoint()<CR>',   SILENT_NORE)
-remap('n', '<S-F8>',     '<CMD>lua require"dap".clear_breakpoints()<CR>',   SILENT_NORE)
+remap('n', '<S-F8>',     '<CMD>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>',   SILENT_NORE)
+remap('n', '<S-F7>',     '<CMD>lua require"dap".clear_breakpoints()<CR>',   SILENT_NORE)
 remap('n', '<F9>',       '<CMD>lua require"dap".continue()<CR>',            SILENT_NORE)
 remap('n', '<F10>',      '<CMD>lua require"dap".step_over()<CR>',           SILENT_NORE)
-remap('n', '<S-F10>',    '<CMD>lua require"dap".step_into()<CR>',           SILENT_NORE)
-remap('n', '<F11>',      '<CMD>lua require"dap".step_out()<CR>',            SILENT_NORE)
+remap('n', '<F11>',      '<CMD>lua require"dap".step_into()<CR>',           SILENT_NORE)
+remap('n', '<S-F11>',    '<CMD>lua require"dap".step_out()<CR>',            SILENT_NORE)
 remap('n', '<F12>',      '<CMD>lua require"dap.ui.widgets".hover()<CR>',    SILENT_NORE)
 
+-- remap('n', '<F6>',       '<CMD>Connect<CR>',            SILENT_NORE)
+
+
 -- NeoRoot
-remap('n', '<Leader>.',  function() vim.cmd('NeoRootSwitchMode') end, SILENT_NORE_NOWAIT)
-remap('n', '<Leader>t.', function() vim.cmd('NeoRootChange') end,     SILENT_NORE_NOWAIT)
+-- remap('n', '<Leader>.',  function() vim.cmd('NeoRootSwitchMode') end, SILENT_NORE_NOWAIT)
+-- remap('n', '<Leader>t.', function() vim.cmd('NeoRootChange') end,     SILENT_NORE_NOWAIT)
 
 -- Surround
 -- Change surrounding quotes to different ones by quickly pressing the
@@ -209,7 +214,7 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
   end
 })
 
-vim.api.nvim_create_autocmd("BufWinEnter", {
+vim.api.nvim_create_autocmd({"BufWinEnter", "BufEnter"}, {
   group = group,
   pattern = "quickfix",
   callback = function ()
@@ -217,3 +222,16 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
   end
 })
 
+-- Makes Enter jump to stuff under cursor when looking at help files
+local filetype_mapping = function(file_type, mode , lhs, rhs)
+  vim.api.nvim_create_autocmd("FileType", {
+    group = group,
+    pattern = file_type,
+    callback = function ()
+      remap(mode, lhs, rhs, { buffer = true})
+    end
+  })
+end
+
+filetype_mapping("help", 'n', '<CR>', 'K')
+filetype_mapping("help", 'n', 'q', '<CMD>q<CR>')

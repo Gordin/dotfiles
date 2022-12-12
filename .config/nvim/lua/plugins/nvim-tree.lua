@@ -2,14 +2,16 @@ require("nvim-tree").setup({
   sort_by = "case_insensitive",
   view = {
     adaptive_size = true,
+    preserve_window_proportions = true,
+    signcolumn = "no",
     float = {
       enable = true,
       quit_on_focus_loss = true,
       open_win_config = {
         relative = "editor",
         border = "rounded",
-        width = 30,
-        height = 30,
+        width = 60,
+        height = 60,
         row = 1,
         col = 1,
       },

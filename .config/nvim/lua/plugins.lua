@@ -38,6 +38,7 @@ return require('packer').startup(function(use)
 
   -- Registers & clipboard
   use { 'AckslD/nvim-neoclip.lua', requires = {'kkharji/sqlite.lua', module = 'sqlite'}, config = config_file"neoclip" }
+  use { "gbprod/yanky.nvim", config = config_file"yanky", requires = { "kkharji/sqlite.lua" } }
 
   -- Move & Search & replace
   -- use { 'nacro90/numb.nvim', config = config_file"numb" }
@@ -116,7 +117,7 @@ return require('packer').startup(function(use)
   use { 'nvim-lua/popup.nvim' }
   use { 'nvim-lua/plenary.nvim' }
   use { 'nvim-telescope/telescope.nvim', config = config_file"telescope", requires = { {'nvim-lua/plenary.nvim'} } }
-  use { 'nvim-telescope/telescope-fzy-native.nvim' }
+  use { "natecraddock/telescope-zf-native.nvim" }
   use { 'cljoly/telescope-repo.nvim' }
   use { 'nvim-telescope/telescope-dap.nvim' }
   use { "pschmitt/telescope-yadm.nvim", requires = "nvim-telescope/telescope.nvim" }
@@ -156,11 +157,12 @@ return require('packer').startup(function(use)
   use { 'mfussenegger/nvim-dap',             config = config_file"nvim-dap" }
   use { 'rcarriga/nvim-dap-ui',              requires = {"mfussenegger/nvim-dap"}, config = config_file"nvim-dap-ui" }
   use { 'theHamsta/nvim-dap-virtual-text',   requires = {"mfussenegger/nvim-dap"}, config = config_file"nvim-dap-virtual-text" }
+  use { "mxsdev/nvim-dap-vscode-js",         requires = {"mfussenegger/nvim-dap"} }
 
   -- General Plugins
   -- use { 'machakann/vim-sandwich', config = config_file"sandwich" }        -- Set of operators and textobjects to search/select/edit sandwiched texts.
   use { 'rcarriga/nvim-notify', config = config_file"nvim-notify" }       -- A fancy, configurable, notification manager for NeoVim
-  use { 'Gordin/noice.nvim', requires = { 'MunifTanjim/nui.nvim' }, config = config_file"noice" }                 -- completely replaces the UI for messages, cmdline and the popupmenu.
+  use { 'folke/noice.nvim', requires = { 'MunifTanjim/nui.nvim' }, config = config_file"noice" }                 -- completely replaces the UI for messages, cmdline and the popupmenu.
   use { 'folke/trouble.nvim' }                                         -- diagnostics, references, telescope results, quickfix and location list
   use { 'goolord/alpha-nvim', config = config_file"alpha-nvim" }          -- greeter like vim-startify / dashboard-nvim
   -- use { 'dstein64/vim-startuptime' }
