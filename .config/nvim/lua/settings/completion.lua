@@ -37,7 +37,7 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
   }),
   sources = cmp.config.sources({
-    { name = 'luasnip', priority = 9 },
+    { name = 'luasnip', option = { show_autosnippets = true }, priority = 9 },
     -- For luasnip users.
     { name = 'nvim_lua', priority = 8 },
     { name = 'nvim_lsp', priority = 8 },
@@ -49,3 +49,4 @@ cmp.setup({
     { name = 'buffer', priority = 1 },
   })
 })
+require("luasnip.loaders.from_vscode").lazy_load()
