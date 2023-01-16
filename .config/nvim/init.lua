@@ -20,8 +20,9 @@ require('colorschemes.gruvbox-nvim')
 -- require('colorschemes.tokyonight')
 -- require('colorschemes.catppuccin')
 
-require("settings.completion")        -- autocompletion
+-- require("settings.completion")        -- autocompletion
 require("settings.lsp")               -- LSP config and servers
+require("settings.null-ls")           -- null-ls config (keep after lsp!)
 
 require('settings.mappings')          -- ./lua/settings/mappings.lua
 require('settings.abbreviations')     -- ./lua/settings/abbreviations.lua

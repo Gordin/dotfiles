@@ -64,33 +64,50 @@ return require('packer').startup(function(use)
   use { 'lewis6991/nvim-treesitter-context' } -- TODO
   use { "SmiteshP/nvim-navic",                 requires = "neovim/nvim-lspconfig" }
 
+  use {
+    'VonHeikemen/lsp-zero.nvim',
+    requires = {
+      -- LSP Support
+      {'neovim/nvim-lspconfig'},
+      {'williamboman/mason.nvim'},
+      {'williamboman/mason-lspconfig.nvim'},
+
+      -- null-ls
+      {"jay-babu/mason-null-ls.nvim"},
+      {"jose-elias-alvarez/null-ls.nvim"},
+
+      -- Autocompletion
+      {'hrsh7th/nvim-cmp'},
+      {'hrsh7th/cmp-buffer'},
+      {'hrsh7th/cmp-path'},
+      {'saadparwaiz1/cmp_luasnip'},
+      {'hrsh7th/cmp-nvim-lsp'},
+      {'hrsh7th/cmp-nvim-lua'},
+
+      -- Snippets
+      {'L3MON4D3/LuaSnip'},
+      -- Snippet Collection (Optional)
+      {'rafamadriz/friendly-snippets'},
+    }
+  }
   -- LSP & Completion
-  use { "williamboman/mason.nvim" }   -- Installs languag servers
-  use { "williamboman/mason-lspconfig.nvim" } -- makes mason works with nvim-lspconfig
-  use { "neovim/nvim-lspconfig" }     -- Provides defaults for configs for different lsp-servers
-  -- cmp-stuff adds sources for autocompletions
-  use { "hrsh7th/cmp-nvim-lsp" }
-  use { "hrsh7th/cmp-buffer" }
-  use { "hrsh7th/cmp-path" }
-  use { 'hrsh7th/cmp-calc' }
-  use { "hrsh7th/cmp-cmdline" }
-  use { "hrsh7th/nvim-cmp"}
-  use { 'ray-x/cmp-treesitter' }
-  use { 'lukas-reineke/cmp-rg' }
+  -- -- cmp-stuff adds sources for autocompletions
+  -- use { 'hrsh7th/cmp-calc' }
+  -- use { "hrsh7th/cmp-cmdline" }
+  -- use { 'ray-x/cmp-treesitter' }
+  -- use { 'lukas-reineke/cmp-rg' }
   use { "onsails/lspkind-nvim" }      -- adds icons (or other stuff) to autocompletions
   use { "folke/neodev.nvim" }         -- completion for neovim stuff in lua
-  -- use { "tzachar/cmp-tabnine", { run = "./install.sh" } }
+
   -- use { "nvim-lua/lsp_extensions.nvim" }
   -- use { "glepnir/lspsaga.nvim" }
   -- use { "simrat39/symbols-outline.nvim" }
-  use { "L3MON4D3/LuaSnip" }
-  use { "saadparwaiz1/cmp_luasnip" }
-  use { 'quangnguyen30192/cmp-nvim-tags' }
-  use { 'rafamadriz/friendly-snippets' }
+
+  -- use { 'quangnguyen30192/cmp-nvim-tags' }
+
   use { 'windwp/nvim-autopairs', config = config_file"nvim-autopairs" } -- auto-close pairs (){}
   use { 'windwp/nvim-ts-autotag', config = config_file"nvim-ts-autotag", after = "nvim-treesitter" }
   use { 'andymass/vim-matchup' }      -- makes % work on more things
-  use { "jose-elias-alvarez/null-ls.nvim" }
 
 
   -- Syntax
@@ -108,6 +125,12 @@ return require('packer').startup(function(use)
 
   -- Statusline
   use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons' }, config = config_file"lualine" }
+
+  -- Statuscolumn
+  use({
+    "luukvbaal/statuscol.nvim",
+    config = function() require("statuscol").setup{setopt = true} end
+  })
 
   -- Icons
   use { 'kyazdani42/nvim-web-devicons', config = config_file('nvim_web-devicons') }
@@ -151,6 +174,7 @@ return require('packer').startup(function(use)
   use { 'catppuccin/nvim', as = "catppuccin" }
   use { 'olimorris/onedarkpro.nvim' }
   use { 'folke/tokyonight.nvim' }
+  use({ 'typicode/bg.nvim' }) -- terminal background fix
 
     -- Debugger
   use { 'jbyuki/one-small-step-for-vimkind', requires = {"mfussenegger/nvim-dap"} }

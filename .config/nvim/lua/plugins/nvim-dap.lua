@@ -68,6 +68,24 @@ dap.configurations.lua = {
 dap.adapters.nlua = function(callback, config)
   callback({ type = 'server', host = config.host or "127.0.0.1", port = config.port or 8086 })
 end
+
+dap.adapters.python = {
+  type = "executable",
+  command = "python",
+  args = {
+    "-m",
+    "debugpy.adapter",
+  },
+}
+
+dap.configurations.python = {
+  {
+    type = "python",
+    request = "launch",
+    name = "Launch file",
+    program = "${file}", -- This configuration will launch the current file if used.
+  },
+}
 -- dap.configurations.typescript = {
 --   {
 --     name = 'Debug firebase repl',

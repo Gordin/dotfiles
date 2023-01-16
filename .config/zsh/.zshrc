@@ -160,7 +160,7 @@ bindkey -M vicmd 'j' history-substring-search-down
 # Aliases
 alias -g ¦='| grep'
 alias f='find . -name'
-alias fd='find . -type d -name'
+# alias fd='find . -type d -name'
 alias ff='find . -type f -name'
 alias h='history'
 alias cpd='cp -r'
@@ -407,6 +407,7 @@ function b() {
         'club' "~/work/clubhouse"
         'app' "~/work/student-services-app"
         'domain-events' "~/work/domain-events"
+        'nvim' "~/.config/nvim"
     )
 
     local selected_bookmark
@@ -456,6 +457,7 @@ function b() {
 # Bind for when ^A is bound (default)
 # bindkey -s '^B' '^Ab ^M'
 bindkey -M viins -s ',b' '^Ab ^M'
+# bindkey -M viins -s '\--rf' '^?^A^[OC^[OC -rf'
 # Bind for when ^A is not bound (vi mode)
 # bindkey -s '^B' '^[Ib ^M'
 # bindkey -M viins -s ',b' '^[Ib ^M'
@@ -475,8 +477,21 @@ fi
 
 export COLORTERM=truecolor
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # . /opt/asdf-vm/asdf.sh
 
 export GITSUBREPODIR=~/.config/git-subrepo
 source "${GITSUBREPODIR}/.rc"
+
+# .zshrc
+set_bg () {
+  saved_stty="$(stty -g)"
+  stty raw -echo min 0 time 1
+  printf "\033]11;?\007"
+  read -r BG
+  export BG="$(echo $BG | cut -c6-24)" 
+  stty "$saved_stty"
+}
+
+# Set $BG on start
+set_bg
