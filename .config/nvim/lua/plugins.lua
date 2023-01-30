@@ -53,6 +53,7 @@ return require('packer').startup(function(use)
   use { 'haya14busa/incsearch.vim' }
   use { 'haya14busa/incsearch-fuzzy.vim' }
   use { 'haya14busa/vim-asterisk' }
+  use { 'pechorin/any-jump.vim', config = config_file("any-jump") }
 
   -- Treesitter
   use { 'David-Kunz/markid' } -- ?

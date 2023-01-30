@@ -168,9 +168,9 @@ alias scpd='scp -r'
 alias rmd='rm -rf'
 alias lS='l -Sr --group-directories-first'
 alias :q=exit
-alias vim='nvim'
-alias agv='nvim $(ag --nobreak --nonumbers --noheading . | fzf | sed "s/^\([^:]*\).*$/\1/")'
-alias rgv='nvim $(rg -N --no-heading --color never . | fzf | sed "s/^\([^:]*\).*$/\1/")'
+alias vim='set_bg; nvim'
+alias agv='set_bg; nvim $(ag --nobreak --nonumbers --noheading . | fzf | sed "s/^\([^:]*\).*$/\1/")'
+alias rgv='set_bg; nvim $(rg -N --no-heading --color never . | fzf | sed "s/^\([^:]*\).*$/\1/")'
 
 alias psa='ps aux | grep -v "grep --color=auto" | grep'
 alias lsport='sudo lsof -Pan -i tcp -i udp'
@@ -408,6 +408,9 @@ function b() {
         'app' "~/work/student-services-app"
         'domain-events' "~/work/domain-events"
         'nvim' "~/.config/nvim"
+        'packer' "~/.local/share/nvim/site/pack/packer/start"
+        'student-data-finder' "~/work/student-data-finder"
+        'jobsearch' "~/work/jobmensa-jobsearch"
     )
 
     local selected_bookmark
@@ -464,15 +467,15 @@ bindkey -M viins -s ',b' '^Ab ^M'
 alias ho='autorandr ho'
 
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
-    alias nvim="nvr -cc split --remote-wait +'set bufhidden=wipe'"
+    alias nvim="set_bg; nvr -cc split --remote-wait +'set bufhidden=wipe'"
 fi
 
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
     export VISUAL="nvr -cc split --remote-wait +'set bufhidden=wipe'"
     export EDITOR="nvr -cc split --remote-wait +'set bufhidden=wipe'"
 else
-    export VISUAL="nvim -O"
-    export EDITOR="nvim -O"
+    export VISUAL="set_bg; nvim -O"
+    export EDITOR="set_bg; nvim -O"
 fi
 
 export COLORTERM=truecolor
@@ -494,4 +497,4 @@ set_bg () {
 }
 
 # Set $BG on start
-set_bg
+# set_bg

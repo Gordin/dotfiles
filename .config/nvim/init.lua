@@ -21,6 +21,7 @@ require('colorschemes.gruvbox-nvim')
 -- require('colorschemes.catppuccin')
 
 -- require("settings.completion")        -- autocompletion
+require("settings.neodev")
 require("settings.lsp")               -- LSP config and servers
 require("settings.null-ls")           -- null-ls config (keep after lsp!)
 

@@ -1,8 +1,9 @@
 local remap = vim.keymap.set
 -- Learn to configure LSP servers, see :help lsp-zero-api-showcase
-
+-- vim.lsp.set_log_level("debug")
 -- Reserve space for diagnostic icons
 vim.opt.signcolumn = 'yes'
+-- vim.opt.completeopt = {'menu','menuone','preview','noselect'}
 
 local lsp = require('lsp-zero')
 lsp.preset('recommended')
@@ -15,13 +16,20 @@ lsp.ensure_installed({
   'vimls'
 })
 
--- local cmp = require('cmp')
--- local cmp_mappings = lsp.defaults.cmp_mappings({
---   -- ['<C-Space>'] = cmp.mapping.complete(),
---   -- ['<C-e>'] = cmp.mapping.abort(),
---   ['<leader>k'] = lspbuf.signature_help,
---   ['<leader>ca'] = lspbuf.code_action,
--- })
+local cmp = require('cmp')
+local types = require('cmp.types')
+local cmp_mappings = lsp.defaults.cmp_mappings({
+    ['<C-n>'] = {
+      i = cmp.mapping.select_next_item({ behavior = types.cmp.SelectBehavior.Insert }),
+    },
+    ['<C-p>'] = {
+      i = cmp.mapping.select_prev_item({ behavior = types.cmp.SelectBehavior.Insert }),
+    },
+  -- ['<C-Space>'] = cmp.mapping.complete(),
+  -- ['<C-e>'] = cmp.mapping.abort(),
+  -- ['<leader>k'] = lspbuf.signature_help,
+  -- ['<leader>ca'] = lspbuf.code_action,
+})
 
 -- -- disable completion with tab
 -- cmp_mappings['<Tab>'] = nil
@@ -34,17 +42,17 @@ lsp.ensure_installed({
 --   mapping = cmp_mappings
 -- })
 
+-- Skip eslint server, because eslint-lsp has some bug...
+lsp.skip_server_setup({'eslint'})
+
 -- Pass arguments to a language server
-lsp.configure('tsserver', {
-  on_attach = function(client, bufnr)
-    print('hello tsserver')
-  end,
-  settings = {
-    completions = {
-      completeFunctionCalls = true
-    }
-  }
-})
+-- lsp.configure('tsserver', {
+--   settings = {
+--     completions = {
+--       completeFunctionCalls = true
+--     }
+--   }
+-- })
 
 -- Configure lua language server for neovim
 lsp.nvim_workspace()
@@ -78,6 +86,7 @@ end)
 
 local lspkind = require('lspkind')
 lsp.setup_nvim_cmp({
+  mapping = cmp_mappings,
   formatting = {
     -- changing the order of fields so the icon is the first
     fields = {'abbr', 'kind'},
@@ -100,8 +109,8 @@ lsp.setup_nvim_cmp({
     -- For luasnip users.
     { name = 'nvim_lua', priority = 8 },
     { name = 'nvim_lsp', priority = 8 },
-    { name = 'path', priority = 8 },
-    {name = 'buffer', keyword_length = 3},
+    { name = 'path',     priority = 8 },
+    { name = 'buffer',   keyword_length = 3 },
   },
   documentation = {
     max_height = 15,
@@ -114,6 +123,7 @@ lsp.setup_nvim_cmp({
   }
 })
 
+require("luasnip.loaders.from_vscode").lazy_load()
 lsp.setup()
 
 
