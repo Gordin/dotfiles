@@ -11,7 +11,8 @@ null_ls.setup({
     -- null_ls.builtins.diagnostics.eslint,
     null_ls.builtins.formatting.stylua,
     null_ls.builtins.formatting.jq,
-    null_ls.builtins.formatting.lua_format
+    null_ls.builtins.formatting.lua_format,
+    null_ls.builtins.code_actions.gitsigns,
     -- require("null-ls").builtins.completion.spell,
   }
 })
