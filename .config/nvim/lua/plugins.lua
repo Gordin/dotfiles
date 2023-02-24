@@ -221,4 +221,9 @@ local plugins = {
   -- {  'terryma/vim-expand-region' },
 }
 
-require("lazy").setup(plugins)
+require("lazy").setup(plugins, {
+  checker = {
+    enabled = true,
+    notify = false
+  }
+})
