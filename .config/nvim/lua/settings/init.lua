@@ -1,11 +1,6 @@
 -- vim settings
 local let = vim.g
 
--- Set <leader> to ,
---" The leader key has to be set BEFORE mapping anything to <leader> for the which-key plugin to work
-let.mapleader = ","
-let.maplocalleader = ","
-
 -- Use python from virtualenv just for neovim
 if vim.fn.filereadable('~/.config/pyenv/versions/neovim3/bin/python') then
   let.python3_host_prog = '~/.config/pyenv/versions/neovim3/bin/python'
