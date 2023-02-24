@@ -13,6 +13,7 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
         source "$BASE16_SHELL/profile_helper.sh"
 
 base16_gruvbox-dark-medium
+# base16_monokai
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -495,6 +496,11 @@ set_bg () {
   export BG="$(echo $BG | cut -c6-24)" 
   stty "$saved_stty"
 }
+
+export WORK_SCRIPTS="$HOME/.config/zsh/work.zsh"
+if [[ -f "$WORK_SCRIPTS" ]]; then
+  source "$WORK_SCRIPTS"
+fi
 
 # Set $BG on start
 # set_bg
