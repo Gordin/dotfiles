@@ -143,9 +143,9 @@ remap('n', '<leader>tt', '<CMD>NvimTreeToggle<CR>', SILENT_NORE) -- [t]oggle [t]
 -- Adds extra text objecst to stop extending/shrinking around.
 -- No idea what those are any more... :help expand_region has examples
 --autocmd VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 })
-remap('v', 'v',     '<Plug>(expand_region_expand)')
-remap('v', '-',     '<Plug>(expand_region_shrink)')
-remap('v', '<c-v>', '<Plug>(expand_region_shrink)')
+-- remap('v', 'v',     '<Plug>(expand_region_expand)')
+-- remap('v', '-',     '<Plug>(expand_region_shrink)')
+-- remap('v', '<c-v>', '<Plug>(expand_region_shrink)')
 
 
 -- diffs
@@ -166,15 +166,15 @@ end
 
 -- debugging / nvim-dap
 remap('n', "<leader>dt", '<CMD>lua require("dapui").toggle()<CR>',          SILENT_NORE)
-remap('n', '<F5>',       '<CMD>lua require"osv".launch({port = 8086})<CR>', SILENT_NORE)
-remap('n', '<F8>',       '<CMD>lua require"dap".toggle_breakpoint()<CR>',   SILENT_NORE)
-remap('n', '<S-F8>',     '<CMD>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>',   SILENT_NORE)
-remap('n', '<S-F7>',     '<CMD>lua require"dap".clear_breakpoints()<CR>',   SILENT_NORE)
-remap('n', '<F9>',       '<CMD>lua require"dap".continue()<CR>',            SILENT_NORE)
-remap('n', '<F10>',      '<CMD>lua require"dap".step_over()<CR>',           SILENT_NORE)
-remap('n', '<F11>',      '<CMD>lua require"dap".step_into()<CR>',           SILENT_NORE)
-remap('n', '<S-F11>',    '<CMD>lua require"dap".step_out()<CR>',            SILENT_NORE)
-remap('n', '<F12>',      '<CMD>lua require"dap.ui.widgets".hover()<CR>',    SILENT_NORE)
+remap({'n', 'i'}, '<F5>',       '<CMD>lua require"osv".launch({port = 8086})<CR>', SILENT_NORE)
+remap({'n', 'i'}, '<F8>',       '<CMD>lua require"dap".toggle_breakpoint()<CR>',   SILENT_NORE)
+remap({'n', 'i'}, '<S-F8>',     '<CMD>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>',   SILENT_NORE)
+remap({'n', 'i'}, '<S-F7>',     '<CMD>lua require"dap".clear_breakpoints()<CR>',   SILENT_NORE)
+remap({'n', 'i'}, '<F9>',       '<CMD>lua require"dap".continue()<CR>',            SILENT_NORE)
+remap({'n', 'i'}, '<F10>',      '<CMD>lua require"dap".step_over()<CR>',           SILENT_NORE)
+remap({'n', 'i'}, '<F11>',      '<CMD>lua require"dap".step_into()<CR>',           SILENT_NORE)
+remap({'n', 'i'}, '<S-F11>',    '<CMD>lua require"dap".step_out()<CR>',            SILENT_NORE)
+remap({'n', 'i'}, '<F12>',      '<CMD>lua require"dap.ui.widgets".hover()<CR>',    SILENT_NORE)
 
 -- remap('n', '<F6>',       '<CMD>Connect<CR>',            SILENT_NORE)
 
@@ -189,7 +189,7 @@ remap('n', '<F12>',      '<CMD>lua require"dap.ui.widgets".hover()<CR>',    SILE
 -- mx  -> `x  pust the cursor on the same position after the change
 -- Does not work for some reason...
 local surround_mappings = {"'`", "`'", '`"', '"`', [['"]], [["']], '"/', "'/", '`/',
-                           '([', '[(', '[{', '({', '{(', '{['}
+                           '([', '[(', '[{', '({', '{(', '{[', [[':]], '":'}
 for _, mapping in ipairs(surround_mappings) do
   -- The lua version doesn't work for some reason
   -- remap('n', mapping, 'mxcs' .. mapping ..'`x')
