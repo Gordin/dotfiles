@@ -12,7 +12,6 @@ lsp.ensure_installed({
   -- Replace these with whatever servers you want to install
   'tsserver',
   'eslint',
-  'sumneko_lua',
   'vimls'
 })
 
@@ -43,7 +42,7 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 -- })
 
 -- Skip eslint server, because eslint-lsp has some bug...
-lsp.skip_server_setup({'eslint'})
+lsp.skip_server_setup({'eslint', 'tsserver'})
 
 -- Pass arguments to a language server
 -- lsp.configure('tsserver', {
@@ -57,7 +56,7 @@ lsp.skip_server_setup({'eslint'})
 -- Configure lua language server for neovim
 lsp.nvim_workspace()
 
-lsp.on_attach(function(client, bufnr)
+local on_attach = function(client, bufnr)
   local bufopts = {buffer = bufnr, remap = false, silent = true}
   local telescope = require("telescope.builtin")
   local lspbuf = vim.lsp.buf
@@ -68,21 +67,34 @@ lsp.on_attach(function(client, bufnr)
   remap("n", "gv",         function () telescope.lsp_definitions{jump_type= "vsplit"} end,      bufopts)
   remap("n", "gt",         function () telescope.lsp_definitions{jump_type= "tab"} end,      bufopts)
   -- remap("n", "K",          lspbuf.hover,                      bufopts)
-  -- remap("n", "gi",         telescope.lsp_implementations,  bufopts)
+  remap("n", "gi",         function () telescope.lsp_implementations{jump_type= "vsplit"} end,  bufopts)
   -- remap("n", "<C-k>",      lspbuf.signature_help,             bufopts)
   remap("n", "<leader>k",  lspbuf.signature_help,          bufopts)
   remap("n", "<leader>wa", lspbuf.add_workspace_folder,    bufopts)
   remap("n", "<leader>wr", lspbuf.remove_workspace_folder, bufopts)
   remap("n", "<leader>D",  telescope.lsp_type_definitions, bufopts)
-  remap("n", "<leader>rn", lspbuf.rename,                  bufopts)
-  remap("n", "<leader>ca", lspbuf.code_action,             bufopts)
+  -- remap("n", "<leader>rn", lspbuf.rename,                  bufopts)
+  -- remap("n", "<leader>ca", lspbuf.code_action,             bufopts)
   remap("n", "gr",         telescope.lsp_references,       bufopts)
   remap("n", "<leader>fmt",
     function() lspbuf.format({ async = true }) end, bufopts)
   remap("n", "<leader>wl", function()
     print(vim.inspect(lspbuf.list_workspace_folders()))
   end, bufopts)
-end)
+end
+
+lsp.on_attach(on_attach)
+
+require("typescript").setup({
+    disable_commands = false, -- prevent the plugin from creating Vim commands
+    debug = false, -- enable debug logging for commands
+    go_to_source_definition = {
+        fallback = true, -- fall back to standard LSP definition on failure
+    },
+    server = { -- pass options to lspconfig's setup method
+        on_attach = on_attach
+    },
+})
 
 local lspkind = require('lspkind')
 lsp.setup_nvim_cmp({

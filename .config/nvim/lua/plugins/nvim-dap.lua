@@ -19,6 +19,7 @@ dap.adapters.node2 = {
   -- args =  { vim.fn.stdpath('data') .. '/mason/packages/node-debug2-adapter/out/src/nodeDebug.js' },
   args = {},
 }
+
 -- dap.configurations.javascript = {
 --   {
 --     name = 'Launch',
@@ -40,6 +41,7 @@ dap.adapters.node2 = {
 --     processId = require'dap.utils'.pick_process,
 --   },
 -- }
+
 dap.adapters.ruby = {
   type = 'executable';
   command = 'bundle';
@@ -86,6 +88,7 @@ dap.configurations.python = {
     program = "${file}", -- This configuration will launch the current file if used.
   },
 }
+
 -- dap.configurations.typescript = {
 --   {
 --     name = 'Debug firebase repl',
@@ -109,31 +112,52 @@ dap.configurations.python = {
 --   }
 -- }
 
+-- for _, language in ipairs({ "typescript", "javascript" }) do
+--   require("dap").configurations[language] = {
+--     {
+--       type = "pwa-node",
+--       request = "attach",
+--       name = "Attach",
+--       trace = true, -- include debugger info
+--       rootPath = "${workspaceFolder}",
+--       cwd = "${workspaceFolder}",
+--       port = 9229,
+--       remoteRoot = '/app/functions/',
+--       localRoot = "${workspaceFolder}",
+--     }
+--   }
+-- end
+
 for _, language in ipairs({ "typescript", "javascript" }) do
   dap.configurations[language] = {
     {
-      name = 'Debug ' .. language .. 'node repl',
+      name = 'Attach to ' .. language .. 'node repl',
       type = 'pwa-node',
       request = 'attach',
       cwd = "${workspaceFolder}",
       sourceMaps = true,
-      port = 9229,
+      address = "127.0.0.1",
+      port = "9229",
+      restart = true,
       remoteRoot = '/app/functions/',
       localRoot = "${workspaceFolder}",
       -- remoteDirectoryMapping = {
       --   ["${workspaceFolder}"] = "/app/functions",
       -- },
-      sourceMapPathOverrides = {
-        ["${workspaceFolder}"] = "/app/functions",
-        ["${workspaceFolder}/src/**/*.ts"] = "${workspaceFolder}/lib/**/*.js",
-        ["*:///app/functions/node_modules/*"] = "${workspaceFolder}/node_modules/*",
-        ["*:///./~/*"] = "${workspaceFolder}/node_modules/*",
-        ["*://@?:*/?:*/*"] = "${workspaceFolder}/*",
-        ["*://?:*/*"] = "${workspaceFolder}/*",
-        -- ["*:///([a-z]):/(.+)"] = "${workspaceFolder}/$1:/$2",
-        -- ["${workspaceFolder}/src/**/*.ts"] = "${workspaceFolder}/lib/**/*.js",
-      },
+      -- sourceMapPathOverrides = {
+      --   ["${workspaceFolder}"] = "/app/functions",
+      --   ["${workspaceFolder}/src/**/*.ts"] = "${workspaceFolder}/lib/**/*.js",
+      --   ["*:///app/functions/node_modules/*"] = "${workspaceFolder}/node_modules/*",
+      --   ["*:///./~/*"] = "${workspaceFolder}/node_modules/*",
+      --   ["*://@?:*/?:*/*"] = "${workspaceFolder}/*",
+      --   ["*://?:*/*"] = "${workspaceFolder}/*",
+      --   -- ["*:///([a-z]):/(.+)"] = "${workspaceFolder}/$1:/$2",
+      --   -- ["${workspaceFolder}/src/**/*.ts"] = "${workspaceFolder}/lib/**/*.js",
+      -- },
       outFiles = {"${workspaceFolder}/**/*.js"},
+      rootPath = "${workspaceFolder}",
+      console = "integratedTerminal",
+      internalConsoleOptions = "neverOpen",
     }
   }
 end

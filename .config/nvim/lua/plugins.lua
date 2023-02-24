@@ -91,6 +91,11 @@ return require('packer').startup(function(use)
       {'rafamadriz/friendly-snippets'},
     }
   }
+  use({
+    "glepnir/lspsaga.nvim",
+    branch = "main",
+    requires = { {"nvim-tree/nvim-web-devicons"} }
+  })
   -- LSP & Completion
   -- -- cmp-stuff adds sources for autocompletions
   -- use { 'hrsh7th/cmp-calc' }
@@ -175,6 +180,7 @@ return require('packer').startup(function(use)
   use { 'catppuccin/nvim', as = "catppuccin" }
   use { 'olimorris/onedarkpro.nvim' }
   use { 'folke/tokyonight.nvim' }
+  use { 'Cside/vim-monokai' }
   use({ 'typicode/bg.nvim' }) -- terminal background fix
 
     -- Debugger
@@ -187,7 +193,7 @@ return require('packer').startup(function(use)
   -- General Plugins
   -- use { 'machakann/vim-sandwich', config = config_file"sandwich" }        -- Set of operators and textobjects to search/select/edit sandwiched texts.
   use { 'rcarriga/nvim-notify', config = config_file"nvim-notify" }       -- A fancy, configurable, notification manager for NeoVim
-  use { 'folke/noice.nvim', requires = { 'MunifTanjim/nui.nvim' }, config = config_file"noice" }                 -- completely replaces the UI for messages, cmdline and the popupmenu.
+  -- use { 'folke/noice.nvim', requires = { 'MunifTanjim/nui.nvim' }, config = config_file"noice" }                 -- completely replaces the UI for messages, cmdline and the popupmenu.
   use { 'folke/trouble.nvim' }                                         -- diagnostics, references, telescope results, quickfix and location list
   use { 'goolord/alpha-nvim', config = config_file"alpha-nvim" }          -- greeter like vim-startify / dashboard-nvim
   -- use { 'dstein64/vim-startuptime' }
@@ -201,6 +207,8 @@ return require('packer').startup(function(use)
 
   use { 'lewis6991/impatient.nvim' }
 
+  -- Languages
+  use { 'jose-elias-alvarez/typescript.nvim' }
 
   use { 'kopischke/vim-fetch' } -- " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
 

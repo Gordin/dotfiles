@@ -15,6 +15,7 @@ require('settings.terminalcolors')    -- ./lua/settings/terminalcolors.lua
 -- require('colorschemes.onedarkpro')
 -- require('colorschemes.gruvbox')
 require('colorschemes.gruvbox-nvim')
+-- require('colorschemes.monokai')
 -- require('colorschemes.ayu')
 -- require('colorschemes.gruvbox_baby')
 -- require('colorschemes.tokyonight')
@@ -24,6 +25,7 @@ require('colorschemes.gruvbox-nvim')
 require("settings.neodev")
 require("settings.lsp")               -- LSP config and servers
 require("settings.null-ls")           -- null-ls config (keep after lsp!)
+require("settings.lspsaga")           -- lspsaga config (keep after lsp!)
 
 require('settings.mappings')          -- ./lua/settings/mappings.lua
 require('settings.abbreviations')     -- ./lua/settings/abbreviations.lua
