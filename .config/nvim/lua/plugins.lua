@@ -59,7 +59,7 @@ return require('packer').startup(function(use)
   use { 'David-Kunz/markid' } -- ?
   use { 'nvim-treesitter/nvim-treesitter',     run = ':TSUpdate', config = config_file"treesitter" }
   use { 'nvim-treesitter/playground' }
-  use { 'p00f/nvim-ts-rainbow' }
+  -- use { 'mrjones2014/nvim-ts-rainbow' }
   use { 'lukas-reineke/indent-blankline.nvim', config = config_file"indent-blankline" }
   use { 'JoosepAlviste/nvim-ts-context-commentstring' } -- TODO
   use { 'lewis6991/nvim-treesitter-context' } -- TODO
