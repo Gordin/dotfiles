@@ -1,7 +1,7 @@
 vim.g.any_jump_disable_default_keybindings = 1
 
-vim.keymap.set('n', '<leader>aj', '<CMD>AnyJump<CR>')
-vim.keymap.set('x', '<leader>aj', '<CMD>AnyJumpVisual<CR>')
+vim.keymap.set('n', '<leader>j', '<CMD>AnyJump<CR>')
+vim.keymap.set('x', '<leader>j', '<CMD>AnyJumpVisual<CR>')
 vim.keymap.set('n', '<leader>ab', '<CMD>AnyJumpBack<CR>')
 vim.keymap.set('n', '<leader>al', '<CMD>AnyJumpLastResult<CR>')
 
