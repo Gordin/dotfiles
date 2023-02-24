@@ -23,10 +23,11 @@ local function get_extension(fn)
 end
 
 local function footer()
-  local total_plugins = #vim.tbl_keys(packer_plugins)
+  local plugin_count = require("lazy").stats().count
+  local plugin_updates = require("lazy.status").updates() or '0'
   local date = os.date("%d-%m-%Y")
   local time = os.date("%H:%M:%S")
-  return "[ " .. total_plugins .. " plugins] [ " .. date .. "] [ " .. time .. "]"
+  return "[ " .. plugin_count .. " plugins - " .. plugin_updates .. " updates available] [ " .. date .. "] [ " .. time .. "]"
 end
 
 local function icon(fn)
