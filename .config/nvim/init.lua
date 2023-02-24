@@ -1,6 +1,8 @@
--- Impatient
-local impatient_ok, impatient = pcall(require, "impatient")
-if impatient_ok then impatient.enable_profile() end
+-- Set <leader> to ,
+--" The leader key has to be set BEFORE any mappings <leader> for stuff to work
+vim.g.mapleader = ","
+vim.g.maplocalleader = ","
+vim.opt.termguicolors = true
 
 -- Packer
 require('plugins')                    -- ./lua/plugins/init.lua
@@ -14,7 +16,7 @@ require('settings.terminalcolors')    -- ./lua/settings/terminalcolors.lua
 -- those load ./lua/colorschemes/THEME.lua
 -- require('colorschemes.onedarkpro')
 -- require('colorschemes.gruvbox')
-require('colorschemes.gruvbox-nvim')
+-- require('colorschemes.gruvbox-nvim')
 -- require('colorschemes.monokai')
 -- require('colorschemes.ayu')
 -- require('colorschemes.gruvbox_baby')
@@ -29,3 +31,5 @@ require("settings.lspsaga")           -- lspsaga config (keep after lsp!)
 
 require('settings.mappings')          -- ./lua/settings/mappings.lua
 require('settings.abbreviations')     -- ./lua/settings/abbreviations.lua
+
+require('colorschemes.gruvbox-nvim')
