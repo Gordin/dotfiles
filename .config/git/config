@@ -1,6 +1,9 @@
+# [user]
+    # name = Andreas Guth
+    # email = andreas.guth@studitemps.de
 [user]
-	email = 9ordin@gmail.com
-	name = Gordin
+    name = Gordin
+    email = 9ordin@gmail.com
 [color]
     ui = auto
     status = auto
