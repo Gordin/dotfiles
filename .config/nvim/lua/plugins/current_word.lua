@@ -8,8 +8,9 @@ vim.cmd[[let g:vim_current_word#highlight_delay = 100]]
 -- vim.cmd[[hi CurrentWord  gui=underline,bold,italic cterm=underline,bold,italic]]
 -- vim.cmd[[hi CurrentWord guifg=#XXXXXX guibg=#XXXXXX gui=underline,bold,italic ctermfg=XXX ctermbg=XXX cterm=underline,bold,italic]]
 
+-- hi CurrentWord guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
 vim.cmd[[
-hi CurrentWord guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
+hi CurrentWord guifg=NONE guibg=NONE gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
 hi CurrentWordTwins guifg=NONE guibg=#4C4745 gui=underline ctermfg=NONE ctermbg=NONE cterm=underline
 ]]
 
