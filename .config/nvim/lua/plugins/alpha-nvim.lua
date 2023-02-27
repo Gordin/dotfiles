@@ -24,10 +24,13 @@ end
 
 local function footer()
   local plugin_count = require("lazy").stats().count
-  local plugin_updates = require("lazy.status").updates() or '0'
+  local plugin_updates = require("lazy.status").updates() or ''
+  if string.len(plugin_updates) > 0 then
+    plugin_updates = " - " .. plugin_updates .. " updates available"
+  end
   local date = os.date("%d-%m-%Y")
   local time = os.date("%H:%M:%S")
-  return "[ " .. plugin_count .. " plugins - " .. plugin_updates .. " updates available] [ " .. date .. "] [ " .. time .. "]"
+  return "[ " .. plugin_count .. " plugins" .. plugin_updates .. "] [ " .. date .. "] [ " .. time .. "]"
 end
 
 local function icon(fn)
@@ -209,7 +212,7 @@ local buttons = {
 local section_footer = {
   type = "group",
   val = {
-    { type = "text", val = footer(), opts = { hl = "Constant", position = "left" } },
+    { type = "text", val = footer, opts = { hl = "Constant", position = "left" } },
   }
 }
 
