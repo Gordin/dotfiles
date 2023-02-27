@@ -173,15 +173,15 @@ local plugins = {
   -- Colorschema
   -- { 'agrzeslak/gruvbox' },
   -- { 'gruvbox-community/gruvbox' },
-  { 'sainnhe/gruvbox-material' },
-  { 'luisiacc/gruvbox-baby' },
+  -- { 'sainnhe/gruvbox-material' },
+  -- { 'luisiacc/gruvbox-baby' },
   { "ellisonleao/gruvbox.nvim" },
   { 'Shatur/neovim-ayu'},
   { 'catppuccin/nvim', as = "catppuccin" },
-  { 'olimorris/onedarkpro.nvim' },
-  { 'folke/tokyonight.nvim' },
-  { 'Cside/vim-monokai' },
-  { 'typicode/bg.nvim' }, -- terminal background fix
+  'olimorris/onedarkpro.nvim',
+  'folke/tokyonight.nvim',
+  'Cside/vim-monokai',
+  'typicode/bg.nvim', -- terminal background fix
 
     -- Debugger
   { 'jbyuki/one-small-step-for-vimkind', dependencies = {"mfussenegger/nvim-dap"} },
