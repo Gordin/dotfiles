@@ -30,6 +30,7 @@ vim.opt.autoindent  = true
 vim.opt.matchpairs:append("<:>") -- Adds <> to list of bracket pairs you can jump between with %
 
 
+
 vim.opt.smartindent = true
 
 vim.opt.wrap        = false
@@ -140,6 +141,10 @@ vim.api.nvim_create_autocmd("BufReadPost", {
       -- The lua version below always go to to first column of a line
       -- vim.api.nvim_win_set_cursor(0, {last_pos, 0})
     end
+
+    -- This doesn't belong here, but something is overwriting this, so let's set this for every buffer...
+    -- Continue comments on next line, when pressing <CR>, but not with o/O (and a lot of other settings...)
+    vim.opt.formatoptions = "rc/n1jp"
   end,
 })
 

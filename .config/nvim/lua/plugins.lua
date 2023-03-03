@@ -50,7 +50,7 @@ local plugins = {
   -- Treesitter
   { 'nvim-treesitter/nvim-treesitter',     run = ':TSUpdate', config = config_file"treesitter" },
   { 'nvim-treesitter/playground' },
-  -- { 'mrjones2014/nvim-ts-rainbow' },
+  { 'HiPhish/nvim-ts-rainbow2' },
   { 'lukas-reineke/indent-blankline.nvim', config = config_file"indent-blankline" },
   { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO
   { 'lewis6991/nvim-treesitter-context' }, -- TODO
