@@ -171,10 +171,6 @@ local plugins = {
 
   { 'norcalli/nvim-colorizer.lua', config = config_file"colorizer" },
   -- Colorschema
-  -- { 'agrzeslak/gruvbox' },
-  -- { 'gruvbox-community/gruvbox' },
-  -- { 'sainnhe/gruvbox-material' },
-  -- { 'luisiacc/gruvbox-baby' },
   { "ellisonleao/gruvbox.nvim" },
   { 'Shatur/neovim-ayu'},
   { 'catppuccin/nvim', as = "catppuccin" },

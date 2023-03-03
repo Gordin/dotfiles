@@ -12,7 +12,8 @@ lsp.ensure_installed({
   -- Replace these with whatever servers you want to install
   'tsserver',
   'eslint',
-  'vimls'
+  'vimls',
+  'lua_ls'
 })
 
 local cmp = require('cmp')

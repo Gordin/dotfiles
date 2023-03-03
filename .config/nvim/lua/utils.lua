@@ -1,12 +1,15 @@
 local M = {}
-local vim_command = vim.api.nvim_command_output
+local nvim_exec = function (src, output)
+  output = output or false
+  return vim.api.nvim_exec(src, output)
+end
 local fn = vim.fn
 local substitute = fn['substitute']
 local matchstr   = fn['matchstr']
 local matchlist  = fn['matchlist']
 
 M.rB = function (groupName)
-  local output = vim_command('hi! ' .. groupName)
+  local output = nvim_exec('hi! ' .. groupName, true)
   if string.len(output) == 0 then
     -- vim.pretty_print(groupName)
     return
@@ -21,9 +24,9 @@ M.rB = function (groupName)
   -- vim.pretty_print(command)
   local clear_command = command .. ' ctermbg=NONE guibg=NONE'
   -- vim.pretty_print(clear_command)
-  vim_command(clear_command)
+  nvim_exec(clear_command)
   -- vim.pretty_print(command)
-  vim_command(command)
+  nvim_exec(command)
 
   -- Some Highlight groups are linked to other Groups (They inherit settings from a different group)
   -- This gets the currently linked group. (This code probably only works for 0 or 1 linked
@@ -33,7 +36,7 @@ M.rB = function (groupName)
   -- If there is a link, create and run a command that sets the link again, because it was removed
   -- by the prevous commands
   if link and string.len(link) > 1 then
-    vim_command('highlight! link ' .. groupName .. " " .. link)
+    nvim_exec('highlight! link ' .. groupName .. " " .. link)
   end
 end
 
@@ -41,6 +44,7 @@ M.enableMouseSelection = function()
   M.mouse_select = true
   vim.opt.list = false
   vim.opt.number = false
+  vim.opt.numberwidth = 1
   vim.opt.relativenumber = false
   vim.opt.mouse= ""
   vim.opt.signcolumn='no'
@@ -53,6 +57,7 @@ M.disableMouseSelection = function()
   vim.opt.list = true
   vim.opt.number = true
   vim.opt.relativenumber = false
+  vim.opt.numberwidth = 4
   vim.opt.mouse= "nvi"
   vim.opt.signcolumn='auto'
   vim.opt.conceallevel=2
