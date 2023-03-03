@@ -213,8 +213,8 @@ alias ggit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git -c user.name=Gordin 
 alias wgit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/id_work' git -c user.name=andreasguthstuditemps -c user.email=andreas.guth@studitemps.de $@"
 if [ "`hostname`" = workelch ]; then
   alias yadm="GIT_SSH_COMMAND='ssh -i ~/.ssh/gordin_rsa' yadm $@"
-# elif [ "`hostname`" = Elchtop ]; then
-#   alias yadm="GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519' yadm $@"
+elif [ "`hostname`" = Elchdesk ]; then
+  alias yadm="GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519' yadm $@"
 else
   # nothing
 fi
