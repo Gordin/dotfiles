@@ -63,10 +63,10 @@ remap('n', '<leader>tm', '<CMD>lua require("utils").toggleMouseSelection()<CR>')
 -- vim-asterisk
 -- Allows to search for text in visual mode by pressing *
 -- Also makes the cursor stay after pressing *
-remap('x', '*', '<Plug>(asterisk-z*)')
-remap('x', '#', '<Plug>(asterisk-z#)')
-remap('x', 'g*', '<Plug>(asterisk-gz*)')
-remap('x', 'g#', '<Plug>(asterisk-gz#)')
+remap({'x', 'n'}, '*',  '<Plug>(asterisk-z*)<CR>',  SILENT_NORE)
+remap({'x', 'n'}, '#',  '<Plug>(asterisk-z#)<CR>',  SILENT_NORE)
+remap({'x', 'n'}, 'g*', '<Plug>(asterisk-gz*)<CR>', SILENT_NORE)
+remap({'x', 'n'}, 'g#', '<Plug>(asterisk-gz#)<CR>', SILENT_NORE)
 
 -- Telescope
 -- remap('n', '<c-p>',   "<CMD>Telescope git_or_yadm_files<CR>",                                  SILENT_NORE)
@@ -87,6 +87,7 @@ remap('n', '<leader>c',  "<cmd>lua require('plugins.telescope').my_git_commits()
 remap('n', '<leader>rr',  "<cmd>lua require'telescope'.extensions.repo.list { file_ignore_patterns= { '/%.cache/', '/%.cargo/',                    '/%.local/', '/%.asdf/', '/%.zinit/', '/%.tmux/'}}<cr>", SILENT_NORE)
 remap('n', '<leader>h',  "<cmd>lua require'telescope.builtin'.help_tags()<cr>", SILENT_NORE)
 remap('n', '<leader>/',  "<cmd>lua require'telescope.builtin'.current_buffer_fuzzy_find({skip_empty_lines = true})<cr>", SILENT_NORE)
+remap('n', '<leader>T',  "<cmd>Telescope<cr>", SILENT_NORE)
 
 
 -- lazygit

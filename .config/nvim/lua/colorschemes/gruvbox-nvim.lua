@@ -13,6 +13,7 @@ require("gruvbox").setup({
   invert_intend_guides = false,
   inverse = true, -- invert background for search, diffs, statuslines and errors
   contrast = "hard", -- can be "hard", "soft" or empty string
+  -- I don't like the neutral colors, so make everything the normal colors 
   palette_overrides = {
     neutral_red    = palette.bright_red,
     neutral_green  = palette.bright_green,

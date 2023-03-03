@@ -28,36 +28,26 @@ end
 local plugins = {
   -- "folke/which-key.nvim",
   -- { "folke/neoconf.nvim", cmd = "Neoconf" },
-  -- "folke/neodev.nvim",
-  -- Packer can manage itself as an optional plugin
-  -- { 'wbthomason/packer.nvim' },
 
   -- Git
   { 'lewis6991/gitsigns.nvim', dependencies = {'nvim-lua/plenary.nvim'}, config = config_file"gitsigns" },
   { 'kdheepak/lazygit.nvim', config = config_file'lazygit' },
-  -- { 'rhysd/committia.vim' }
 
   -- Registers & clipboard
   { 'AckslD/nvim-neoclip.lua', dependencies = {'kkharji/sqlite.lua', module = 'sqlite'}, config = config_file"neoclip" },
   { "gbprod/yanky.nvim", config = config_file"yanky", dependencies = { "kkharji/sqlite.lua" } },
 
   -- Move & Search & replace
-  -- { 'nacro90/numb.nvim', config = config_file"numb" },
-  -- { 'dyng/ctrlsf.vim', config = config_file"ctrlsf" },
-  -- { 'kevinhwang91/nvim-hlslens', config = config_file"hlslens" },
   -- { 'ggandor/lightspeed.nvim', config = config_file"lightspeed" } -- go anywhere with 2-4 keypresses mapping: s/S
   { 'phaazon/hop.nvim', config = config_file'hop' },
-  -- { 'karb94/neoscroll.nvim',   config = config_file"neoscroll" },
-  { 'dstein64/nvim-scrollview' },
+  { 'dstein64/nvim-scrollview' }, -- gives neovim a scrollbar
   -- { 'chaoren/vim-wordmotion' },
-  -- { 'fedepujol/move.nvim' } -- move linkes or blocks of text around
-  { 'haya14busa/incsearch.vim' },
-  { 'haya14busa/incsearch-fuzzy.vim' },
+  -- { 'fedepujol/move.nvim' } -- move lines or blocks of text around
   { 'haya14busa/vim-asterisk' },
+  -- jump-to-definition, in case LSP doesn't work (mainly for ruby... -_-)
   { 'pechorin/any-jump.vim', config = config_file("any-jump") },
 
   -- Treesitter
-  -- { 'David-Kunz/markid' }, -- ?
   { 'nvim-treesitter/nvim-treesitter',     run = ':TSUpdate', config = config_file"treesitter" },
   { 'nvim-treesitter/playground' },
   -- { 'mrjones2014/nvim-ts-rainbow' },
@@ -106,7 +96,6 @@ local plugins = {
   { "onsails/lspkind-nvim" },      -- adds icons (or other stuff) to autocompletions
   { "folke/neodev.nvim" },         -- completion for neovim stuff in lua
 
-  -- { "nvim-lua/lsp_extensions.nvim" },
   -- { "simrat39/symbols-outline.nvim" },
 
   -- { 'quangnguyen30192/cmp-nvim-tags' },
@@ -123,7 +112,6 @@ local plugins = {
   -- Formatting
   --{ 'junegunn/vim-easy-align' },
   { 'njhoffman/vim-easy-align' },
-  -- Plug 'junegunn/vim-easy-align'
   -- I forked this and added hjkl as alternatives for arrow keys. Development seems dead
   -- Pull Request here: https://github.com/junegunn/vim-easy-align/pull/138/files
   -- Edit: changed it to the repo of some other guy that used my fork...
@@ -132,7 +120,7 @@ local plugins = {
   -- Statusline
   { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, config = config_file"lualine" },
 
-  -- Statuscolumn
+  -- Statuscolumn (Allows stuff like clicking on line numbers for breakpoints)
   {
     "luukvbaal/statuscol.nvim",
     config = function() require("statuscol").setup{setopt = true} end
@@ -166,13 +154,13 @@ local plugins = {
   { 'tpope/vim-repeat' },
   { 'tpope/vim-endwise' },
   { 'tpope/vim-dispatch' },
-  { 'tpope/vim-fugitive' },
-  { 'tpope/vim-surround' },
+  { 'tpope/vim-fugitive' }, -- git stuff
+  { 'tpope/vim-surround' }, -- mapping to surround stuff with ({[`'"
 
-  { 'norcalli/nvim-colorizer.lua', config = config_file"colorizer" },
+  { 'norcalli/nvim-colorizer.lua', config = config_file"colorizer" }, -- shows color codes in color
   -- Colorschema
-  { "ellisonleao/gruvbox.nvim" },
-  { 'Shatur/neovim-ayu'},
+  "ellisonleao/gruvbox.nvim",
+  'Shatur/neovim-ayu',
   { 'catppuccin/nvim', as = "catppuccin" },
   'olimorris/onedarkpro.nvim',
   'folke/tokyonight.nvim',
@@ -187,7 +175,6 @@ local plugins = {
   { "mxsdev/nvim-dap-vscode-js",         dependencies = {"mfussenegger/nvim-dap"} },
 
   -- General Plugins
-  -- { 'machakann/vim-sandwich', config = config_file"sandwich" },        -- Set of operators and textobjects to search/select/edit sandwiched texts.
   { 'rcarriga/nvim-notify', config = config_file"nvim-notify" },       -- A fancy, configurable, notification manager for NeoVim
   -- { 'folke/noice.nvim', dependencies = { 'MunifTanjim/nui.nvim' },, config = config_file"noice" }                 -- completely replaces the UI for messages, cmdline and the popupmenu.
   { 'folke/trouble.nvim' },                                         -- diagnostics, references, telescope results, quickfix and location list
@@ -197,8 +184,7 @@ local plugins = {
   { 'nvim-tree/nvim-tree.lua', dependencies = { 'nvim-tree/nvim-web-devicons' }, tag = 'nightly', config = config_file"nvim-tree" },
 
   -- Plugin that automatically highlight the word and all other occurences of the word under cursor.
-  -- Style can be controlled whith the variables CurrentWord and CurrentWordTwins at the end of this
-  -- file (becase colorscheme needs to be loaded first)
+  -- Style can be controlled whith the variables CurrentWord and CurrentWordTwins, but AFTER colerscheme loads
   { 'dominikduda/vim_current_word', config = config_file"current_word" },
 
   -- Languages
@@ -212,7 +198,8 @@ local plugins = {
   -- { 'nyngwang/NeoRoot.lua', config = config_file("neoroot") },
   { 'ahmedkhalf/project.nvim', config = config_file("project") },
   { 'DataWraith/auto_mkdir' },     -- Automatically create folders that don't exist when saving a new file
-  { 'landock/vim-expand-region' }, -- Expand/Shrink current selection around text objects
+  -- { 'landock/vim-expand-region' }, -- Expand/Shrink current selection around text objects
+  { 'olambo/vi-viz', config = config_file"vi-viz" }
   -- This is a fork. Original is this, but hasn't been updated since 2013:
   -- {  'terryma/vim-expand-region' },
 }
