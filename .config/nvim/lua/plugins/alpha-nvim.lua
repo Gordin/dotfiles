@@ -65,7 +65,7 @@ local buttons = {
     -- button("g", "  Find modified file", ":lua require('plugins.telescope').my_git_status()<CR>"),
     -- button("m", "  Show mark", ":Telescope marks"),
     -- button("t", "  Show todo", ":TodoTelescope<CR>"),
-    button("u", "  Sync plugins", ":PackerSync<CR>"),
+    button("u", "  Sync plugins", ":Lazy sync<CR>"),
     button("h", "  Neovim Check health", ":checkhealth<CR>"),
     button("q", "  Quit", "<Cmd>qa<CR>")
   },
