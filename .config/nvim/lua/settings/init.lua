@@ -33,9 +33,9 @@ vim.opt.matchpairs:append("<:>") -- Adds <> to list of bracket pairs you can jum
 
 vim.opt.smartindent = true
 
-vim.opt.wrap        = false
--- vim.opt.textwidth = "100"   -- Automatically wrap lines after column 100
-vim.opt.colorcolumn = "100" -- Show line in column 80
+vim.opt.wrap        = true
+vim.opt.textwidth   = 100   -- Automatically wrap lines after column 120
+vim.opt.colorcolumn = "100" -- Show line in column 120
 
 vim.opt.history    = 10000     -- 10000 is the max history size...
 vim.opt.swapfile   = true
