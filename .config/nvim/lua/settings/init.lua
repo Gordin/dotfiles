@@ -1,5 +1,6 @@
 -- vim settings
 local let = vim.g
+local utils = require('utils')
 
 -- Use python from virtualenv just for neovim
 if vim.fn.filereadable('~/.config/pyenv/versions/neovim3/bin/python') then
@@ -57,11 +58,10 @@ vim.opt.gdefault   = true -- substitutions have the g (replace all matches on a 
 vim.opt.wrapscan   = true -- Makes searches loop around to the beginning of file after the last result
 
 -- Turn off search result highlights when you go to insert mode toggle it back on afterwards
-
-local group = vim.api.nvim_create_augroup("AutoHLSearch", {})
-vim.api.nvim_clear_autocmds({ group = group })
-vim.api.nvim_create_autocmd("InsertEnter", { group = group, pattern = "*", command = ":setlocal nohlsearch " })
-vim.api.nvim_create_autocmd("InsertLeave", { group = group, pattern = "*", command = ":setlocal hlsearch " })
+utils.easyAutocmd("AutoHLSearch", {
+  InsertEnter = { command = ":setlocal nohlsearch " },
+  InsertLeave = { command = ":setlocal hlsearch "   }
+})
 
 vim.opt.termguicolors = true
 
@@ -125,34 +125,10 @@ vim.opt.splitbelow = true
 vim.opt.clipboard = "unnamed"
 
 -- AutoCmd that restores the last cursor position after re-opening a file
-local cursor_group = vim.api.nvim_create_augroup("CursorPos", {})
-vim.api.nvim_clear_autocmds({ group = cursor_group })
-vim.api.nvim_create_autocmd("BufReadPost", {
-  group = cursor_group,
-  callback = function()
-    local ft = vim.bo.filetype
-    if string.find(ft, "commit") then return end
-    if string.find(ft, "svn") then return end
-
-    local last_pos = vim.fn.line("'\"")
-    if last_pos > 0 and last_pos <= vim.fn.line("$") then
-      vim.cmd[[ exe "normal! g`\"" ]]
-      vim.cmd[[ normal! zz ]]
-      -- The lua version below always go to to first column of a line
-      -- vim.api.nvim_win_set_cursor(0, {last_pos, 0})
-    end
-
-    -- This doesn't belong here, but something is overwriting this, so let's set this for every buffer...
-    -- Continue comments on next line, when pressing <CR>, but not with o/O (and a lot of other settings...)
-    vim.opt.formatoptions = "rc/n1jp"
-  end,
+utils.easyAutocmd("CursorPos", {
+  BufReadPost = { callback = utils.return_to_last_cursor_position, }
 })
 
-local yank_group = vim.api.nvim_create_augroup("YankGroup", {})
-vim.api.nvim_clear_autocmds({ group = yank_group })
-vim.api.nvim_create_autocmd("TextYankPost", {
-  group = group,
-  callback =  function()
-    vim.highlight.on_yank()
-  end,
+utils.easyAutocmd("YankGroup", {
+  TextYankPost = { callback =  function() vim.highlight.on_yank() end }
 })
