@@ -38,8 +38,8 @@ local plugins = {
   { "gbprod/yanky.nvim", config = config_file"yanky", dependencies = { "kkharji/sqlite.lua" } },
 
   -- Move & Search & replace
-  -- { 'ggandor/lightspeed.nvim', config = config_file"lightspeed" } -- go anywhere with 2-4 keypresses mapping: s/S
-  { 'phaazon/hop.nvim', config = config_file'hop' },
+  { 'ggandor/lightspeed.nvim', config = config_file"lightspeed" }, -- go anywhere with 2-4 keypresses mapping: s/S
+  -- { 'phaazon/hop.nvim', config = config_file'hop' },
   { 'dstein64/nvim-scrollview' }, -- gives neovim a scrollbar
   -- { 'chaoren/vim-wordmotion' },
   -- { 'fedepujol/move.nvim' } -- move lines or blocks of text around
@@ -48,7 +48,7 @@ local plugins = {
   { 'pechorin/any-jump.vim', config = config_file("any-jump") },
 
   -- Treesitter
-  { 'nvim-treesitter/nvim-treesitter',     run = ':TSUpdate', config = config_file"treesitter" },
+  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = config_file"treesitter" },
   { 'nvim-treesitter/playground' },
   { 'HiPhish/nvim-ts-rainbow2' },
   { 'lukas-reineke/indent-blankline.nvim', config = config_file"indent-blankline" },
@@ -101,7 +101,7 @@ local plugins = {
   -- { 'quangnguyen30192/cmp-nvim-tags' },
 
   { 'windwp/nvim-autopairs', config = config_file"nvim-autopairs" }, -- auto-close pairs (){}
-  { 'windwp/nvim-ts-autotag', config = config_file"nvim-ts-autotag", after = "nvim-treesitter" },
+  { 'windwp/nvim-ts-autotag', config = config_file"nvim-ts-autotag", dependencies = { "nvim-treesitter" } },
   { 'andymass/vim-matchup' },      -- makes % work on more things
 
 
@@ -162,7 +162,7 @@ local plugins = {
   -- Colorschema
   "ellisonleao/gruvbox.nvim",
   'Shatur/neovim-ayu',
-  { 'catppuccin/nvim', as = "catppuccin" },
+  { 'catppuccin/nvim', name = "catppuccin" },
   'olimorris/onedarkpro.nvim',
   'folke/tokyonight.nvim',
   'Cside/vim-monokai',
