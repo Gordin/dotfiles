@@ -111,7 +111,8 @@ local plugins = {
 
   -- Formatting
   --{ 'junegunn/vim-easy-align' },
-  { 'njhoffman/vim-easy-align' },
+  { 'echasnovski/mini.nvim', version = false, config = config_file("mini") },
+  -- { 'njhoffman/vim-easy-align' },
   -- I forked this and added hjkl as alternatives for arrow keys. Development seems dead
   -- Pull Request here: https://github.com/junegunn/vim-easy-align/pull/138/files
   -- Edit: changed it to the repo of some other guy that used my fork...
