@@ -17,8 +17,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Sets path of config to be ./lua/config_file/NAME.lua
-local config_file = function(name)
+-- Sets path of config to be ./lua/plugins/NAME.lua
+local config = function(name)
   return function()
     require(string.format('plugins.%s', name))
   end
@@ -30,28 +30,28 @@ local plugins = {
   -- { "folke/neoconf.nvim", cmd = "Neoconf" },
 
   -- Git
-  { 'lewis6991/gitsigns.nvim', dependencies = {'nvim-lua/plenary.nvim'}, config = config_file"gitsigns" },
-  { 'kdheepak/lazygit.nvim', config = config_file'lazygit' },
+  { 'lewis6991/gitsigns.nvim', dependencies = {'nvim-lua/plenary.nvim'}, config = config"gitsigns" },
+  { 'kdheepak/lazygit.nvim', config = config'lazygit' },
 
   -- Registers & clipboard
-  { 'AckslD/nvim-neoclip.lua', dependencies = {'kkharji/sqlite.lua', module = 'sqlite'}, config = config_file"neoclip" },
-  { "gbprod/yanky.nvim", config = config_file"yanky", dependencies = { "kkharji/sqlite.lua" } },
+  { 'AckslD/nvim-neoclip.lua', dependencies = {'kkharji/sqlite.lua', module = 'sqlite'}, config = config"neoclip" },
+  { "gbprod/yanky.nvim", config = config"yanky", dependencies = { "kkharji/sqlite.lua" } },
 
   -- Move & Search & replace
-  { 'ggandor/lightspeed.nvim', config = config_file"lightspeed" }, -- go anywhere with 2-4 keypresses mapping: s/S
+  { 'ggandor/lightspeed.nvim', config = config"lightspeed" }, -- go anywhere with 2-4 keypresses mapping: s/S
   -- { 'phaazon/hop.nvim', config = config_file'hop' },
   { 'dstein64/nvim-scrollview' }, -- gives neovim a scrollbar
   -- { 'chaoren/vim-wordmotion' },
   -- { 'fedepujol/move.nvim' } -- move lines or blocks of text around
   { 'haya14busa/vim-asterisk' },
   -- jump-to-definition, in case LSP doesn't work (mainly for ruby... -_-)
-  { 'pechorin/any-jump.vim', config = config_file("any-jump") },
+  { 'pechorin/any-jump.vim', config = config"any-jump" },
 
   -- Treesitter
-  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = config_file"treesitter" },
+  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = config"treesitter" },
   { 'nvim-treesitter/playground' },
   { 'HiPhish/nvim-ts-rainbow2' },
-  { 'lukas-reineke/indent-blankline.nvim', config = config_file"indent-blankline" },
+  { 'lukas-reineke/indent-blankline.nvim', config = config"indent-blankline" },
   { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO
   { 'lewis6991/nvim-treesitter-context' }, -- TODO
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
@@ -98,50 +98,41 @@ local plugins = {
 
   -- { "simrat39/symbols-outline.nvim" },
 
-  -- { 'quangnguyen30192/cmp-nvim-tags' },
-
-  { 'windwp/nvim-autopairs', config = config_file"nvim-autopairs" }, -- auto-close pairs (){}
-  { 'windwp/nvim-ts-autotag', config = config_file"nvim-ts-autotag", dependencies = { "nvim-treesitter" } },
-  { 'andymass/vim-matchup' },      -- makes % work on more things
-
+  { 'windwp/nvim-autopairs', config = config"nvim-autopairs" }, -- auto-close pairs (){}
+  { 'windwp/nvim-ts-autotag', config = config"nvim-ts-autotag", dependencies = { "nvim-treesitter" } },
+  { 'andymass/vim-matchup' },                                        -- makes % work on more things
 
   -- Syntax
   { 'chrisbra/csv.vim' },
   { 'zdharma-continuum/zinit-vim-syntax' },
 
   -- Formatting
-  --{ 'junegunn/vim-easy-align' },
-  { 'echasnovski/mini.nvim', version = false, config = config_file("mini") },
-  -- { 'njhoffman/vim-easy-align' },
-  -- I forked this and added hjkl as alternatives for arrow keys. Development seems dead
-  -- Pull Request here: https://github.com/junegunn/vim-easy-align/pull/138/files
-  -- Edit: changed it to the repo of some other guy that used my fork...
-  { 'mhartington/formatter.nvim', config = config_file"formatter" },
+  { 'echasnovski/mini.align',     version = false, config = config"mini.align" },
+  { 'echasnovski/mini.animate',   version = false, config = config"mini.animate" },
+  { 'echasnovski/mini.ai',        version = false, config = function () require('mini.ai').setup() end },
+  { 'mhartington/formatter.nvim', config = config"formatter" },
 
   -- Statusline
-  { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, config = config_file"lualine" },
+  { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, config = config"lualine" },
 
   -- Statuscolumn (Allows stuff like clicking on line numbers for breakpoints)
-  {
-    "luukvbaal/statuscol.nvim",
-    config = function() require("statuscol").setup{setopt = true} end
-  },
+  { "luukvbaal/statuscol.nvim", config = function() require("statuscol").setup{setopt = true} end },
 
   -- Icons
-  { 'nvim-tree/nvim-web-devicons', config = config_file('nvim_web-devicons') },
+  { 'nvim-tree/nvim-web-devicons', config = config'nvim_web-devicons' },
   { 'ryanoasis/vim-devicons' },
 
   -- Telescope
   { 'nvim-lua/popup.nvim' },
   { 'nvim-lua/plenary.nvim' },
-  { 'nvim-telescope/telescope.nvim', config = config_file"telescope", dependencies = { {'nvim-lua/plenary.nvim'} } },
+  { 'nvim-telescope/telescope.nvim', config = config"telescope", dependencies = { 'nvim-lua/plenary.nvim' } },
   { "natecraddock/telescope-zf-native.nvim" },
   { 'cljoly/telescope-repo.nvim' },
   { 'nvim-telescope/telescope-dap.nvim' },
   { "pschmitt/telescope-yadm.nvim", dependencies = "nvim-telescope/telescope.nvim" },
 
   -- Comments
-  { "terrortylor/nvim-comment", config = config_file"nvim-comment" },
+  { "terrortylor/nvim-comment", config = config"nvim-comment" },
 
   -- Tim Pope ✝️
   -- Rails stuff
@@ -158,8 +149,9 @@ local plugins = {
   { 'tpope/vim-fugitive' }, -- git stuff
   { 'tpope/vim-surround' }, -- mapping to surround stuff with ({[`'"
 
-  { 'norcalli/nvim-colorizer.lua', config = config_file"colorizer" }, -- shows color codes in color
-  -- Colorschema
+  { 'norcalli/nvim-colorizer.lua', config = config"colorizer" }, -- shows color codes in color
+
+  -- Colorschemes
   "ellisonleao/gruvbox.nvim",
   'Shatur/neovim-ayu',
   { 'catppuccin/nvim', name = "catppuccin" },
@@ -169,24 +161,25 @@ local plugins = {
   'typicode/bg.nvim', -- terminal background fix
 
     -- Debugger
-  { 'jbyuki/one-small-step-for-vimkind', dependencies = {"mfussenegger/nvim-dap"} },
-  { 'mfussenegger/nvim-dap',             config = config_file"nvim-dap" },
-  { 'rcarriga/nvim-dap-ui',              dependencies = {"mfussenegger/nvim-dap"}, config = config_file"nvim-dap-ui" },
-  { 'theHamsta/nvim-dap-virtual-text',   dependencies = {"mfussenegger/nvim-dap"}, config = config_file"nvim-dap-virtual-text" },
-  { "mxsdev/nvim-dap-vscode-js",         dependencies = {"mfussenegger/nvim-dap"} },
+  { 'mfussenegger/nvim-dap',             config = config"nvim-dap" },
+  { 'rcarriga/nvim-dap-ui',              dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-ui"           },
+  { 'theHamsta/nvim-dap-virtual-text',   dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-virtual-text" },
+  { 'jbyuki/one-small-step-for-vimkind', dependencies = {"mfussenegger/nvim-dap"}, },
+  { "mxsdev/nvim-dap-vscode-js",         dependencies = {"mfussenegger/nvim-dap"}, },
 
   -- General Plugins
-  { 'rcarriga/nvim-notify', config = config_file"nvim-notify" },       -- A fancy, configurable, notification manager for NeoVim
+  { 'rcarriga/nvim-notify', config = config"nvim-notify" },       -- A fancy, configurable, notification manager for NeoVim
   -- { 'folke/noice.nvim', dependencies = { 'MunifTanjim/nui.nvim' },, config = config_file"noice" }                 -- completely replaces the UI for messages, cmdline and the popupmenu.
   { 'folke/trouble.nvim' },                                         -- diagnostics, references, telescope results, quickfix and location list
-  { 'goolord/alpha-nvim', config = config_file"alpha-nvim" },          -- greeter like vim-startify / dashboard-nvim
+  { 'goolord/alpha-nvim', config = config"alpha-nvim" },          -- greeter like vim-startify / dashboard-nvim
   -- { 'dstein64/vim-startuptime' },
   -- file explorer
-  { 'nvim-tree/nvim-tree.lua', dependencies = { 'nvim-tree/nvim-web-devicons' }, tag = 'nightly', config = config_file"nvim-tree" },
+  { 'nvim-tree/nvim-tree.lua', dependencies = { 'nvim-tree/nvim-web-devicons' }, tag = 'nightly', config = config"nvim-tree" },
 
   -- Plugin that automatically highlight the word and all other occurences of the word under cursor.
   -- Style can be controlled whith the variables CurrentWord and CurrentWordTwins, but AFTER colerscheme loads
-  { 'dominikduda/vim_current_word', config = config_file"current_word" },
+  -- { 'dominikduda/vim_current_word', config = config_file"current_word" },
+  { 'RRethy/vim-illuminate', config = config"illuminate" },
 
   -- Languages
   { 'jose-elias-alvarez/typescript.nvim' },
@@ -195,12 +188,12 @@ local plugins = {
 
   -- When you open a new file but a file with a similar name exists Vim will ask to open that one
   { 'EinfachToll/DidYouMean' },
-  -- { 'airblade/vim-rooter', config = config_file("vim-rooter") },
-  -- { 'nyngwang/NeoRoot.lua', config = config_file("neoroot") },
-  { 'ahmedkhalf/project.nvim', config = config_file("project") },
+  -- { 'airblade/vim-rooter', config = config"vim-rooter" },
+  -- { 'nyngwang/NeoRoot.lua', config = config"neoroot" },
+  { 'ahmedkhalf/project.nvim', config = config"project" },
   { 'DataWraith/auto_mkdir' },     -- Automatically create folders that don't exist when saving a new file
   -- { 'landock/vim-expand-region' }, -- Expand/Shrink current selection around text objects
-  { 'olambo/vi-viz', config = config_file"vi-viz" }
+  { 'olambo/vi-viz', config = config"vi-viz" }
   -- This is a fork. Original is this, but hasn't been updated since 2013:
   -- {  'terryma/vim-expand-region' },
 }
