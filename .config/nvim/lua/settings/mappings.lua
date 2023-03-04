@@ -41,6 +41,9 @@ remap('n', 'gk', "k",                         SILENT_NORE)
 
 remap("n",    "<C-e>",  ":TSHighlightCapturesUnderCursor<CR>",   SILENT_NORE)
 
+remap("c", "<leader>pr", "lua vim.pretty_print()<left>")
+remap("c", "<leader>re", 'require("").<left><left><left>')
+
 vim.cmd[[
 nnoremap <f1> :echo synIDattr(synID(line('.'), col('.'), 0), 'name')<cr>
 nnoremap <f2> :echo ("hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
@@ -126,7 +129,6 @@ remap('x', '<leader>tw', "<CMD>VimCurrentWordToggle<CR>", {noremap = false, sile
 -- nvim-comment
 remap('n', '', '<Cmd>set operatorfunc=CommentOperator<CR>g@$', {noremap = true, silent = true})
 remap('x', '', ':<C-U>call CommentOperator(visualmode())<CR>', {noremap = true, silent = true})
-
 
 -- Pressing I/A when in visual block mode allows to add something in front of/after the block in all
 -- lines of the block. !!vim will only show the edit to current line until you leave edit mode!!
