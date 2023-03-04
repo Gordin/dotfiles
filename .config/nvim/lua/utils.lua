@@ -72,4 +72,46 @@ M.toggleMouseSelection = function ()
   end
 end
 
+M.return_to_last_cursor_position = function()
+  local ft = vim.bo.filetype
+  if string.find(ft, "commit") then return end
+  if string.find(ft, "svn") then return end
+
+  local last_pos = vim.fn.line("'\"")
+  if last_pos > 0 and last_pos <= vim.fn.line("$") then
+    vim.cmd[[ exe "normal! g`\"" ]]
+    vim.cmd[[ normal! zz ]]
+    -- The lua version below always go to to first column of a line
+    -- vim.api.nvim_win_set_cursor(0, {last_pos, 0})
+  end
+
+  -- This doesn't belong here, but something is overwriting this, so let's set this for every buffer...
+  -- Continue comments on next line, when pressing <CR>, but not with o/O (and a lot of other settings...)
+  vim.opt.formatoptions = "rc/n1jp"
+end
+
+M.mergeBintoA = function(tableA, tableB)
+  for key, value in pairs(tableB) do
+    tableA[key] = value
+  end
+  return tableA
+end
+
+M.easyAutocmd = function(unique_group_name, opts)
+  local group = vim.api.nvim_create_augroup(unique_group_name, {})
+  vim.api.nvim_clear_autocmds({ group = group })
+
+  for event, options in pairs(opts) do
+    local real_opts = M.mergeBintoA({ group = group  }, options)
+    if not (real_opts["pattern"] or real_opts["buffer"]) then
+      real_opts["pattern"] = '*'
+    end
+    vim.api.nvim_create_autocmd(event, real_opts)
+  end
+end
+
+M.link_highlight_group = function(group, group_to_link_to)
+  vim.api.nvim_set_hl(0, group, { link = group_to_link_to })
+end
+
 return M
