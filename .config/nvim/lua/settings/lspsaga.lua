@@ -1,9 +1,10 @@
+local symbol_in_winbar = true
 require("lspsaga").setup({
   lightbulb = {
     sign = false
   },
   symbol_in_winbar = {
-    enable = false,
+    enable = symbol_in_winbar,
     separator = " |> ",
     hide_keyword = true,
     show_file = true,
@@ -12,6 +13,11 @@ require("lspsaga").setup({
     color_mode = true,
   },
 })
+
+if symbol_in_winbar then
+  -- always show winbar, even if empty, to make diffs line up, when "symbol_in_winbar" feature is on
+  vim.opt.winbar = " "
+end
 
 local keymap = vim.keymap.set
 
