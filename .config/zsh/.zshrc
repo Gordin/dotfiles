@@ -208,6 +208,7 @@ search_and_replace() {
   fi
 }
 
+alias yreset="yadm enter git reset"
 alias yvim="bash -c 'cd;yadm enter nvim'"
 alias ggit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/gordin_rsa' git -c user.name=Gordin -c user.email=9ordin@gmail.com $@"
 alias wgit="GIT_SSH_COMMAND='ssh -i  ~/.ssh/id_work' git -c user.name=andreasguthstuditemps -c user.email=andreas.guth@studitemps.de $@"
