@@ -116,13 +116,6 @@ remap('n', '<leader>ST', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
 -- Neoclip
 remap('n', '<leader>p', "<CMD>Telescope neoclip<CR> | ",  SILENT_NORE) -- `| ` skips searching
 
--- Easy Align
--- Start interactive EasyAlign in visual mode (e.g. vipga) [g]o [a]lign
--- Start interactive EasyAlign for a motion/text object (e.g. gaip) [g]o [a]lign (motion)
-remap({'x', 'n'}, 'ga', "<Plug>(EasyAlign)", {noremap = false, silent = false})
--- Easier mapping to remember this plugin because = indents and <leader>= aligns
-remap('x', '<leader>=', "<Plug>(LiveEasyAlign)", {noremap = false, silent = false})
-
 -- vim_current_word
 remap('x', '<leader>tw', "<CMD>VimCurrentWordToggle<CR>", {noremap = false, silent = true})
 
