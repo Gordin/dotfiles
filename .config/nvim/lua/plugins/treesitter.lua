@@ -1,8 +1,4 @@
 require'nvim-treesitter.configs'.setup {
-  markid = {
-    enable = true,
-    colors = false
-  },
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   highlight = {
     enable = true,          -- false will disable the whole extension
@@ -40,12 +36,27 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 
-local group = vim.api.nvim_create_augroup("TSRainbow", {})
-vim.api.nvim_clear_autocmds({ group = group })
-vim.api.nvim_create_autocmd('InsertLeave',  {
-  group=group,
-  pattern = "*",
-  callback = function ()
-    vim.cmd[[:TSDisable rainbow | TSEnable rainbow]]
+local utils = require("utils")
+
+local interval_ms = 1000
+local last_execution = 0
+local function restart_rainbow()
+  vim.cmd[[:TSDisable rainbow | TSEnable rainbow]]
+end
+
+-- Use a timer that ensures, this is only triggered once every 500ms
+function Reset_Rainbow_Timer()
+  local now = vim.loop.now()
+  if now - last_execution >= interval_ms then
+    last_execution = now
+    local timer = vim.loop.new_timer()
+    if timer == nil then return end
+
+    -- timer:start(interval_ms, 0, vim.schedule_wrap(restart_rainbow))
+    restart_rainbow()
   end
+end
+
+utils.easyAutocmd("TSRainbow", {
+  TextChanged = { pattern = "*", callback = Reset_Rainbow_Timer }
 })
