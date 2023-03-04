@@ -34,13 +34,18 @@ require'nvim-treesitter.configs'.setup {
   },
   rainbow = {
     enable = true,
-    -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
     query = 'rainbow-parens',
     extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-    max_file_lines = nil, -- Do not enable for files with more than n lines, int
-    -- colors = {}, -- table of hex strings
-    -- termcolors = {} -- table of colour name strings
-    -- Highlight the entire buffer all at once
-    strategy = require 'ts-rainbow.strategy.global',
+    strategy = require 'ts-rainbow.strategy.local',
   }
 }
+
+local group = vim.api.nvim_create_augroup("TSRainbow", {})
+vim.api.nvim_clear_autocmds({ group = group })
+vim.api.nvim_create_autocmd('InsertLeave',  {
+  group=group,
+  pattern = "*",
+  callback = function ()
+    vim.cmd[[:TSDisable rainbow | TSEnable rainbow]]
+  end
+})
