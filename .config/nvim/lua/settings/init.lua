@@ -59,8 +59,8 @@ vim.opt.wrapscan   = true -- Makes searches loop around to the beginning of file
 
 -- Turn off search result highlights when you go to insert mode toggle it back on afterwards
 utils.easyAutocmd("AutoHLSearch", {
-  InsertEnter = { command = ":setlocal nohlsearch " },
-  InsertLeave = { command = ":setlocal hlsearch "   }
+  InsertEnter = { command = ":setlocal nohlsearch" },
+  InsertLeave = { command = ":setlocal hlsearch"   }
 })
 
 vim.opt.termguicolors = true
@@ -124,11 +124,10 @@ vim.opt.splitbelow = true
 -- Make vim use the system clipboard for copy&pasting
 vim.opt.clipboard = "unnamed"
 
--- AutoCmd that restores the last cursor position after re-opening a file
-utils.easyAutocmd("CursorPos", {
+utils.easyAutocmd("RestoreLastCursorPositionAfterOpeningFile", {
   BufReadPost = { callback = utils.return_to_last_cursor_position, }
 })
 
 utils.easyAutocmd("YankGroup", {
-  TextYankPost = { callback =  function() vim.highlight.on_yank() end }
+  TextYankPost = { callback =  vim.highlight.on_yank }
 })

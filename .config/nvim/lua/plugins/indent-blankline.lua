@@ -14,12 +14,12 @@ require("indent_blankline").setup {
 
 local utils = require("utils")
 
+-- Don't link to anything with background here, it will color all spaces...
 utils.easyAutocmd("IndentBlankLineSpaceColor", {
   ColorScheme = {
-    callback = function ()
-      -- Don't link to anything with background here, it will color all spaces...
-      utils.link_highlight_group('IndentBlanklineSpaceChar',          'DiagnosticSignOk')
-      utils.link_highlight_group('IndentBlanklineSpaceCharBlankline', 'DiagnosticSignOk')
-    end
+    callback = utils.link_highlight_group {
+      IndentBlanklineSpaceChar          = 'DiagnosticSignOk',
+      IndentBlanklineSpaceCharBlankline = 'DiagnosticSignOk'
+    }
   }
 })

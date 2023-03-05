@@ -110,8 +110,12 @@ M.easyAutocmd = function(unique_group_name, opts)
   end
 end
 
-M.link_highlight_group = function(group, group_to_link_to)
-  vim.api.nvim_set_hl(0, group, { link = group_to_link_to })
+M.link_highlight_group = function(group_mapping)
+  return function ()
+    for group, group_to_link_to in pairs(group_mapping) do
+      vim.api.nvim_set_hl(0, group, { link = group_to_link_to })
+    end
+  end
 end
 
 return M

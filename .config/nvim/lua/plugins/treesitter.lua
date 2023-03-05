@@ -45,7 +45,7 @@ local function restart_rainbow()
 end
 
 -- Use a timer that ensures, this is only triggered once every 500ms
-function Reset_Rainbow_Timer()
+local function reset_rainbow_timer()
   local now = vim.loop.now()
   if now - last_execution >= interval_ms then
     last_execution = now
@@ -58,5 +58,5 @@ function Reset_Rainbow_Timer()
 end
 
 utils.easyAutocmd("TSRainbow", {
-  TextChanged = { pattern = "*", callback = Reset_Rainbow_Timer }
+  TextChanged = { callback = reset_rainbow_timer }
 })
