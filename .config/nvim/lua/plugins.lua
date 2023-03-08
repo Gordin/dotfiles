@@ -152,6 +152,8 @@ local plugins = {
 
   { 'norcalli/nvim-colorizer.lua', config = config"colorizer" }, -- shows color codes in color
 
+  { "laytan/cloak.nvim", config = config"cloak" },
+
   -- Colorschemes
   "ellisonleao/gruvbox.nvim",
   'Shatur/neovim-ayu',
