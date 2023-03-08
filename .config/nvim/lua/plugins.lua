@@ -161,6 +161,8 @@ local plugins = {
 
   { "laytan/cloak.nvim", config = config"cloak" },
 
+  { "folke/neoconf.nvim", priority = 1000, config = function () require("neoconf").setup({ }) end },
+
   -- Colorschemes
   "ellisonleao/gruvbox.nvim",
   'Shatur/neovim-ayu',
