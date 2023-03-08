@@ -33,7 +33,7 @@ require("tokyonight").setup({
   on_highlights = function(highlights, colors) end,
 })
 
-grpid = vim.api.nvim_create_augroup('custom_highlights_tokyonight', {})
+local grpid = vim.api.nvim_create_augroup('custom_highlights_tokyonight', {})
 vim.api.nvim_create_autocmd('ColorScheme', {
   group = grpid,
   pattern = 'tokyonight',
