@@ -92,6 +92,9 @@ remap('n', '<leader>h',  "<cmd>lua require'telescope.builtin'.help_tags()<cr>", 
 remap('n', '<leader>/',  "<cmd>lua require'telescope.builtin'.current_buffer_fuzzy_find({skip_empty_lines = true})<cr>", SILENT_NORE)
 remap('n', '<leader>T',  "<cmd>Telescope<cr>", SILENT_NORE)
 
+-- Yanks current filename. I want exactly what :file shows, so I'm doing it with the file command and not with
+-- expand("%")
+remap('n', '<leader><c-g>', ':lua vim.fn.setreg("*", string.gmatch(vim.api.nvim_command_output("file"), \'"(.+)"\')())<CR>', SILENT_NORE)
 
 -- lazygit
 remap('n', '<leader>lg', "<cmd>LazyGit<cr>",                                 SILENT_NORE)
