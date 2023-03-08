@@ -43,6 +43,7 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 -- })
 
 -- Skip eslint server, because eslint-lsp has some bug...
+-- lsp.skip_server_setup({'eslint', 'tsserver', 'solargraph'})
 lsp.skip_server_setup({'eslint', 'tsserver'})
 
 -- Pass arguments to a language server
@@ -54,6 +55,29 @@ lsp.skip_server_setup({'eslint', 'tsserver'})
 --   }
 -- })
 
+-- lsp.configure('solargraph', {
+--   cmd = {'solargraph', 'stdio'},
+--   settings = {
+--     solargraph = {
+--       autoformat       = false,
+--       checkGemVersion  = true,
+--       completion       = true,
+--       definitions      = true,
+--       diagnostics      = true,
+--       folding          = true,
+--       formatting       = true,
+--       hover            = true,
+--       logLevel         = "warn",
+--       references       = true,
+--       rename           = true,
+--       symbols          = true,
+--       useBundler       = true,
+--     }
+--   },
+--   init_options = { formatting = true },
+--   filetypes = { 'ruby' },
+-- }
+-- )
 -- Configure lua language server for neovim
 lsp.nvim_workspace()
 
