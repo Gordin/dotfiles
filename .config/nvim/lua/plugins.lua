@@ -44,7 +44,7 @@ local plugins = {
   -- { 'chaoren/vim-wordmotion' },
   -- { 'fedepujol/move.nvim' } -- move lines or blocks of text around
   { 'haya14busa/vim-asterisk' },
-  -- jump-to-definition, in case LSP doesn't work (mainly for ruby... -_-)
+  -- zero config jump-to-definition, in case LSP doesn't work (mainly for ruby... -_-)
   { 'pechorin/any-jump.vim', config = config"any-jump" },
 
   -- Treesitter
@@ -56,6 +56,7 @@ local plugins = {
   { 'lewis6991/nvim-treesitter-context' }, -- TODO
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
 
+  -- lsp config is loaded from global init.lua
   {
     'VonHeikemen/lsp-zero.nvim',
     dependencies = {
@@ -202,5 +203,9 @@ require("lazy").setup(plugins, {
   checker = {
     enabled = true,
     notify = false
+  },
+  dev = {
+    path = "~/code/nvim_plugins",
+    fallback = true
   }
 })
