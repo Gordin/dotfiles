@@ -150,7 +150,14 @@ local plugins = {
   { 'tpope/vim-fugitive' }, -- git stuff
   { 'tpope/vim-surround' }, -- mapping to surround stuff with ({[`'"
 
-  { 'norcalli/nvim-colorizer.lua', config = config"colorizer" }, -- shows color codes in color
+  -- Show Colors codes and nomes in the actual color
+  -- nvim-colorizer is the cool new lua plugin, hexokinase is vimscript, but I like the virtualtext display
+  -- { 'NvChad/nvim-colorizer.lua', config = config"colorizer" },
+  { "kaymmm/vim-hexokinase",
+    init = config"hexokinase", -- init instead of config, because the config has to be set before the plugin
+    build = 'make hexokinase',
+    branch = 'latex'
+  },
 
   { "laytan/cloak.nvim", config = config"cloak" },
 
