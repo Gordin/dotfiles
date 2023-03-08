@@ -54,7 +54,7 @@ local buttons = {
     button("o", "  old vim config", ":e $HOME/.config/nvim_old/oldconfig.vim<CR>"),
     -- button("g", "  Edit config", ""),
     button("p", "  plugins", ":e ~/.config/nvim/lua/plugins.lua<CR>"),
-    button("P", "  plugin dir", ":e ~/.local/share/nvim/site/pack/packer/<CR>"),
+    button("P", "  plugin dir", ":e ~/.local/share/nvim/lazy/<CR>"),
     button("l", "  lazygit", ":LazyGit<CR>"),
     button("c", "  lazygit config", ":LazyGitConfig<CR>"),
 
