@@ -99,6 +99,7 @@ local plugins = {
   -- { 'lukas-reineke/cmp-rg' }
   { "onsails/lspkind-nvim" },      -- adds icons (or other stuff) to autocompletions
   { "folke/neodev.nvim" },         -- completion for neovim stuff in lua
+  { "rafcamlet/nvim-luapad", config = config"luapad" },
 
   -- { "simrat39/symbols-outline.nvim" },
 
