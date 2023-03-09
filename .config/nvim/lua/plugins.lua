@@ -34,7 +34,6 @@ local plugins = {
   { 'kdheepak/lazygit.nvim', config = config'lazygit' },
 
   -- Registers & clipboard
-  { 'AckslD/nvim-neoclip.lua', dependencies = {'kkharji/sqlite.lua', module = 'sqlite'}, config = config"neoclip" },
   { "gbprod/yanky.nvim",
     config = config"yanky",
     dependencies = { "kkharji/sqlite.lua" },
@@ -151,8 +150,8 @@ local plugins = {
   { 'tpope/vim-repeat' },
   { 'tpope/vim-endwise' },
   { 'tpope/vim-dispatch' },
-  { 'tpope/vim-fugitive' }, -- git stuff
-  { 'tpope/vim-surround' }, -- mapping to surround stuff with ({[`'"
+  { 'tpope/vim-fugitive', config = config"fugitive" }, -- git stuff
+  { 'tpope/vim-surround', config = config"surround" }, -- mapping to surround stuff with ({[`'"
 
   -- Show Colors codes and nomes in the actual color
   -- nvim-colorizer is the cool new lua plugin, hexokinase is vimscript, but I like the virtualtext display

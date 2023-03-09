@@ -117,7 +117,7 @@ remap('n', '<leader>ST', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
 -- remap('n', '<leader>?', '<Plug>(incsearch-fuzzy-stay/)')
 
 -- Neoclip
-remap('n', '<leader>p', "<CMD>Telescope neoclip<CR> | ",  SILENT_NORE) -- `| ` skips searching
+remap('n', '<leader>p', "<CMD>Telescope yank_history<CR> | ",  SILENT_NORE) -- `| ` skips searching
 
 -- vim_current_word
 remap('x', '<leader>tw', "<CMD>VimCurrentWordToggle<CR>", {noremap = false, silent = true})
