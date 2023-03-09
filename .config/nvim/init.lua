@@ -6,8 +6,8 @@ vim.g.maplocalleader = ","
 require('settings.terminalcolors')    -- ./lua/settings/terminalcolors.lua
 
 -- Packer
-require('plugins')                    -- ./lua/plugins/init.lua
 require('settings')                   -- ./lua/settings/init.lua
+require('plugins')                    -- ./lua/plugins/init.lua
 -- require('auto_cmds')                  -- ./lua/auto_cmds.lua (I don't think I use those anymore?)
 
 -- require("settings.completion")        -- autocompletion (old, for comparison with lsp.lua)

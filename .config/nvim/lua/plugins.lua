@@ -35,7 +35,11 @@ local plugins = {
 
   -- Registers & clipboard
   { 'AckslD/nvim-neoclip.lua', dependencies = {'kkharji/sqlite.lua', module = 'sqlite'}, config = config"neoclip" },
-  { "gbprod/yanky.nvim", config = config"yanky", dependencies = { "kkharji/sqlite.lua" } },
+  { "gbprod/yanky.nvim",
+    config = config"yanky",
+    dependencies = { "kkharji/sqlite.lua" },
+    priority = 0 -- telescope complains while loading the yanky extension without this ¯\_(ツ)_/¯
+  },
 
   -- Move & Search & replace
   { 'ggandor/lightspeed.nvim', config = config"lightspeed" }, -- go anywhere with 2-4 keypresses mapping: s/S
