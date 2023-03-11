@@ -174,7 +174,9 @@ local plugins = {
   'olimorris/onedarkpro.nvim',
   'folke/tokyonight.nvim',
   'Cside/vim-monokai',
-  'typicode/bg.nvim', -- terminal background fix
+  "rebelot/kanagawa.nvim",
+  { 'typicode/bg.nvim', lazy = false}, -- terminal background fix
+  { 'echasnovski/mini.base16', version = false }, -- creates base_16 themes from a palette
 
     -- Debugger
   { 'mfussenegger/nvim-dap',             config = config"nvim-dap" },
