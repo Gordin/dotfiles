@@ -118,4 +118,8 @@ M.link_highlight_group = function(group_mapping)
   end
 end
 
+M.home = function ()
+  return os.getenv("HOME") or os.getenv("HOMEPATH") or '~'
+end
+
 return M

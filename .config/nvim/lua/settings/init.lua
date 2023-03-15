@@ -40,10 +40,10 @@ vim.opt.colorcolumn = "110" -- Show line in column 110
 
 vim.opt.history    = 10000     -- 10000 is the max history size...
 vim.opt.swapfile   = true
-vim.opt.directory  = os.getenv("HOME") .. '/.config/nvim/tmp/swap//'
+vim.opt.directory  = utils.home() .. '/.config/nvim/tmp/swap//'
 vim.opt.backup     = true
-vim.opt.backupdir  = os.getenv("HOME") .. '/.config/nvim/tmp/backup//'
-vim.opt.undodir    = os.getenv("HOME") .. "/.config/nvim/undodir//"
+vim.opt.backupdir  = utils.home() .. '/.config/nvim/tmp/backup//'
+vim.opt.undodir    = utils.home() .. "/.config/nvim/undodir//"
 vim.opt.undofile   = true
 vim.opt.undolevels = 100000 -- Maximum number of undos
 vim.opt.undoreload = 100000 -- Save complete files for undo on reload if it has less lines
