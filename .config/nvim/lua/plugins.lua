@@ -58,6 +58,12 @@ local plugins = {
   { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO
   { 'lewis6991/nvim-treesitter-context' }, -- TODO
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
+  {
+    'Wansmer/treesj',
+    -- keys = { '<leader>m', '<leader>j', '<leader>s' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = config"treesj"
+  },
 
   -- lsp config is loaded from global init.lua
   -- All configs for lsp-related plugins will be loaded from inside lsp.lua to ensure correct order

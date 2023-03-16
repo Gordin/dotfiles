@@ -1,0 +1,49 @@
+local langs = {--[[ configuration for languages ]]}
+local treesj = require('treesj')
+
+treesj.setup({
+  -- Use default keymaps
+  -- (<space>m - toggle, <space>j - join, <space>s - split)
+  use_default_keymaps = true,
+
+  -- Node with syntax error will not be formatted
+  check_syntax_error = true,
+
+  -- If line after join will be longer than max value,
+  -- node will not be formatted
+  max_join_length = 120,
+
+  -- hold|start|end:
+  -- hold - cursor follows the node/place on which it was called
+  -- start - cursor jumps to the first symbol of the node being formatted
+  -- end - cursor jumps to the last symbol of the node being formatted
+  cursor_behavior = 'hold',
+
+  -- Notify about possible problems or not
+  notify = true,
+  langs = langs,
+
+  -- Use `dot` for repeat action
+  dot_repeat = true
+})
+
+local recursive_toggle = function ()
+  treesj.toggle({ split = { recursive = true } })
+end
+
+local recursive_join = function ()
+  treesj.join({ split = { recursive = true } })
+end
+
+local recursive_split = function ()
+  treesj.split({ split = { recursive = true } })
+end
+
+local opts = { remap = false, silent = true }
+
+vim.keymap.set('n', '<leader>ts', treesj.toggle,    opts)
+vim.keymap.set('n', '<leader>tS', recursive_toggle, opts)
+vim.keymap.set('n', '<leader>J',  recursive_join,   opts)
+vim.keymap.set('n', '<leader>JJ', treesj.join,      opts)
+vim.keymap.set('n', '<leader>S',  recursive_split, opts)
+vim.keymap.set('n', '<leader>SS', treesj.split,     opts)
