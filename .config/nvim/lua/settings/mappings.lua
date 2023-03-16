@@ -108,9 +108,9 @@ remap('n', '<leader>lg', "<cmd>LazyGit<cr>",                                 SIL
 -- remap('n', '<leader>ll', "<CMD>lua require('telescope.builtin').grep_string({ search = vim.fn.input('GREP -> ') })<CR>", {noremap = true, silent = true})
 
 -- Alpha
-remap('n', '<leader>st', "<CMD>Alpha<CR>",         SILENT_NORE)
-remap('n', '<leader>St', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
-remap('n', '<leader>ST', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
+remap('n', '<leader>al', "<CMD>Alpha<CR>",         SILENT_NORE)
+remap('n', '<leader>Al', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
+remap('n', '<leader>AL', "<CMD>vsp<CR>:Alpha<CR>", SILENT_NORE)
 
 -- incsearch-fuzzy
 -- remap('n', '<leader>/', '<Plug>(incsearch-fuzzy-/)')
