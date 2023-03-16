@@ -29,5 +29,5 @@ require('settings.abbreviations')     -- ./lua/settings/abbreviations.lua
 -- require('colorschemes.ayu')
 -- require('colorschemes.tokyonight')
 -- require('colorschemes.catppuccin')
--- require('colorschemes.gruvbox-nvim')
-require('colorschemes.kanagawa')
+require('colorschemes.gruvbox-nvim')
+-- require('colorschemes.kanagawa')
