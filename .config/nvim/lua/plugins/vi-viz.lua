@@ -10,7 +10,7 @@ map('x', '-',       "<cmd>lua require('vi-viz').vizContract1Chr()<CR>", {noremap
 -- good use for the r key in visual mode
 map('x', 'r',       "<cmd>lua require('vi-viz').vizPattern()<CR>",      {noremap = true})
 -- nice to have to get dot repeat on single words
-map('x', 'c',       "<cmd>lua require('vi-viz').vizChange()<CR>",       {noremap = true})
+-- map('x', 'c',       "<cmd>lua require('vi-viz').vizChange()<CR>",       {noremap = true})
 -- nice to have to insert before and after
 map('x', 'ii',      "<cmd>lua require('vi-viz').vizInsert()<CR>",       {noremap = true})
 map('x', 'aa',      "<cmd>lua require('vi-viz').vizAppend()<CR>",       {noremap = true})
