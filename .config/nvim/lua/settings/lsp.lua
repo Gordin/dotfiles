@@ -3,7 +3,7 @@ local remap = vim.keymap.set
 -- vim.lsp.set_log_level("debug")
 -- Reserve space for diagnostic icons
 vim.opt.signcolumn = 'yes'
--- vim.opt.completeopt = {'menu','menuone','preview','noselect'}
+vim.opt.completeopt = {'menu','menuone','preview','noselect'}
 
 local lsp = require('lsp-zero')
 lsp.preset('recommended')
@@ -177,3 +177,5 @@ remap("n", "<leader>dp", diagnostics.goto_prev,  opts)
 remap("n", "<c-j>",      diagnostics.goto_next,  opts)
 remap("n", "<leader>dn", diagnostics.goto_next,  opts)
 remap("n", "<leader>dq", diagnostics.setloclist, opts)
+
+require("plugins.lsp_signature")

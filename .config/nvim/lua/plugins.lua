@@ -60,6 +60,7 @@ local plugins = {
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
 
   -- lsp config is loaded from global init.lua
+  -- All configs for lsp-related plugins will be loaded from inside lsp.lua to ensure correct order
   {
     'VonHeikemen/lsp-zero.nvim',
     dependencies = {
@@ -84,6 +85,7 @@ local plugins = {
       {'L3MON4D3/LuaSnip'},
       -- Snippet Collection (Optional)
       {'rafamadriz/friendly-snippets'},
+      {'ray-x/lsp_signature.nvim'},
     }
   },
   {
