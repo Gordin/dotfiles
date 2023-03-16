@@ -195,7 +195,7 @@ local plugins = {
 
   -- General Plugins
   { 'rcarriga/nvim-notify', config = config"nvim-notify" },       -- A fancy, configurable, notification manager for NeoVim
-  -- { 'folke/noice.nvim', dependencies = { 'MunifTanjim/nui.nvim' },, config = config_file"noice" }                 -- completely replaces the UI for messages, cmdline and the popupmenu.
+  { 'folke/noice.nvim', dependencies = { 'MunifTanjim/nui.nvim' }, config = config"noice" },                 -- completely replaces the UI for messages, cmdline and the popupmenu.
   { 'folke/trouble.nvim' },                                         -- diagnostics, references, telescope results, quickfix and location list
   { 'goolord/alpha-nvim', config = config"alpha-nvim" },          -- greeter like vim-startify / dashboard-nvim
   -- { 'dstein64/vim-startuptime' },
