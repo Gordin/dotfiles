@@ -41,9 +41,10 @@ end
 
 local opts = { remap = false, silent = true }
 
-vim.keymap.set('n', '<leader>ts', treesj.toggle,    opts)
-vim.keymap.set('n', '<leader>tS', recursive_toggle, opts)
-vim.keymap.set('n', '<leader>J',  recursive_join,   opts)
-vim.keymap.set('n', '<leader>JJ', treesj.join,      opts)
-vim.keymap.set('n', '<leader>S',  recursive_split, opts)
-vim.keymap.set('n', '<leader>SS', treesj.split,     opts)
+vim.keymap.set('n', '<leader>tj', treesj.toggle, opts)
+vim.keymap.set('n', '<leader>tJ', recursive_toggle, opts)
+vim.keymap.set('n', '<leader>TJ', recursive_toggle, opts)
+vim.keymap.set('n', '<leader>rJ', recursive_join, opts)
+vim.keymap.set('n', '<leader>J', treesj.join,      opts)
+vim.keymap.set('n', '<leader>rS',  recursive_split, opts)
+vim.keymap.set('n', '<leader>S', treesj.split,     opts)

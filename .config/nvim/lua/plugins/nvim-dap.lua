@@ -3,10 +3,12 @@ local dap, dapui = require("dap")
 require("dap-vscode-js").setup({
   -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
   -- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
-  debugger_path = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter",
-  -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+  debugger_path = "~/.local/share/nvim/lazy/vscode-js-debug",
+  debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
   adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
-  -- adapters = { 'pwa-node', 'node-terminal' }, -- which adapters to register in nvim-dap
+  -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
+  -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
+  -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
 })
 
 
@@ -163,7 +165,8 @@ for _, language in ipairs({ "typescript", "javascript" }) do
 end
 
 vim.api.nvim_create_user_command('Connect', function ()
-  dap.attach({ type = 'server', host = 'localhost', port = 9229 }, dap.configurations.typescript[1], {})
+  -- dap.attach({ type = 'server', host = '127.0.0.1', port = 9229 }, dap.configurations.typescript[1], {})
+  dap.attach({ type = 'server', host = '127.0.0.1', port = 9229 }, dap.configurations.typescript[1], {})
 end, {})
 
 -- dap.configurations.javascript = {

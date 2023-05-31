@@ -53,10 +53,9 @@ local plugins = {
   -- Treesitter
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = config"treesitter" },
   { 'nvim-treesitter/playground' },
-  { 'HiPhish/nvim-ts-rainbow2' },
+  { 'HiPhish/nvim-ts-rainbow2', lazy = true },
   { 'lukas-reineke/indent-blankline.nvim', config = config"indent-blankline" },
   { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO
-  { 'lewis6991/nvim-treesitter-context' }, -- TODO
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
   {
     'Wansmer/treesj',
@@ -76,8 +75,8 @@ local plugins = {
       {'williamboman/mason-lspconfig.nvim'},
 
       -- null-ls
-      {"jay-babu/mason-null-ls.nvim"},
-      {"jose-elias-alvarez/null-ls.nvim"},
+      -- {"jay-babu/mason-null-ls.nvim"},
+      -- {"jose-elias-alvarez/null-ls.nvim"},
 
       -- Autocompletion
       {'hrsh7th/nvim-cmp'},
@@ -121,7 +120,7 @@ local plugins = {
 
   -- Formatting
   { 'echasnovski/mini.align',     version = false, config = config"mini.align" },
-  { 'echasnovski/mini.animate',   version = false, config = config"mini.animate" },
+  -- { 'echasnovski/mini.animate',   version = false, config = config"mini.animate" },
   { 'echasnovski/mini.ai',        version = false, config = function () require('mini.ai').setup() end },
   { 'mhartington/formatter.nvim', config = config"formatter" },
 
@@ -186,7 +185,12 @@ local plugins = {
   { 'typicode/bg.nvim', lazy = false}, -- terminal background fix
   { 'echasnovski/mini.base16', version = false }, -- creates base_16 themes from a palette
 
-    -- Debugger
+  -- Debugger
+  {
+    "microsoft/vscode-js-debug",
+    lazy = true,
+    build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && rm -rf out && mv dist out"
+  },
   { 'mfussenegger/nvim-dap',             config = config"nvim-dap" },
   { 'rcarriga/nvim-dap-ui',              dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-ui"           },
   { 'theHamsta/nvim-dap-virtual-text',   dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-virtual-text" },

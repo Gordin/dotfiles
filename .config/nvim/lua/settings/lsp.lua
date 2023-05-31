@@ -44,7 +44,7 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 
 -- Skip eslint server, because eslint-lsp has some bug...
 -- lsp.skip_server_setup({'eslint', 'tsserver', 'solargraph'})
-lsp.skip_server_setup({'eslint', 'tsserver'})
+lsp.skip_server_setup({'eslint', 'tsserver', 'shellcheck'})
 
 -- Pass arguments to a language server
 -- lsp.configure('tsserver', {

@@ -135,6 +135,7 @@ remap('v', 'a', 'A')
 
 -- nvim-tree
 remap('n', '<leader>tt', '<CMD>NvimTreeToggle<CR>', SILENT_NORE) -- [t]oggle [t]ree
+remap('n', '<leader>tf', '<CMD>NvimTreeFindFile<CR>', SILENT_NORE) -- [t]oggle [t]ree
 -- remap('n', '<leader>tr', '<CMD>lua require"nvim-tree".open_replacing_current_buffer()<CR>', SILENT_NORE) -- [t]oggle [t]ree
 
 -- vim-expand-region
@@ -156,7 +157,7 @@ remap('n', 'dp', 'dp:diffupdate<cr>]c', SILENT_NORE)
 -- Make zO recursively open whatever fold we're in, even if it's partially open.
 remap('n', 'zO', 'zczO')
 -- Space to toggle folds.
-remap({'n', 'v'}, "<Space>", 'za')
+remap({'n', 'v'}, "<Space><Space>", 'za')
 -- Easily set foldlevel to get an overview of all attributes of something
 -- (Anything above 3 will probably never be used)
 for i=0, 9 do

@@ -122,4 +122,9 @@ M.home = function ()
   return os.getenv("HOME") or os.getenv("HOMEPATH") or '~'
 end
 
+M.numberToRRGGBB = function(color)
+  if not color then return nil end
+  return string.format("#%06x", color)
+end
+
 return M
