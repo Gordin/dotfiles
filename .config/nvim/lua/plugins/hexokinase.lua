@@ -17,4 +17,7 @@ let g:Hexokinase_optInPatterns = [
 \     'hsla',
 \     'colour_names'
 \ ]
+
+let g:Hexokinase_termDisabled = 0
+let g:Hexokinase_ftDisabled = ['alpha', 'lazy']
 ]]

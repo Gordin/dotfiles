@@ -3,6 +3,15 @@ require("lspsaga").setup({
   lightbulb = {
     sign = false
   },
+  code_action = {
+    -- num_shortcut = true,
+    show_server_name = true,
+    -- extend_gitsigns = false,
+    keys = {
+      quit = {'q', '', '<c-c>'},
+      exec = '<CR>',
+    },
+  },
   symbol_in_winbar = {
     enable = symbol_in_winbar,
     separator = " |> ",
@@ -25,7 +34,7 @@ local keymap = vim.keymap.set
 -- If there is no definition, it will instead be hidden
 -- When you use an action in finder like "open vsplit",
 -- you can use <C-t> to jump back
-keymap("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
+keymap("n", "gh", "<cmd>Lspsaga finder<CR>")
 
 -- Code action
 keymap({"n","v"}, "<leader>ca", "<cmd>Lspsaga code_action<CR>")

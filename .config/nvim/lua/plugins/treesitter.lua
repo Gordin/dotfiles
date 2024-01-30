@@ -3,10 +3,6 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,          -- false will disable the whole extension
   },
-  context_commentstring = {
-    enable = true,
-    enable_autocmd = false,
-  },
   matchup = {
     enable = true
   },
@@ -28,13 +24,15 @@ require'nvim-treesitter.configs'.setup {
       show_help = '?',
     },
   },
-  rainbow = {
+  autotag = {
     enable = true,
-    query = 'rainbow-parens',
-    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-    strategy = require 'ts-rainbow.strategy.local',
+    enable_rename = true,
+    enable_close = true,
+    enable_close_on_slash = false,
   }
 }
+require('ts_context_commentstring').setup {}
+vim.g.skip_ts_commentstring_module = true
 
 local utils = require("utils")
 
@@ -57,6 +55,6 @@ local function reset_rainbow_timer()
   end
 end
 
-utils.easyAutocmd("TSRainbow", {
-  TextChanged = { callback = reset_rainbow_timer }
-})
+-- utils.easyAutocmd("TSRainbow", {
+--   TextChanged = { callback = reset_rainbow_timer }
+-- })

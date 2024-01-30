@@ -1,5 +1,6 @@
 local remap = vim.keymap.set
 local SILENT_NORE = { noremap = true, silent = true }
+local SILENT_NORE_EXPR = { noremap = true, silent = true, expr = true }
 local SILENT_NORE_NOWAIT = { noremap = true, silent = true, nowait = true }
 
 -- Put directory of current file in command line mode
@@ -34,8 +35,8 @@ remap('n', '<leader>te', '<CMD>tab split<CR>', SILENT_NORE)
 -- go down or up 1 visual line on wrapped lines instead of line of file. Check the count to only
 -- do this without a count. (It will jump over wrapped lines when you give a count, so it works with
 -- relative numbers)
-remap('n', 'j',  "v:count == 0 ? 'gj' : 'j'", { noremap = true, silent = true, expr = true })
-remap('n', 'k',  "v:count == 0 ? 'gk' : 'k'", { noremap = true, silent = true, expr = true })
+remap('n', 'j',  "v:count == 0 ? 'gj' : 'j'", SILENT_NORE_EXPR)
+remap('n', 'k',  "v:count == 0 ? 'gk' : 'k'", SILENT_NORE_EXPR)
 remap('n', 'gj', "j",                         SILENT_NORE)
 remap('n', 'gk', "k",                         SILENT_NORE)
 
@@ -85,7 +86,7 @@ remap('n', '<leader>b',  "<cmd>lua require('telescope.builtin').buffers()<cr>", 
 remap('n', '<leader>l',  "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>",                 SILENT_NORE)
 remap('n', '<leader>f',  "<cmd>lua require('plugins.telescope').project_files()<cr>",                             SILENT_NORE)
 remap('n', '<c-p>',      "<cmd>lua require('plugins.telescope').project_files()<cr>",                             SILENT_NORE)
-remap('n', '<leader>c',  "<cmd>lua require('plugins.telescope').my_git_commits()<cr>",                            SILENT_NORE)
+-- remap('n', '<leader>c',  "<cmd>lua require('plugins.telescope').my_git_commits()<cr>",                            SILENT_NORE)
 -- remap('n', '<leader>g',  "<cmd>lua require('plugins.telescope').my_git_status()<cr>",                             SILENT_NORE)
 remap('n', '<leader>rr',  "<cmd>lua require'telescope'.extensions.repo.list { file_ignore_patterns= { '/%.cache/', '/%.cargo/',                    '/%.local/', '/%.asdf/', '/%.zinit/', '/%.tmux/'}}<cr>", SILENT_NORE)
 remap('n', '<leader>h',  "<cmd>lua require'telescope.builtin'.help_tags()<cr>", SILENT_NORE)
@@ -94,7 +95,9 @@ remap('n', '<leader>T',  "<cmd>Telescope<cr>", SILENT_NORE)
 
 -- Yanks current filename. I want exactly what :file shows, so I'm doing it with the file command and not with
 -- expand("%")
-remap('n', '<leader><c-g>', ':lua vim.fn.setreg("*", string.gmatch(vim.api.nvim_command_output("file"), \'"(.+)"\')())<CR>', SILENT_NORE)
+local yank_current_filename = ':lua vim.fn.setreg("*", string.gmatch(vim.api.nvim_command_output("file"), \'"(.+)"\')())<CR>'
+remap('n', '<leader><c-g>', yank_current_filename, SILENT_NORE)
+remap('n', '<leader>y%', yank_current_filename, SILENT_NORE)
 
 -- lazygit
 remap('n', '<leader>lg', "<cmd>LazyGit<cr>",                                 SILENT_NORE)
@@ -138,16 +141,6 @@ remap('n', '<leader>tt', '<CMD>NvimTreeToggle<CR>', SILENT_NORE) -- [t]oggle [t]
 remap('n', '<leader>tf', '<CMD>NvimTreeFindFile<CR>', SILENT_NORE) -- [t]oggle [t]ree
 -- remap('n', '<leader>tr', '<CMD>lua require"nvim-tree".open_replacing_current_buffer()<CR>', SILENT_NORE) -- [t]oggle [t]ree
 
--- vim-expand-region
--- With this you can just press v multiple times from normal mode to get the selection you want
--- Adds extra text objecst to stop extending/shrinking around.
--- No idea what those are any more... :help expand_region has examples
---autocmd VimEnter * call expand_region#custom_text_objects({ 'a]' :1, 'ab' :1, 'aB' :1, 'a<' : 1 })
--- remap('v', 'v',     '<Plug>(expand_region_expand)')
--- remap('v', '-',     '<Plug>(expand_region_shrink)')
--- remap('v', '<c-v>', '<Plug>(expand_region_shrink)')
-
-
 -- diffs
 -- Automatically update/fold the diff after [o]btaining or [p]utting and go to next change
 remap('n', 'do', 'do:diffupdate<cr>]c', SILENT_NORE)
@@ -177,6 +170,25 @@ remap({'n', 'i'}, '<S-F11>',    '<CMD>lua require"dap".step_out()<CR>',         
 remap({'n', 'i'}, '<F12>',      '<CMD>lua require"dap.ui.widgets".hover()<CR>',    SILENT_NORE)
 
 -- remap('n', '<F6>',       '<CMD>Connect<CR>',            SILENT_NORE)
+
+
+-- Gitsigns
+
+remap('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", SILENT_NORE_EXPR)
+remap('n', '[c', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", SILENT_NORE_EXPR)
+
+remap('n', '<leader>gs', '<cmd>Gitsigns stage_hunk<CR>', SILENT_NORE)
+remap('v', '<leader>gs', ':Gitsigns stage_hunk<CR>', SILENT_NORE)
+remap('n', '<leader>gu', '<cmd>Gitsigns undo_stage_hunk<CR>', SILENT_NORE)
+remap('n', '<leader>gr', '<cmd>Gitsigns reset_hunk<CR>', SILENT_NORE)
+remap('v', '<leader>gr', ':Gitsigns reset_hunk<CR>', SILENT_NORE)
+remap('n', '<leader>gR', '<cmd>Gitsigns reset_buffer<CR>', SILENT_NORE)
+remap('n', '<leader>gp', '<cmd>Gitsigns preview_hunk<CR>', SILENT_NORE)
+remap('n', '<leader>gb', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>', SILENT_NORE)
+remap('n', '<leader>gS', '<cmd>Gitsigns stage_buffer<CR>', SILENT_NORE)
+remap('n', '<leader>gU', '<cmd>Gitsigns reset_buffer_index<CR>', SILENT_NORE)
+
+remap({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
 
 
 -- NeoRoot

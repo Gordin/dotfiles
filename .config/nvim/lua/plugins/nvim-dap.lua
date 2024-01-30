@@ -3,8 +3,10 @@ local dap, dapui = require("dap")
 require("dap-vscode-js").setup({
   -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
   -- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
-  debugger_path = "~/.local/share/nvim/lazy/vscode-js-debug",
-  debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+  -- debugger_path = "~/.local/share/nvim/lazy/vscode-js-debug",
+  debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
+  -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+  -- debugger_cmd = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug/dist/src/dapDebugServer.js",
   adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
   -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
   -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
@@ -14,14 +16,21 @@ require("dap-vscode-js").setup({
 
 vim.fn.sign_define('DapBreakpoint', {text='', texthl='error', linehl='', numhl=''})
 -- ADAPTERS
-dap.adapters.node2 = {
-  type = 'executable',
-  command = 'node-debug2-adapter',
-  -- args = {os.getenv('HOME') .. '/.zinit/plugins/microsoft---vscode-node-debug2.git/out/src/nodeDebug.js'},
-  -- args =  { vim.fn.stdpath('data') .. '/mason/packages/node-debug2-adapter/out/src/nodeDebug.js' },
-  args = {},
-}
-
+-- dap.adapters.node2 = {
+--   type = 'executable',
+--   command = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug/dist/src/dapDebugServer.js",
+--   -- args = {os.getenv('HOME') .. '/.zinit/plugins/microsoft---vscode-node-debug2.git/out/src/nodeDebug.js'},
+--   -- args =  { vim.fn.stdpath('data') .. '/mason/packages/node-debug2-adapter/out/src/nodeDebug.js' },
+--   args = {},
+-- }
+-- dap.adapters.node2 = {
+--   type = 'executable',
+--   command = 'node-debug2-adapter',
+--   -- args = {os.getenv('HOME') .. '/.zinit/plugins/microsoft---vscode-node-debug2.git/out/src/nodeDebug.js'},
+--   -- args =  { vim.fn.stdpath('data') .. '/mason/packages/node-debug2-adapter/out/src/nodeDebug.js' },
+--   args = {},
+-- }
+--
 -- dap.configurations.javascript = {
 --   {
 --     name = 'Launch',
@@ -130,7 +139,7 @@ dap.configurations.python = {
 --   }
 -- end
 
-for _, language in ipairs({ "typescript", "javascript" }) do
+for _, language in ipairs({ "typescript", "javascript", "svelte" }) do
   dap.configurations[language] = {
     {
       name = 'Attach to ' .. language .. 'node repl',
@@ -143,6 +152,10 @@ for _, language in ipairs({ "typescript", "javascript" }) do
       restart = true,
       remoteRoot = '/app/functions/',
       localRoot = "${workspaceFolder}",
+      resolveSourceMapLocations = {
+        "${workspaceFolder}/**",
+        "!**/node_modules/**",
+      },
       -- remoteDirectoryMapping = {
       --   ["${workspaceFolder}"] = "/app/functions",
       -- },

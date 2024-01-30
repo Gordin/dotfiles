@@ -3,7 +3,7 @@ local notify = require("notify")
 vim.notify = notify
 
 local setup_notify_colors = function()
-  local search = vim.api.nvim_get_hl_by_name("Folded", true)
+  local search = vim.api.nvim_get_hl(0, {name = "Folded"})
   notify.setup({
     background_colour = utils.numberToRRGGBB(search.background),
   })

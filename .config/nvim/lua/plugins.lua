@@ -43,7 +43,7 @@ local plugins = {
   -- Move & Search & replace
   { 'ggandor/lightspeed.nvim', config = config"lightspeed" }, -- go anywhere with 2-4 keypresses mapping: s/S
   -- { 'phaazon/hop.nvim', config = config_file'hop' },
-  { 'dstein64/nvim-scrollview' }, -- gives neovim a scrollbar
+  -- { 'dstein64/nvim-scrollview' }, -- gives neovim a scrollbar
   -- { 'chaoren/vim-wordmotion' },
   -- { 'fedepujol/move.nvim' } -- move lines or blocks of text around
   { 'haya14busa/vim-asterisk' },
@@ -53,7 +53,8 @@ local plugins = {
   -- Treesitter
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = config"treesitter" },
   { 'nvim-treesitter/playground' },
-  { 'HiPhish/nvim-ts-rainbow2', lazy = true },
+  -- { 'HiPhish/nvim-ts-rainbow2', lazy = true },
+  { 'HiPhish/rainbow-delimiters.nvim', config = config"rainbow-delimiters" },
   { 'lukas-reineke/indent-blankline.nvim', config = config"indent-blankline" },
   { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
@@ -188,8 +189,8 @@ local plugins = {
   -- Debugger
   {
     "microsoft/vscode-js-debug",
-    lazy = true,
-    build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && rm -rf out && mv dist out"
+    version = "1.x",
+    build = "npm i && npm run compile vsDebugServerBundle && mv dist out"
   },
   { 'mfussenegger/nvim-dap',             config = config"nvim-dap" },
   { 'rcarriga/nvim-dap-ui',              dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-ui"           },
@@ -205,7 +206,11 @@ local plugins = {
   -- { 'dstein64/vim-startuptime' },
   -- file explorer
   { 'nvim-tree/nvim-tree.lua', dependencies = { 'nvim-tree/nvim-web-devicons' }, tag = 'nightly', config = config"nvim-tree" },
-
+  {
+    'antosha417/nvim-lsp-file-operations',
+    dependencies = { { "nvim-lua/plenary.nvim" }, { "nvim-tree/nvim-tree.lua" } },
+    config = function() require("lsp-file-operations").setup() end,
+  },
   -- Plugin that automatically highlight the word and all other occurences of the word under cursor.
   -- Style can be controlled whith the variables CurrentWord and CurrentWordTwins, but AFTER colerscheme loads
   -- { 'dominikduda/vim_current_word', config = config_file"current_word" },

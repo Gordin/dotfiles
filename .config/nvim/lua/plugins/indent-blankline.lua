@@ -1,16 +1,30 @@
-require("indent_blankline").setup {
-  buftype_exclude = {'terminal', 'nofile'},
-  filetype_exclude = {'help', 'noice', 'startify', 'alpha', 'dashboard', 'packer', 'neogitstatus', 'NvimTree', 'mason.nvim'},
+vim.api.nvim_set_hl(0, 'Nothing', { fg="#1D2021", bg="#1D2021"})
+require("ibl").setup {
+  exclude = {
+    buftypes = {'terminal', 'nofile'},
+    filetypes = {'help', 'noice', 'startify', 'alpha', 'dashboard', 'packer', 'neogitstatus', 'NvimTree', 'mason.nvim'},
+  },
   -- Setting char empty and enabling show_current_context makes it so only your current context 
   -- has indent line
-  char = ' ',
-  show_current_context = true,
-  show_current_context_start = true,  -- underline first line
-  context_char_blankline = '│',
-  use_treesitter = true,
-  show_trailing_blankline_indent = true,
-  disable_with_nolist = true,
+  indent = {
+    -- char = {' ', '▎'},
+    -- tab_char = { "a", "b", "c" },
+    highlight = 'Nothing'
+  },
+  whitespace = {
+    highlight = 'Nothing',
+    remove_blankline_trail = false
+  },
+  scope = {
+    enabled = true,
+    show_start = true
+  },
+  -- context_char_blankline = '│',
+  -- use_treesitter = true,
+  -- show_trailing_blankline_indent = true,
+  -- disable_with_nolist = true,
 }
+
 
 local utils = require("utils")
 
@@ -18,8 +32,9 @@ local utils = require("utils")
 utils.easyAutocmd("IndentBlankLineSpaceColor", {
   ColorScheme = {
     callback = utils.link_highlight_group {
-      IndentBlanklineSpaceChar          = 'DiagnosticSignOk',
-      IndentBlanklineSpaceCharBlankline = 'DiagnosticSignOk'
+      IblIndent          = 'DiagnosticSignOk',
+      IblWhitespace = 'DiagnosticSignOk',
+      -- IblScope = 'DiagnosticSignOk'
     }
   }
 })
