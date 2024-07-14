@@ -41,6 +41,7 @@ local plugins = {
   },
 
   -- Move & Search & replace
+  { 'nvim-pack/nvim-spectre', dependencies = {'nvim-lua/plenary.nvim'}, config = config"spectre" },
   { 'ggandor/lightspeed.nvim', config = config"lightspeed" }, -- go anywhere with 2-4 keypresses mapping: s/S
   -- { 'phaazon/hop.nvim', config = config_file'hop' },
   -- { 'dstein64/nvim-scrollview' }, -- gives neovim a scrollbar
@@ -194,13 +195,13 @@ local plugins = {
   },
   { 'mfussenegger/nvim-dap',             config = config"nvim-dap" },
   { 'rcarriga/nvim-dap-ui',              dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-ui"           },
-  { 'theHamsta/nvim-dap-virtual-text',   dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-virtual-text" },
+  { 'theHamsta/nvim-dap-virtual-text',   dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"}, config = config"nvim-dap-virtual-text" },
   { 'jbyuki/one-small-step-for-vimkind', dependencies = {"mfussenegger/nvim-dap"}, },
   { "mxsdev/nvim-dap-vscode-js",         dependencies = {"mfussenegger/nvim-dap"}, },
 
   -- General Plugins
   { 'rcarriga/nvim-notify', config = config"nvim-notify" },       -- A fancy, configurable, notification manager for NeoVim
-  { 'folke/noice.nvim', dependencies = { 'MunifTanjim/nui.nvim' }, config = config"noice" },                 -- completely replaces the UI for messages, cmdline and the popupmenu.
+  -- { 'folke/noice.nvim', dependencies = { 'MunifTanjim/nui.nvim' }, config = config"noice" },                 -- completely replaces the UI for messages, cmdline and the popupmenu.
   { 'folke/trouble.nvim' },                                         -- diagnostics, references, telescope results, quickfix and location list
   { 'goolord/alpha-nvim', config = config"alpha-nvim" },          -- greeter like vim-startify / dashboard-nvim
   -- { 'dstein64/vim-startuptime' },
@@ -218,6 +219,7 @@ local plugins = {
 
   -- Languages
   { 'jose-elias-alvarez/typescript.nvim' },
+  { 'delphinus/vim-firestore' },
 
   { 'kopischke/vim-fetch' }, -- " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
 
@@ -225,7 +227,7 @@ local plugins = {
   { 'EinfachToll/DidYouMean' },
   -- { 'airblade/vim-rooter', config = config"vim-rooter" },
   -- { 'nyngwang/NeoRoot.lua', config = config"neoroot" },
-  { 'ahmedkhalf/project.nvim', config = config"project" },
+  { 'DrKJeff16/project.nvim', config = config"project" },
   { 'DataWraith/auto_mkdir' },     -- Automatically create folders that don't exist when saving a new file
   -- { 'landock/vim-expand-region' }, -- Expand/Shrink current selection around text objects
   { 'olambo/vi-viz', config = config"vi-viz" }

@@ -35,10 +35,6 @@ local recursive_join = function ()
   treesj.join({ split = { recursive = true } })
 end
 
-local recursive_split = function ()
-  treesj.split({ split = { recursive = true } })
-end
-
 local opts = { remap = false, silent = true }
 
 vim.keymap.set('n', '<leader>tj', treesj.toggle, opts)
@@ -46,5 +42,9 @@ vim.keymap.set('n', '<leader>tJ', recursive_toggle, opts)
 vim.keymap.set('n', '<leader>TJ', recursive_toggle, opts)
 vim.keymap.set('n', '<leader>rJ', recursive_join, opts)
 vim.keymap.set('n', '<leader>J', treesj.join,      opts)
-vim.keymap.set('n', '<leader>rS',  recursive_split, opts)
-vim.keymap.set('n', '<leader>S', treesj.split,     opts)
+
+-- local recursive_split = function ()
+--   treesj.split({ split = { recursive = true } })
+-- end
+-- vim.keymap.set('n', '<leader>rS',  recursive_split, opts)
+-- vim.keymap.set('n', '<leader>S', treesj.split,     opts)

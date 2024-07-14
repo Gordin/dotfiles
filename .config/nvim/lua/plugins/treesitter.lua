@@ -23,13 +23,13 @@ require'nvim-treesitter.configs'.setup {
       goto_node = '<cr>',
       show_help = '?',
     },
-  },
-  autotag = {
-    enable = true,
-    enable_rename = true,
-    enable_close = true,
-    enable_close_on_slash = false,
-  }
+  } -- ,
+  -- autotag = {
+  --   enable = true,
+  --   enable_rename = true,
+  --   enable_close = true,
+  --   enable_close_on_slash = false,
+  -- }
 }
 require('ts_context_commentstring').setup {}
 vim.g.skip_ts_commentstring_module = true

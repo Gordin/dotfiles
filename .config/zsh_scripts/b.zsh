@@ -23,6 +23,7 @@ function b() {
         'club' "~/work/clubhouse"
         'app' "~/work/student-services-app"
         'domain-events' "~/work/domain-events"
+        'certification' "~/work/certification"
         'nvim' "~/.config/nvim"
         'packer' "~/.local/share/nvim/site/pack/packer/start"
         'student-data-finder' "~/work/student-data-finder"
