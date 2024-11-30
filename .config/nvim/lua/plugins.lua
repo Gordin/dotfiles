@@ -34,11 +34,12 @@ local plugins = {
   { 'kdheepak/lazygit.nvim', config = config'lazygit' },
 
   -- Registers & clipboard
-  { "gbprod/yanky.nvim",
-    config = config"yanky",
-    dependencies = { "kkharji/sqlite.lua" },
-    priority = 0 -- telescope complains while loading the yanky extension without this ¯\_(ツ)_/¯
-  },
+  -- { "gbprod/yanky.nvim",
+  --   config = config"yanky",
+  --   dependencies = { "kkharji/sqlite.lua" },
+  --   -- priority = 0, -- telescope complains while loading the yanky extension without this ¯\_(ツ)_/¯
+  --   event = "VeryLazy"
+  -- },
 
   -- Move & Search & replace
   { 'nvim-pack/nvim-spectre', dependencies = {'nvim-lua/plenary.nvim'}, config = config"spectre" },
@@ -57,7 +58,7 @@ local plugins = {
   -- { 'HiPhish/nvim-ts-rainbow2', lazy = true },
   { 'HiPhish/rainbow-delimiters.nvim', config = config"rainbow-delimiters" },
   { 'lukas-reineke/indent-blankline.nvim', config = config"indent-blankline" },
-  { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO
+  -- { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO -- BROKEN
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
   {
     'Wansmer/treesj',
@@ -125,6 +126,16 @@ local plugins = {
   -- { 'echasnovski/mini.animate',   version = false, config = config"mini.animate" },
   { 'echasnovski/mini.ai',        version = false, config = function () require('mini.ai').setup() end },
   { 'mhartington/formatter.nvim', config = config"formatter" },
+  {
+    "iamcco/markdown-preview.nvim",
+    config = config"markdown-preview",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && yarn install",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
+    ft = { "markdown" },
+  },
 
   -- Statusline
   { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, config = config"lualine" },
@@ -139,7 +150,7 @@ local plugins = {
   -- Telescope
   { 'nvim-lua/popup.nvim' },
   { 'nvim-lua/plenary.nvim' },
-  { 'nvim-telescope/telescope.nvim', config = config"telescope", dependencies = { 'nvim-lua/plenary.nvim' } },
+  { 'nvim-telescope/telescope.nvim', config = config"telescope", dependencies = { 'nvim-lua/plenary.nvim' }, lazy = true },
   { "natecraddock/telescope-zf-native.nvim" },
   { 'cljoly/telescope-repo.nvim' },
   { 'nvim-telescope/telescope-dap.nvim' },
@@ -149,8 +160,6 @@ local plugins = {
   { "terrortylor/nvim-comment", config = config"nvim-comment" },
 
   -- Tim Pope ✝️
-  -- Rails stuff
-  { 'tpope/vim-rails' },
   -- Does a lot of word-conversion stuff
   -- Has mappings to convert between snake/camel/mixed/dash etc. cases
   -- Mappings: crs (snake_case), crm (MixedCase), crc (camelCase), cr- (dash-case), cr. (dot.case)
@@ -191,7 +200,7 @@ local plugins = {
   {
     "microsoft/vscode-js-debug",
     version = "1.x",
-    build = "npm i && npm run compile vsDebugServerBundle && mv dist out"
+    build = "npm i && npm run compile vsDebugServerBundle && rm ./out -rf && mv dist out"
   },
   { 'mfussenegger/nvim-dap',             config = config"nvim-dap" },
   { 'rcarriga/nvim-dap-ui',              dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-ui"           },
@@ -218,8 +227,9 @@ local plugins = {
   { 'RRethy/vim-illuminate', config = config"illuminate" },
 
   -- Languages
-  { 'jose-elias-alvarez/typescript.nvim' },
+  -- { 'jose-elias-alvarez/typescript.nvim' },
   { 'delphinus/vim-firestore' },
+  { 'kchmck/vim-coffee-script' },
 
   { 'kopischke/vim-fetch' }, -- " Makes `vim x:10` or `:e x:10` open file `x` and jump to line 10
 

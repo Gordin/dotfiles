@@ -10,7 +10,7 @@ lsp.preset('recommended')
 
 lsp.ensure_installed({
   -- Replace these with whatever servers you want to install
-  'tsserver',
+  'ts_ls',
   'eslint',
   'vimls',
   'lua_ls'
@@ -43,12 +43,12 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 -- })
 
 -- Skip eslint server, because eslint-lsp has some bug...
--- lsp.skip_server_setup({'eslint', 'tsserver', 'solargraph'})
--- lsp.skip_server_setup({'eslint', 'tsserver', 'shellcheck'})
-lsp.skip_server_setup({'tsserver', 'shellcheck'})
+-- lsp.skip_server_setup({'eslint', 'ts_ls', 'solargraph'})
+-- lsp.skip_server_setup({'eslint', 'ts_ls', 'shellcheck'})
+lsp.skip_server_setup({'shellcheck'})
 
 -- Pass arguments to a language server
--- lsp.configure('tsserver', {
+-- lsp.configure('ts_ls', {
 --   settings = {
 --     completions = {
 --       completeFunctionCalls = true
@@ -111,16 +111,16 @@ end
 
 lsp.on_attach(on_attach)
 
-require("typescript").setup({
-    disable_commands = false, -- prevent the plugin from creating Vim commands
-    debug = false, -- enable debug logging for commands
-    go_to_source_definition = {
-        fallback = true, -- fall back to standard LSP definition on failure
-    },
-    server = { -- pass options to lspconfig's setup method
-        on_attach = on_attach
-    },
-})
+-- require("typescript").setup({
+--     disable_commands = false, -- prevent the plugin from creating Vim commands
+--     debug = false, -- enable debug logging for commands
+--     go_to_source_definition = {
+--         fallback = true, -- fall back to standard LSP definition on failure
+--     },
+--     server = { -- pass options to lspconfig's setup method
+--         on_attach = on_attach
+--     },
+-- })
 
 local lspkind = require('lspkind')
 lsp.setup_nvim_cmp({
@@ -171,12 +171,20 @@ diagnostics.config({
   virtual_text = true,
 })
 
+local function goto_next()
+  diagnostics.jump{diagnostic= diagnostics.get_next()}
+end
+
+local function goto_prev()
+  diagnostics.jump{diagnostic= diagnostics.get_prev()}
+end
+
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap = true, silent = true }
 remap("n", "<leader>di", diagnostics.open_float, opts)
-remap("n", "<leader>dp", diagnostics.goto_prev,  opts)
-remap("n", "<c-j>",      diagnostics.goto_next,  opts)
-remap("n", "<leader>dn", diagnostics.goto_next,  opts)
+remap("n", "<leader>dp", goto_prev,  opts)
+remap("n", "<c-j>",      goto_next,  opts)
+remap("n", "<leader>dn", goto_next,  opts)
 remap("n", "<leader>dq", diagnostics.setloclist, opts)
 
 require("plugins.lsp_signature")

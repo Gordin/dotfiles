@@ -73,8 +73,7 @@ telescope.load_extension('notify')
 telescope.load_extension('dap')
 telescope.load_extension("yadm_files")
 telescope.load_extension("git_or_yadm_files")
-telescope.load_extension('projects') -- project.nvim
-telescope.load_extension("yank_history")
+-- telescope.load_extension("yank_history")
 
 local builtin = require('telescope.builtin')
 local M = {}

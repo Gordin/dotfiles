@@ -124,6 +124,21 @@ vim.opt.splitbelow = true
 -- Make vim use the system clipboard for copy&pasting
 vim.opt.clipboard = "unnamed"
 
+vim.cmd[[
+  let g:clipboard = {
+    \   'name': 'myClipboard',
+    \   'copy': {
+    \      '+': ['xsel', '--nodetach', '-i', '-b'],
+    \      '*': ['xsel', '--nodetach', '-i', '-p'],
+    \    },
+    \   'paste': {
+    \      '+': ['xsel', '-o', '-b'],
+    \      '*': ['xsel', '-o', '-p'],
+    \   },
+    \   'cache_enabled': 1,
+    \ }
+]]
+
 utils.easyAutocmd("RestoreLastCursorPositionAfterOpeningFile", {
   BufReadPost = { callback = utils.return_to_last_cursor_position, }
 })

@@ -31,10 +31,10 @@ require'nvim-treesitter.configs'.setup {
   --   enable_close_on_slash = false,
   -- }
 }
-require('ts_context_commentstring').setup {}
+-- require('ts_context_commentstring').setup {}
 vim.g.skip_ts_commentstring_module = true
 
-local utils = require("utils")
+-- local utils = require("utils")
 
 local interval_ms = 1000
 local last_execution = 0
