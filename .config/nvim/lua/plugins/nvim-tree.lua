@@ -9,10 +9,5 @@ require("nvim-tree").setup({
         height = 60,
       },
     },
-    mappings = {
-      list = {
-        { key = "u", action = "dir_up" },
-      },
-    },
   },
 })
