@@ -23,3 +23,16 @@ export WORK_SCRIPTS="$HOME/.config/zsh/work.sh"
 if [[ -f "$WORK_SCRIPTS" ]]; then
   source "$WORK_SCRIPTS"
 fi
+
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/aguth/.config/.dart-cli-completion/zsh-config.zsh ]] && . /home/aguth/.config/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+
+
+# FVM
+export PATH="$HOME/.fvm_flutter/bin:$PATH"
+export PATH="$HOME/fvm/versions/stable/bin:$PATH"
+export PATH="$HOME/fvm/versions/stable/bin:$PATH"
+export PATH="$HOME/.local/share/gem/ruby/3.4.0/bin:$PATH"
