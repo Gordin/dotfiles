@@ -56,7 +56,7 @@ local plugins = {
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = config"treesitter" },
   { 'nvim-treesitter/playground' },
   -- { 'HiPhish/nvim-ts-rainbow2', lazy = true },
-  { 'HiPhish/rainbow-delimiters.nvim', config = config"rainbow-delimiters" },
+  -- { 'HiPhish/rainbow-delimiters.nvim', config = config"rainbow-delimiters" },
   { 'lukas-reineke/indent-blankline.nvim', config = config"indent-blankline" },
   -- { 'JoosepAlviste/nvim-ts-context-commentstring' }, -- TODO -- BROKEN
   { "SmiteshP/nvim-navic",                 dependencies = "neovim/nvim-lspconfig" },
@@ -197,16 +197,18 @@ local plugins = {
   { 'echasnovski/mini.base16', version = false }, -- creates base_16 themes from a palette
 
   -- Debugger
-  {
-    "microsoft/vscode-js-debug",
-    version = "1.x",
-    build = "npm i && npm run compile vsDebugServerBundle && rm ./out -rf && mv dist out"
-  },
+  -- {
+  --   "microsoft/vscode-js-debug",
+  --   opt = true,
+  --   -- version = "1.x",
+  --   -- build = "npm i && npm run compile vsDebugServerBundle && rm ./out -rf && mv dist out"
+  --   build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out"
+  -- },
   { 'mfussenegger/nvim-dap',             config = config"nvim-dap" },
   { 'rcarriga/nvim-dap-ui',              dependencies = {"mfussenegger/nvim-dap"}, config = config"nvim-dap-ui"           },
   { 'theHamsta/nvim-dap-virtual-text',   dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"}, config = config"nvim-dap-virtual-text" },
   { 'jbyuki/one-small-step-for-vimkind', dependencies = {"mfussenegger/nvim-dap"}, },
-  { "mxsdev/nvim-dap-vscode-js",         dependencies = {"mfussenegger/nvim-dap"}, },
+  -- { "mxsdev/nvim-dap-vscode-js",         dependencies = {"mfussenegger/nvim-dap"}, },
 
   -- General Plugins
   { 'rcarriga/nvim-notify', config = config"nvim-notify" },       -- A fancy, configurable, notification manager for NeoVim
@@ -215,7 +217,7 @@ local plugins = {
   { 'goolord/alpha-nvim', config = config"alpha-nvim" },          -- greeter like vim-startify / dashboard-nvim
   -- { 'dstein64/vim-startuptime' },
   -- file explorer
-  { 'nvim-tree/nvim-tree.lua', dependencies = { 'nvim-tree/nvim-web-devicons' }, tag = 'nightly', config = config"nvim-tree" },
+  { 'nvim-tree/nvim-tree.lua', dependencies = { 'nvim-tree/nvim-web-devicons' }, config = config"nvim-tree" },
   {
     'antosha417/nvim-lsp-file-operations',
     dependencies = { { "nvim-lua/plenary.nvim" }, { "nvim-tree/nvim-tree.lua" } },
