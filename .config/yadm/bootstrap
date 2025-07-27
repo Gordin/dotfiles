@@ -79,7 +79,7 @@ pyenv exec pip install --upgrade wheel
 pyenv exec pip install --upgrade neovim
 
 # PY3VER=$(pyenv install --list | grep -v 'dev\|b\|rc\|-\|alpha' | grep '3\..\+' -o | tail -1)
-PY3VER='3.10.7'
+PY3VER='3.12.7'
 pyenv install "$PY3VER" -s
 CUR_PY3VER=$(pyenv virtualenvs --skip-aliases | grep neovim3 | cut -d/ -f1 | tr -d ' ')
 if ! [ "$CUR_PY3VER" = "$PY3VER" ]; then
@@ -93,7 +93,6 @@ pyenv exec pip install --upgrade wheel
 pyenv exec pip install --upgrade neovim flake8 mypy pylint black neovim-remote
 pyenv exec pip install --upgrade ipython ipdb ptpython
 
-
 # move all paths ending in 'sbin' to the back of PATH
 # This is needed because pyenv fails to find the system python otherwise
 for SB in $(echo "$PATH" | grep ':*/[^:]*sbin' -o)
@@ -101,32 +100,32 @@ do
   PATH="${PATH/$SB}:${SB#:}"
 done
 
-if [[ ! "$OS" == "OSX" ]]; then
-  # Set global version to system version
-  pyenv global system
-  set +u; pyenv deactivate; set -u
-
-  # Install pip and python stuff
-  if ! [ -x "$(command -v pip)" ]; then
-    cd /tmp
-    wget https://bootstrap.pypa.io/get-pip.py
-    python get-pip.py --user
-  fi
-  # Install same stuff as for neovim3 env (and maybe more stuff)
-  pip install --user wheel
-  pip install --user neovim-remote
-  pip install --user neovim flake8 mypy pylint black
-  pip install --user ipython ipdb ptpython
-else
-  # Don't trust macOS with anything, always use the python from pyenv...
-  # Set global version to system version
-  pyenv global $PY3VER
-  set +u; pyenv activate; set -u
-  pip install wheel
-  pip install neovim-remote
-  pip install neovim flake8 mypy pylint black
-  pip install ipython ipdb ptpython
-fi
+# if [[ ! "$OS" == "OSX" ]]; then
+#   # Set global version to system version
+#   pyenv global system
+#   set +u; pyenv deactivate; set -u
+#
+#   # Install pip and python stuff
+#   if ! [ -x "$(command -v pip)" ]; then
+#     cd /tmp
+#     wget https://bootstrap.pypa.io/get-pip.py
+#     python get-pip.py --user
+#   fi
+#   # Install same stuff as for neovim3 env (and maybe more stuff)
+#   pip install wheel
+#   pip install neovim-remote
+#   pip install neovim flake8 mypy pylint black
+#   pip install ipython ipdb ptpython
+# else
+#   # Don't trust macOS with anything, always use the python from pyenv...
+#   # Set global version to system version
+#   pyenv global $PY3VER
+#   set +u; pyenv activate; set -u
+#   pip install wheel
+#   pip install neovim-remote
+#   pip install neovim flake8 mypy pylint black
+#   pip install ipython ipdb ptpython
+# fi
 
 ### Setup fzf (fuzzy finder)
 # https://github.com/junegunn/fzf
@@ -233,4 +232,4 @@ if ! [ -x "$(command -v nvim)" ]; then
   brew install nvim --HEAD
 fi
 
-nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall!' '+qall'
+#nvim '+PlugUpgrade' '+PlugClean!' '+PlugInstall!' '+qall'
