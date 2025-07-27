@@ -3,6 +3,8 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,          -- false will disable the whole extension
   },
+  -- List of parsers to ignore installing (or "all")
+  ignore_install = { "hoon" },
   matchup = {
     enable = true
   },
