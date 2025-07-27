@@ -83,6 +83,10 @@ doco() {
   bash -c "cd ~/work/studitemps-docker; docker compose $*"
 }
 
+foco() {
+  bash -c "cd ~/work/studibase; docker compose $*"
+}
+
 soco() {
   bash -c "cd ~/work/studibase; docker compose $*"
 }
