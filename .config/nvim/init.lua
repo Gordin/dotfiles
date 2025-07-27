@@ -13,7 +13,6 @@ require('plugins')                    -- ./lua/plugins/init.lua
 -- require("settings.completion")        -- autocompletion (old, for comparison with lsp.lua)
 
 -- completion and stuff for neovim lua stuff specifically
-require("settings.neodev")            -- keey before lsp!
 
 require("settings.lsp")               -- LSP config and servers
 require("settings.null-ls")           -- null-ls config (keep after lsp!)

@@ -108,8 +108,18 @@ local plugins = {
   -- { 'ray-x/cmp-treesitter' }
   -- { 'lukas-reineke/cmp-rg' }
   { "onsails/lspkind-nvim" },      -- adds icons (or other stuff) to autocompletions
-  { "folke/neodev.nvim" },         -- completion for neovim stuff in lua
   { "rafcamlet/nvim-luapad", config = config"luapad" },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
+  },
 
   -- { "simrat39/symbols-outline.nvim" },
 
